@@ -43,6 +43,9 @@ To start the game in development mode, use the following command:
 npm run dev
 ```
 
+To move the player use the arrow keys!<br/>
+
+
 This command will start the development server, allowing you to see live updates as you modify the code.
 
 # Project Structure
