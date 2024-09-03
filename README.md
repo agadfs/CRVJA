@@ -26,30 +26,29 @@ Install Dependencies
 
 Run the following command to install all necessary dependencies:
 
-bash
-Copy code
 ```
 npm install
 ```
+
 Running the Game
 To start the game in development mode, use the following command:
 
-bash
-Copy code
 ```
 npm run dev
 ```
+
 This command will start the development server, allowing you to see live updates as you modify the code.
 
 # Project Structure
-src/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.
-src/Entities: Manages entity creation and component management.
-src/Systems: Includes all game logic systems such as MovementSystem, CollisionSystem, AttackSystem, AIMovementSystem, and RespawnSystem.
-src/GameTest: The main game logic and initialization.
-public: Contains static assets and the HTML entry point.
-package.json: Contains project metadata and scripts.
-Contributing
-Contributions are welcome! Please fork the repository and submit a pull request for any bug fixes or enhancements.
+src/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.<br />
+src/Entities: Manages entity creation and component management.<br />
+src/Systems: Includes all game logic systems such as MovementSystem, CollisionSystem, AttackSystem, AIMovementSystem, and RespawnSystem.<br />
+src/GameTest: The main game logic and initialization.<br />
+public: Contains static assets and the HTML entry point.<br />
+package.json: Contains project metadata and scripts.<br />
+
+# Contributing
+Contributions are welcome! Please fork the repository and submit a pull request for any bug fixes or enhancements.<br />
 
 # License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
