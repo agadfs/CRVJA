@@ -23,10 +23,13 @@ Clone the Repository
 ```
 git clone https://github.com/yourusername/ecs-game-project.git
 ```
+
+Go to the project folder
+
 ```
 cd ecs-game-project
 ```
-Install Dependencies
+
 
 Run the following command to install all necessary dependencies:
 
@@ -34,7 +37,6 @@ Run the following command to install all necessary dependencies:
 npm install
 ```
 
-Running the Game
 To start the game in development mode, use the following command:
 
 ```
