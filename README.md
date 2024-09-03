@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+ECS Game Project
+Welcome to the ECS Game Project! This project implements a simple grid-based game using the Entity-Component-System (ECS) architecture. Players can control a character, interact with non-playable characters (NPCs), and engage in combat. The game features dynamic entity management, including respawning mechanics and AI-driven NPC behavior.
 
-## Getting Started
+Features
+Entity-Component-System (ECS) Architecture: The game utilizes a modular ECS design for managing game objects and behaviors.
+Player and NPC Interactions: Control a player character to explore the game world, encounter NPCs, and engage in combat.
+Combat System: Both players and NPCs can perform attacks based on their defined abilities and cooldowns.
+AI Movement: NPCs navigate the game world using simple AI behaviors.
+Respawn System: Automatically respawn NPCs to maintain a minimum number of entities in the game.
+Grid-based Movement: Entities move within a grid-based map, interacting with the environment and each other.
+Getting Started
+Prerequisites
+Ensure you have the following installed:
 
-First, run the development server:
+Node.js (version 12 or later)
+npm (comes with Node.js)
+Installation
+Clone the Repository
 
-```bash
+bash
+Copy code
+git clone https://github.com/yourusername/ecs-game-project.git
+cd ecs-game-project
+Install Dependencies
+
+Run the following command to install all necessary dependencies:
+
+bash
+Copy code
+npm install
+Running the Game
+To start the game in development mode, use the following command:
+
+bash
+Copy code
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This command will start the development server, allowing you to see live updates as you modify the code.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Project Structure
+src/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.
+src/Entities: Manages entity creation and component management.
+src/Systems: Includes all game logic systems such as MovementSystem, CollisionSystem, AttackSystem, AIMovementSystem, and RespawnSystem.
+src/GameTest: The main game logic and initialization.
+public: Contains static assets and the HTML entry point.
+package.json: Contains project metadata and scripts.
+Contributing
+Contributions are welcome! Please fork the repository and submit a pull request for any bug fixes or enhancements.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
