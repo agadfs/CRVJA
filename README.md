@@ -21,7 +21,7 @@ npm (comes with Node.js)<br />
 Clone the Repository
 
 ```
-git clone https://github.com/yourusername/ecs-game-project.git
+git clone https://github.com/agadfs/ECS-NextJS-Game-Testing.git
 ```
 
 Go to the project folder
