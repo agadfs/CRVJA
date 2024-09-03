@@ -15,13 +15,17 @@ Ensure you have the following installed:
 
 Node.js (version 12 or later)
 npm (comes with Node.js)
-Installation
+
+# Installation
+
 Clone the Repository
 
-bash
-Copy code
+```
 git clone https://github.com/yourusername/ecs-game-project.git
+```
+```
 cd ecs-game-project
+```
 Install Dependencies
 
 Run the following command to install all necessary dependencies:
