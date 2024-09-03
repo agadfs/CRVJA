@@ -28,13 +28,17 @@ Run the following command to install all necessary dependencies:
 
 bash
 Copy code
+```
 npm install
+```
 Running the Game
 To start the game in development mode, use the following command:
 
 bash
 Copy code
+```
 npm run dev
+```
 This command will start the development server, allowing you to see live updates as you modify the code.
 
 # Project Structure
