@@ -10,11 +10,11 @@ Respawn System: Automatically respawn NPCs to maintain a minimum number of entit
 Grid-based Movement: Entities move within a grid-based map, interacting with the environment and each other.
 
 # Getting Started
-Prerequisites
-Ensure you have the following installed:
 
-Node.js (version 12 or later)
-npm (comes with Node.js)
+Ensure you have the following installed:<br />
+
+Node.js (version 12 or later)<br />
+npm (comes with Node.js)<br />
 
 # Installation
 
