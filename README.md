@@ -1,4 +1,4 @@
-ECS Game Project
+<span style="font-size:0.5em;">ECS Game Project</span>
 Welcome to the ECS Game Project! This project implements a simple grid-based game using the Entity-Component-System (ECS) architecture. Players can control a character, interact with non-playable characters (NPCs), and engage in combat. The game features dynamic entity management, including respawning mechanics and AI-driven NPC behavior.
 
 Features
