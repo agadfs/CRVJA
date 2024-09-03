@@ -46,11 +46,23 @@ npm run dev
 This command will start the development server, allowing you to see live updates as you modify the code.
 
 # Project Structure
-src/ECS/GameTest/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.<br />
-src/ECS/GameTest/Entities: Manages entity creation and component management.<br />
-src/ECS/GameTest/Systems: Includes all game logic systems such as MovementSystem, CollisionSystem, AttackSystem, AIMovementSystem, and RespawnSystem.<br />
+Using Next 13+ the pages are inside /App folder, on the main page with no routes "/", the nodeRenderGame.js is rendered.<br />
+
+src/ECS/GameTest/GameTest/nodeRenderGame.js: The integration with Next.js to render the game, here it compiles all systems, including the map.<br />
+
 src/ECS/GameTest/GameTest/initializeMap.js: The main game logic and initialization.<br />
-src/ECS/GameTest/GameTest/nodeRenderGame.js: The integration with Next.js to render the game<br />
+src/ECS/GameTest/Systems: Includes all game logic systems such as MovementSystem, CollisionSystem, AttackSystem, AIMovementSystem, and RespawnSystem.<br />
+
+Then there is the components that adds data to the entities<br />
+src/ECS/GameTest/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.<br />
+
+And the entity startup <br />
+src/ECS/GameTest/Entities: Manages entity creation and component management.<br />
+
+
+
+
+
 public: Contains static assets and the HTML entry point.<br />
 package.json: Contains project metadata and scripts.<br />
 
