@@ -25,7 +25,15 @@ export const RespawnSystem = (entities, mapEntities) => {
       addComponent(goblin, IDComponent());
       addComponent(goblin, PositionComponent(spawnPosition.x, spawnPosition.y)); // Set spawn position
       addComponent(goblin, HealthComponent(10*currentNpcLevel)); // Starting health
-      addComponent(goblin, setEntityNameComponent("Goblin Respawned"));
+      if(currentNpcLevel <= 5) {
+        addComponent(goblin, setEntityNameComponent(`Goblin`));
+      }else if(currentNpcLevel > 5 && currentNpcLevel <= 10) {
+        addComponent(goblin, setEntityNameComponent(`Goblin Warrior`));
+      }else if(currentNpcLevel > 10 && currentNpcLevel <= 20) {
+        addComponent(goblin, setEntityNameComponent(`Goblin Elite`));
+      }else {
+        addComponent(goblin, setEntityNameComponent(`Goblin King`));
+      }
       addComponent(goblin, setNpcCanWalkComponent(true));
       addComponent(goblin, LevelComponent(currentNpcLevel));
       addPlayerAttackComponent(goblin, {

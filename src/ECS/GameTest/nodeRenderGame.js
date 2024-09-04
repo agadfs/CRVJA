@@ -26,7 +26,7 @@ const Game = () => {
   const [entities, setEntities] = useState([]);
   const entitiesRef = useRef(entities);
   const [mapEntities, setMapEntities] = useState(initializeMap); // Initialize map here
-
+ 
   useEffect(() => {
     let initialEntities = [];
     /* Create player */

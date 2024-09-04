@@ -1,8 +1,16 @@
-// Systems/playerInputSystem.js
-
 export const PlayerInputSystem = (getEntities, mapEntities) => {
+  /* This defines the player speed for now */
+  let lastMoveTime = 0; // Timestamp for the last move
+  const moveCooldown = 100; // the higher the number, slower the player moves
+  /*  */
+
   const handleKeyDown = (event) => {
-    
+    const currentTime = performance.now(); // Current timestamp
+
+    // Check if enough time has passed since the last move
+    if (currentTime - lastMoveTime < moveCooldown) {
+      return; // Not enough time has passed, ignore the input
+    }
 
     const entities = getEntities(); // Always fetch the latest entities
     const player = entities.find((e) => e.components.isPlayer);
@@ -11,11 +19,13 @@ export const PlayerInputSystem = (getEntities, mapEntities) => {
       console.error("Player entity not found");
       return;
     }
-    if(player.components.stopGame && player.components.stopGame === true) {
+
+    // Check if the game is stopped
+    if (player.components.stopGame && player.components.stopGame === true) {
       console.log("Game stopped");
       return;
-
     }
+
     if (player.components.hp <= 0) {
       console.error("Player is dead!");
       return;
@@ -49,6 +59,7 @@ export const PlayerInputSystem = (getEntities, mapEntities) => {
         if (!entityOnTargetTile) {
           position.x = newX;
           position.y = newY;
+          lastMoveTime = currentTime; // Update last move time
         } else {
           console.log("Another entity is already on the target tile");
         }
