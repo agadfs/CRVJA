@@ -48,21 +48,18 @@ export const RespawnSystem = (entities, mapEntities) => {
 
 // Helper function to find a suitable spawn position
 function findSpawnPosition(mapEntities, entities) {
-  // Find all walkable tiles that are not occupied
   const walkableTiles = mapEntities.filter((tile) => tile.components.walkable);
-
-  // Check each walkable tile to see if it's occupied
-  for (const tile of walkableTiles) {
+  const availableTiles = walkableTiles.filter(tile => {
     const { x, y } = tile.components;
-    const isOccupied = entities.some(
+    return !entities.some(
       (entity) => entity.components.x === x && entity.components.y === y
     );
+  });
 
-    if (!isOccupied) {
-      // Return the first available walkable and unoccupied tile
-      return { x, y };
-    }
+  if (availableTiles.length > 0) {
+    const randomTile = availableTiles[Math.floor(Math.random() * availableTiles.length)];
+    return { x: randomTile.components.x, y: randomTile.components.y };
   }
 
-  return null; // No available position found
+  return null;
 }
