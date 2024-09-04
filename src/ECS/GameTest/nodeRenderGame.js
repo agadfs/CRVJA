@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { PositionComponent } from "./Components/positionComponent";
@@ -15,7 +14,6 @@ import { AttackSystem } from "./Systems/attackSystem";
 import { setPlayerComponent } from "./Components/setPlayerComponent";
 import { setEntityNameComponent } from "./Components/setEnitityNameComponent";
 import { addPlayerAttackComponent } from "./Components/addPlayerAttackComponent";
-import { setNpcCanWalkComponent } from "./Components/setWalkableNpcComponent";
 import { RespawnSystem } from "./Systems/respawnSystem";
 import { LevelComponent, XpComponent } from "./Components/LevelComponent";
 import { HealthOrbSpawnSystem } from "./Systems/healthOrbSystem";
@@ -26,7 +24,7 @@ const Game = () => {
   const [entities, setEntities] = useState([]);
   const entitiesRef = useRef(entities);
   const [mapEntities, setMapEntities] = useState(initializeMap); // Initialize map here
- 
+
   useEffect(() => {
     let initialEntities = [];
     /* Create player */
@@ -38,24 +36,93 @@ const Game = () => {
     addComponent(player, setEntityNameComponent("Player"));
     addComponent(player, LevelComponent(1));
     addComponent(player, XpComponent(0));
-    addPlayerAttackComponent(player, {
-      name: "Arrow",
-      damage: 2,
-      range: 4,
-      aoe: false,
-      aoeArea: 0,
-      cooldown: 2000,
-      currentCooldown: 0,
-    });
 
     addPlayerAttackComponent(player, {
       name: "Punch",
-      damage: 25,
+      damage: 50,
       range: 2,
+      tier: 1,
       aoe: false,
       aoeArea: 0,
       cooldown: 1000,
       currentCooldown: 0,
+      selected: true,
+      selectedPosition: 0,
+    });
+    addPlayerAttackComponent(player, {
+      name: "Kick",
+      damage: 2,
+      range: 4,
+      tier: 1,
+      aoe: false,
+      aoeArea: 0,
+      cooldown: 2000,
+      currentCooldown: 0,
+      selected: false,
+      selectedPosition: 0,
+    });
+    addPlayerAttackComponent(player, {
+      name: "FireBall",
+      damage: 2,
+      range: 4,
+      tier: 1,
+      aoe: false,
+      aoeArea: 0,
+      cooldown: 2000,
+      currentCooldown: 0,
+      selected: false,
+      selectedPosition: 0,
+    });
+
+    addPlayerAttackComponent(player, {
+      name: "Fire Aura",
+      damage: 3,
+      range: 2,
+      tier: 1,
+      aoe: true,
+      aoeArea: 2,
+      cooldown: 200,
+      currentCooldown: 0,
+      selected: false,
+      selectedPosition: 0,
+    });
+
+    addPlayerAttackComponent(player, {
+      name: "Lightining Aura",
+      damage: 2,
+      range: 3,
+      tier: 1,
+      aoe: true,
+      aoeArea: 2,
+      cooldown: 200,
+      selected: false,
+      selectedPosition: 0,
+    });
+
+    addPlayerAttackComponent(player, {
+      name: "Ice Aura",
+      damage: 1,
+      range: 4,
+      tier: 1,
+      aoe: true,
+      aoeArea: 2,
+      cooldown: 200,
+      currentCooldown: 0,
+      selected: false,
+      selectedPosition: 0,
+    });
+
+    addPlayerAttackComponent(player, {
+      name: "Axe Throw",
+      damage: 2,
+      range: 4,
+      tier: 1,
+      aoe: false,
+      aoeArea: 0,
+      cooldown: 1000,
+      currentCooldown: 0,
+      selected: false,
+      selectedPosition: 0,
     });
 
     initialEntities.push(player);
@@ -73,7 +140,10 @@ const Game = () => {
     const gameLoop = (currentTime) => {
       const deltaTime = currentTime - lastTime; // Time difference between frames
       lastTime = currentTime;
-
+      let skillsToUpgrade = [];
+      const changeSkillsToUpgrade = (skills) => {
+        skillsToUpgrade = skills;
+      }
       const updatedEntities = [...entitiesRef.current];
       RespawnSystem(updatedEntities, mapEntities);
       MovementSystem(updatedEntities, mapEntities);

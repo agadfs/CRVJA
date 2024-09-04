@@ -75,6 +75,9 @@ export const AttackSystem = (entities, mapEntities) => {
       if (attack.currentCooldown > 0) {
         return; // Skip this attack if it's on cooldown
       }
+      if(attack.selected === false) {
+        return; // Skip this attack if it's not selected
+      }
 
       targetPosition = targetPosition || {
         x: target.components.x,
@@ -85,7 +88,7 @@ export const AttackSystem = (entities, mapEntities) => {
       // Check if the target is within range of the attack
       if (attack.range >= distance) {
         // Apply the damage to the target
-        target.components.hp -= attack.damage;
+        target.components.hp -= attack.damage*attack.tier;
         console.log(
           `${attacker.components.name} attacks ${target.components.name} with ${attack.name}, dealing ${attack.damage} damage!`
         );

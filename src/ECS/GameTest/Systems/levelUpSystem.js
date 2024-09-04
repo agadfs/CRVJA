@@ -1,5 +1,7 @@
+import { getAvailableAttacks } from "../Components/selectNextUpgradesToPlayerComponent";
 
-export const LevelUpSystem = (entities, setStopGame) => {
+
+export const LevelUpSystem = (entities) => {
   entities.forEach((entity) => {
     // Check if the entity is a player
     if (entity.components.isPlayer) {
@@ -16,6 +18,8 @@ export const LevelUpSystem = (entities, setStopGame) => {
         xpComponent.stopGame = true; // Stop the game when the player levels up
         // Log the level-up event
         console.log(`Player has leveled up to level ${levelComponent.level}!`);
+        xpComponent.skillsToUpgrade = getAvailableAttacks(entities);
+
         
       }
     }

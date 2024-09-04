@@ -1,7 +1,13 @@
-// Systems/renderMapAndEntitiesSystem.js
-import React from "react";
+import React, { useState } from "react";
 
-export const RenderMapAndEntitiesSystem = ({ mapEntities, entities }) => {
+
+  /* This is a function that first gets all entities with components then
+   will iterate over all the attacks component of the entity player 
+    and return all available attacks
+  */
+
+export const RenderMapAndEntitiesSystem = ({ mapEntities, entities,skillsUpgrade }) => {
+
   return (
     <div
       style={{
@@ -28,7 +34,8 @@ export const RenderMapAndEntitiesSystem = ({ mapEntities, entities }) => {
 
           alignItems: "center",
           display:
-            entities.find((entity) => entity.components.isPlayer)?.components?.stopGame === true
+            entities.find((entity) => entity.components.isPlayer)?.components
+              ?.stopGame === true
               ? "flex"
               : "none",
           flexDirection: "column",
@@ -36,57 +43,35 @@ export const RenderMapAndEntitiesSystem = ({ mapEntities, entities }) => {
       >
         <h1 style={{ textAlign: "center" }}>Choose a upgrade</h1>
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div
-            style={{
-              border: "1px solid white",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              /* need to add the upgrade to the player here */
-              /* then just update thee state of the gameStop of the player */
-              const findStopGame = entities.filter(
-                (entity) => entity.components.isPlayer
-              );
-              findStopGame[0].components.stopGame = false;
-            }}
-          >
-            <h2>No upgrades are available right now</h2>
-          </div>
-          <div
-            style={{
-              border: "1px solid white",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              /* need to add the upgrade to the player here */
-              /* then just update thee state of the gameStop of the player */
-              const findStopGame = entities.filter(
-                (entity) => entity.components.isPlayer
-              );
-              findStopGame[0].components.stopGame = false;
-            }}
-          >
-            <h2>No upgrades are available right now</h2>
-          </div>
-          <div
-            style={{
-              border: "1px solid white",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              /* need to add the upgrade to the player here */
-              /* then just update thee state of the gameStop of the player */
-              const findStopGame = entities.filter(
-                (entity) => entity.components.isPlayer
-              );
-              findStopGame[0].components.stopGame = false;
-            }}
-          >
-            <h2>No upgrades are available right now</h2>
-          </div>
+          {entities.find((entity) => entity.components.isPlayer)?.components?.skillsToUpgrade?.map((attack, index) => (
+            <div
+              style={{
+                border: "1px solid white",
+                padding: "10px",
+                cursor: "pointer",
+              }}
+              key={index}
+              onClick={() => {
+                /* need to add the upgrade to the player here */
+                /* then just update thee state of the gameStop of the player */
+                const findStopGame = entities.filter(
+                  (entity) => entity.components.isPlayer
+                );
+                findStopGame[0].components.stopGame = false;
+                let upgradedAttack = attack;
+                if (upgradedAttack.selected === false){
+                  upgradedAttack.selected = true;
+                }else{
+                  upgradedAttack.tier += 1;
+                }
+                
+                findStopGame[0].components.attacks.filter((attacks) => attacks.name !== attack.name).push(upgradedAttack);
+                console.log(findStopGame[0].components.attacks);
+              }}
+            >
+              <h2>{attack.name}</h2>
+            </div>
+          ))}
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
@@ -99,7 +84,21 @@ export const RenderMapAndEntitiesSystem = ({ mapEntities, entities }) => {
               <div>HP: {entity.components.hp}</div>
               <div>Level: {entity.components.level}</div>
               {entity.components.isPlayer && (
+                <>
                 <div>Xp: {entity.components.xp}</div>
+                {entity.components.attacks?.filter((attack) => attack.selected === true).map((attack, index) => (
+                  <div key={index} >
+                    <div>
+                    Attack : {attack.name}
+
+                    </div>
+                    <div>
+                    Tier : {attack.tier}
+                    </div>
+                  </div>
+                ))}
+               
+                </>
               )}
             </div>
           ))}
