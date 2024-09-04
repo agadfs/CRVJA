@@ -140,10 +140,6 @@ const Game = () => {
     const gameLoop = (currentTime) => {
       const deltaTime = currentTime - lastTime; // Time difference between frames
       lastTime = currentTime;
-      let skillsToUpgrade = [];
-      const changeSkillsToUpgrade = (skills) => {
-        skillsToUpgrade = skills;
-      }
       const updatedEntities = [...entitiesRef.current];
       RespawnSystem(updatedEntities, mapEntities);
       MovementSystem(updatedEntities, mapEntities);
