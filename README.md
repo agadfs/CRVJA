@@ -44,7 +44,7 @@ npm run dev
 ```
 
 This command will start the development server, allowing you to see live updates as you modify the code.
-
+To Move the player, use WASD keys on the keyboard.
 # Project Structure
 src/ECS/GameTest/Components: Contains all ECS components such as PositionComponent, HealthComponent, IDComponent, etc.<br />
 src/ECS/GameTest/Entities: Manages entity creation and component management.<br />

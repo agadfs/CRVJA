@@ -1,5 +1,5 @@
-// GameTest/Game.js
 
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { PositionComponent } from "./Components/positionComponent";
 import { HealthComponent } from "./Components/healthComponent";
@@ -17,6 +17,10 @@ import { setEntityNameComponent } from "./Components/setEnitityNameComponent";
 import { addPlayerAttackComponent } from "./Components/addPlayerAttackComponent";
 import { setNpcCanWalkComponent } from "./Components/setWalkableNpcComponent";
 import { RespawnSystem } from "./Systems/respawnSystem";
+import { LevelComponent, XpComponent } from "./Components/LevelComponent";
+import { HealthOrbSpawnSystem } from "./Systems/healthOrbSystem";
+import { PickupSystem } from "./Systems/pickUpSystem";
+import { LevelUpSystem } from "./Systems/levelUpSystem";
 
 const Game = () => {
   const [entities, setEntities] = useState([]);
@@ -32,6 +36,8 @@ const Game = () => {
     addComponent(player, HealthComponent(100)); // Starting health
     addComponent(player, setPlayerComponent());
     addComponent(player, setEntityNameComponent("Player"));
+    addComponent(player, LevelComponent(1));
+    addComponent(player, XpComponent(0));
     addPlayerAttackComponent(player, {
       name: "Arrow",
       damage: 2,
@@ -44,7 +50,7 @@ const Game = () => {
 
     addPlayerAttackComponent(player, {
       name: "Punch",
-      damage: 5,
+      damage: 25,
       range: 2,
       aoe: false,
       aoeArea: 0,
@@ -54,7 +60,6 @@ const Game = () => {
 
     initialEntities.push(player);
 
-
     setEntities(initialEntities);
     entitiesRef.current = initialEntities;
 
@@ -63,14 +68,21 @@ const Game = () => {
       mapEntities
     );
 
-    const gameLoop = () => {
+    let lastTime = performance.now(); // Initial time for the game loop
+
+    const gameLoop = (currentTime) => {
+      const deltaTime = currentTime - lastTime; // Time difference between frames
+      lastTime = currentTime;
+
       const updatedEntities = [...entitiesRef.current];
       RespawnSystem(updatedEntities, mapEntities);
       MovementSystem(updatedEntities, mapEntities);
       CollisionSystem(updatedEntities);
       AIMovementSystem(updatedEntities, mapEntities);
-      AttackSystem(updatedEntities, mapEntities);   
-
+      AttackSystem(updatedEntities, mapEntities);
+      HealthOrbSpawnSystem(updatedEntities, mapEntities, player, deltaTime); // Pass deltaTime
+      PickupSystem(updatedEntities); // Handle pickups for any pickable entity
+      LevelUpSystem(updatedEntities);
       entitiesRef.current = updatedEntities;
       setEntities(updatedEntities);
 

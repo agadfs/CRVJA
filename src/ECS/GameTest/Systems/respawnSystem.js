@@ -7,10 +7,14 @@ import { HealthComponent } from "../Components/healthComponent";
 import { setEntityNameComponent } from "../Components/setEnitityNameComponent";
 import { setNpcCanWalkComponent } from "../Components/setWalkableNpcComponent";
 import { addPlayerAttackComponent } from "../Components/addPlayerAttackComponent";
+import { LevelComponent } from "../Components/LevelComponent";
+
+let currentNpcLevel = 1;
 
 export const RespawnSystem = (entities, mapEntities) => {
+  
   // Check the number of entities
-  if (entities.length < 4) {
+  if (entities.filter((entity) => !entity.components.itemType).length < 4) {
     // Define a position to respawn the goblin (e.g., random position)
     // Make sure the position is walkable and not occupied
     const spawnPosition = findSpawnPosition(mapEntities, entities);
@@ -20,12 +24,13 @@ export const RespawnSystem = (entities, mapEntities) => {
       const goblin = createEntity();
       addComponent(goblin, IDComponent());
       addComponent(goblin, PositionComponent(spawnPosition.x, spawnPosition.y)); // Set spawn position
-      addComponent(goblin, HealthComponent(50)); // Starting health
+      addComponent(goblin, HealthComponent(10*currentNpcLevel)); // Starting health
       addComponent(goblin, setEntityNameComponent("Goblin Respawned"));
       addComponent(goblin, setNpcCanWalkComponent(true));
+      addComponent(goblin, LevelComponent(currentNpcLevel));
       addPlayerAttackComponent(goblin, {
         name: "Punch",
-        damage: 5,
+        damage: 2*currentNpcLevel,
         range: 2,
         aoe: false,
         aoeArea: 0,
@@ -36,6 +41,7 @@ export const RespawnSystem = (entities, mapEntities) => {
       // Add the new goblin to the entities list
       entities.push(goblin);
       console.log(`A new goblin has spawned at (${spawnPosition.x}, ${spawnPosition.y})`);
+      currentNpcLevel++;
     }
   }
 };

@@ -1,8 +1,12 @@
 // Systems/aiMovementSystem.js
 export const AIMovementSystem = (entities, map) => {
   const currentTime = Date.now();
-  const moveInterval = 1000; // Move every second
+  const moveInterval = 500; // Move every second
 
+  const findStopGame = entities.filter((entity) => entity.components.isPlayer);
+  if(findStopGame[0].components.stopGame && findStopGame[0].components.stopGame === true) {
+    return;
+  }
   // Find all entities that have AI behavior
   const aiEntities = entities.filter((entity) => entity.components.canWalk); // or any other flag you use for NPCs
 
@@ -42,15 +46,15 @@ export const AIMovementSystem = (entities, map) => {
             position.y = newY;
            
           } else {
-            console.log("Another entity is already on the target tile");
+            /* console.log("Another entity is already on the target tile"); */
           }
          
         } else {
-          console.log(`Entity ${entity.id} cannot move to non-walkable tile (${newX}, ${newY})`);
-        }
+/*           console.log(`Entity ${entity.id} cannot move to non-walkable tile (${newX}, ${newY})`);
+ */        }
       } else {
-        console.log(`Entity ${entity.id} cannot move to out of bounds (${newX}, ${newY})`);
-      }
+/*         console.log(`Entity ${entity.id} cannot move to out of bounds (${newX}, ${newY})`);
+ */      }
 
       entity.lastMoveTime = currentTime; // Update last move time
     }

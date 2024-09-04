@@ -7,6 +7,10 @@ export const AttackSystem = (entities, mapEntities) => {
     console.error("Player entity not found");
     return;
   }
+  const findStopGame = entities.filter((entity) => entity.components.isPlayer);
+  if(findStopGame[0].components.stopGame && findStopGame[0].components.stopGame === true) {
+    return;
+  }
 
 
   const playerPosition = { x: player.components.x, y: player.components.y };
@@ -114,6 +118,7 @@ export const AttackSystem = (entities, mapEntities) => {
               console.log("Player is defeated. Game Over!");
             } else {
               entities.splice(indexToRemove, 1);
+              attacker.components.xp += target.components.level * 10;
               console.log(
                 `Entity ${target.components.name} has been defeated and removed from the game.`
               );
