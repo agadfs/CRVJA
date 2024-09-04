@@ -6,7 +6,7 @@ import React, { useState } from "react";
     and return all available attacks
   */
 
-export const RenderMapAndEntitiesSystem = ({ mapEntities, entities,skillsUpgrade }) => {
+export const RenderMapAndEntitiesSystem = ({ mapEntities, entities }) => {
 
   return (
     <div
