@@ -42,8 +42,8 @@ To start the game in development mode, use the following command:
 ```
 npm run dev
 ```
-This command will start the development server, allowing you to see live updates as you modify the code.
-To Move the player, use WASD keys on the keyboard.
+This command will start the development server, allowing you to see live updates as you modify the code.<br />
+To Move the player, use WASD keys on the keyboard.<br />
 # Project Structure
 Using Next 13+ the pages are inside /App folder, on the main page with no routes "/", the nodeRenderGame.js is rendered.<br />
 
