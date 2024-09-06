@@ -8,7 +8,7 @@ export const SeeTheMadeAlgorithmComponent = () => {
   const [rgbTiles, setRgbTiles] = useState([]); // Store unique RGB colors
   const [rgbTouches, setRgbTouches] = useState({}); // Store counts of RGB pairs touching
   const randomCanvasRef = useRef(null);
-  const mapSize = 100;
+  const mapSize = 150;
   // Handle image file upload
   const handleFileChange = (event) => {
     const file = event.target.files[0]; // Get the selected file
