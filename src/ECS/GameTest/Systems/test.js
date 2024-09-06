@@ -1,6 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
+
+/* TO DO
+
+To smooth edges of not connectable tiles
+
+ADD 1 more tile to check, between above and previous so if going left to right
+it needs to check above, previous and top left
+
+if going right to left it needs to check above, previous and top right
+
+*/
+
+
 export const SeeTheMadeAlgorithmComponent = () => {
   const canvasRef = useRef(null); // Reference to the canvas element
   const [uploadedImage, setUploadedImage] = useState(null); // Uploaded image data URL
@@ -62,7 +75,7 @@ export const SeeTheMadeAlgorithmComponent = () => {
 
           // Create an RGB string (without alpha for uniqueness)
           const rgbString = getRgbString(r, g, b);
-
+         
           // If the RGB string is not already in the set, add it
           if (!uniqueRgbSet.has(rgbString)) {
             uniqueRgbSet.add(rgbString); // Add to set to track uniqueness
@@ -80,11 +93,11 @@ export const SeeTheMadeAlgorithmComponent = () => {
           const pixelIndex = y * 12 + x;
           const currentPixel = newImg[pixelIndex];
           const neighbors = getNeighbors(x, y, newImg); // Get the neighbors of the current pixel
-
           neighbors.forEach((neighbor) => {
             const currentRgb = currentPixel.rgbString;
             const neighborRgb = neighbor.rgbString;
             const key = `${currentRgb}-${neighborRgb}`;
+            if (currentRgb === "rgb(0, 0, 0)" || neighborRgb === "rgb(0, 0, 0)") return;
 
             // Increment the count for this pair of RGBs
             if (!touchCounter[key]) {
