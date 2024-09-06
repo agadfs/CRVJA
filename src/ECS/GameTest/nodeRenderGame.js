@@ -166,11 +166,11 @@ const Game = () => {
 
   return (
     <div>
-      <SeeTheMadeAlgorithmComponent />
      {/*  <RenderMapAndEntitiesSystem
         mapEntities={mapEntities}
         entities={entities}
-      /> */}
+        /> */}
+        <SeeTheMadeAlgorithmComponent />
     </div>
   );
 };
