@@ -19,12 +19,11 @@ import { LevelComponent, XpComponent } from "./Components/LevelComponent";
 import { HealthOrbSpawnSystem } from "./Systems/healthOrbSystem";
 import { PickupSystem } from "./Systems/pickUpSystem";
 import { LevelUpSystem } from "./Systems/levelUpSystem";
-import { SeeTheMadeAlgorithmComponent } from "./Systems/test";
 
 const Game = () => {
   const [entities, setEntities] = useState([]);
   const entitiesRef = useRef(entities);
-  const [mapEntities, setMapEntities] = useState(initializeMap); // Initialize map here
+  const [mapEntities, setMapEntities] = useState(initializeMap(4)); // Initialize map here
 
   useEffect(() => {
     let initialEntities = [];
@@ -142,7 +141,8 @@ const Game = () => {
       const deltaTime = currentTime - lastTime; // Time difference between frames
       lastTime = currentTime;
       const updatedEntities = [...entitiesRef.current];
-    /*   RespawnSystem(updatedEntities, mapEntities);
+      
+      RespawnSystem(updatedEntities, mapEntities);
       MovementSystem(updatedEntities, mapEntities);
       CollisionSystem(updatedEntities);
       AIMovementSystem(updatedEntities, mapEntities);
@@ -151,7 +151,7 @@ const Game = () => {
       PickupSystem(updatedEntities); // Handle pickups for any pickable entity
       LevelUpSystem(updatedEntities);
       entitiesRef.current = updatedEntities;
-      setEntities(updatedEntities); */
+      setEntities(updatedEntities);
 
       requestAnimationFrame(gameLoop);
     };
@@ -166,11 +166,11 @@ const Game = () => {
 
   return (
     <div>
-     {/*  <RenderMapAndEntitiesSystem
+      <RenderMapAndEntitiesSystem
         mapEntities={mapEntities}
         entities={entities}
-        /> */}
-        <SeeTheMadeAlgorithmComponent />
+        
+      />
     </div>
   );
 };
