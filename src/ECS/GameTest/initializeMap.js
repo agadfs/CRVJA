@@ -2,6 +2,8 @@ import { GridMapComponent } from "./Components/gridMapComponent";
 import { addComponent, createEntity } from "./Entities/entityManager";
 import { assignIdToEntity } from "./Systems/entityAssingSystem";
 
+/* This is only to set the Map Properties */
+
 export const initializeMap = (seed) => {
   const mapEntities = [];
   const borderSizeX = 17;

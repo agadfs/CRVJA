@@ -19,6 +19,7 @@ import { LevelComponent, XpComponent } from "./Components/LevelComponent";
 import { HealthOrbSpawnSystem } from "./Systems/healthOrbSystem";
 import { PickupSystem } from "./Systems/pickUpSystem";
 import { LevelUpSystem } from "./Systems/levelUpSystem";
+import { SeeTheMadeAlgorithmComponent } from "@/test";
 
 const Game = () => {
   const [entities, setEntities] = useState([]);
@@ -137,6 +138,8 @@ const Game = () => {
 
     let lastTime = performance.now(); // Initial time for the game loop
 
+    /* Here is where every system is looped, reproducing what a game engine would do? */
+
     const gameLoop = (currentTime) => {
       const deltaTime = currentTime - lastTime; // Time difference between frames
       lastTime = currentTime;
@@ -166,11 +169,12 @@ const Game = () => {
 
   return (
     <div>
-      <RenderMapAndEntitiesSystem
+     {/*  <RenderMapAndEntitiesSystem
         mapEntities={mapEntities}
         entities={entities}
         
-      />
+      /> */}
+      <SeeTheMadeAlgorithmComponent />
     </div>
   );
 };
