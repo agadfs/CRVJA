@@ -1,1 +1,0 @@
-export const HealthComponent = (hp = 100) => ({ hp });

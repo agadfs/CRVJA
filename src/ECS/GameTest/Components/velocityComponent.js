@@ -1,1 +1,0 @@
-export const VelocityComponent = (vx = 0, vy = 0) => ({ vx, vy });
