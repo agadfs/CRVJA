@@ -6,6 +6,7 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.output = "";
     this.indentLevel = 0; // Track current indentation level
     this.id = 0;
+    this.current_Ink = "black";
   }
 
   // Helper function to return the current indentation
@@ -50,10 +51,9 @@ ${this.indent()}document.getElementById('amos-screen').style.cursor = 'auto';
       3: "red",
     };
     const color = colorMapping[colorIndex] || "black";
-    this.output += `
-${this.indent()}document.getElementById('amos-screen').style.backgroundColor = '${color}';
-        `;
+   this.current_Ink = color;
   }
+  /* FIX BAR CHECK LEFT TOP WIDTH AND HEIGHT AND SO ON */
   enterBar(ctx) {
     this.id++;
     let x1 = ctx.expression1(0).getText();
@@ -63,34 +63,32 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = '
 
     this.output += `
 ${this.indent()}const screenBarDiv${this.id} = document.createElement('div');
-${this.indent()}const screenBarDiv${this.id}Props = {
-x1: ${x1},
-x2: ${x2},
-y1: ${y1},
-y2: ${y2},
-width: x2 - x1,
-height: y2 - y1,
-  };
-${this.indent()}screenBarDiv${this.id}.style.width = screenBarDiv${
-      this.id
-    }Props.width;
-${this.indent()}screenBarDiv${this.id}.style.height = '0px';
+${this.indent()}screenBarDiv${this.id}.style.backgroundColor = '${this.current_Ink}';
+${this.indent()}screenBarDiv${this.id}.style.width = 100px;
+${this.indent()}screenBarDiv${this.id}.style.height = 100px;
+${this.indent()}screenBarDiv${this.id}.style.border = '1px solid ${this.current_Ink}';
 ${this.indent()}screenBarDiv${this.id}.style.overflow = 'hidden'; 
 ${this.indent()}screenBarDiv${this.id}.style.padding = '0'; 
-${this.indent()}screenBarDiv${this.id}.style.position = 'relative'; 
+${this.indent()}screenBarDiv${this.id}.style.position = 'absolute'; 
 ${this.indent()}screenBarDiv${this.id}.id = ${this.id}; 
-${this.indent()}screenBarDiv${this.id}.style.left = '0px';
-${this.indent()}screenBarDiv${this.id}.style.top = '0px';
+${this.indent()}screenBarDiv${this.id}.style.left = '${x1}px';
+${this.indent()}screenBarDiv${this.id}.style.top = '${y1}px';
 ${this.indent()}document.getElementById('amos-screen').appendChild(screenBarDiv${
       this.id
     });
         `;
-  }
+}
 
+  enterVariable_starter(ctx) {
+    let name = ctx.children[0]?.getText() || "";
+    let value = ctx.children[2]?.getText() || 0;
+    this.output += `
+${this.indent()}let ${name} = ${value};
+        `;
+  }
   enterProcedure(ctx) {
     this.id++;
     let name = ctx.children[1].getText();
-    console.log(ctx)
     let props = "";
     for (let i = 3; i < ctx.children.length; i++) {
       if (ctx.children[i].getText() === "]") {

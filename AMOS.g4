@@ -2,7 +2,7 @@ grammar AMOS;
 
 // Lexer rules
 SCREENOPEN: 'Screen Open'; 
-NUMBER: [0-9]+; 
+NUMBER: '-'? [0-9]+;
 LOWRES: 'Lowres'; 
 HIRES: 'Hires'; 
 COMMA: ','; 
@@ -29,7 +29,6 @@ ENDPROC: 'End Proc';
 BAR: 'Bar'; 
 WAITKEY: 'Wait Key'; 
 KEYSTATE: 'Key State'; 
-P_DRAWKEYS: 'P_DRAWKEYS'; 
 IDENTIFIER: [a-zA-Z_] [a-zA-Z_0-9]*;
 COMPARISON: '=' | '<>' | '>=' | '>' | '<=' | '<'; // Comparison operators
 BRACKETOPEN_PROP: '(';
@@ -72,8 +71,8 @@ program:
     ;
 
 statement:
-    screen_open
-    | procedure
+    procedure
+    | screen_open
     | curs_off
     | curs_on
     | ink
@@ -83,7 +82,19 @@ statement:
     | if_statement_key_state
     | if_statement
     | bar
+    | function_call_or_array_access // Nova regra para chamadas de função ou acesso a array
+    | variable_starter
     ;
+
+variable_starter:
+    IDENTIFIER '=' expression1 // Agora captura apenas atribuições de variáveis
+    ;
+
+function_call_or_array_access:
+    IDENTIFIER BRACKETOPEN_ARRAY expression1 BRACKETCLOSE_ARRAY // Acesso a array
+    | IDENTIFIER BRACKETOPEN_PROP expression1? (COMMA expression1)* BRACKETCLOSE_PROP // Chamadas de função com ou sem parâmetros
+    ;
+
 
 screen_open:
     SCREENOPEN NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA (LOWRES | HIRES)
@@ -137,11 +148,9 @@ bar:
     ;
 
 procedure:
-    PROC IDENTIFIER (BRACKETOPEN_ARRAY IDENTIFIER BRACKETCLOSE_ARRAY)?
+    PROC IDENTIFIER BRACKETOPEN_ARRAY IDENTIFIER? BRACKETCLOSE_ARRAY // Modified to properly capture the brackets and optional parameter
     (statement)* 
     ENDPROC
     ;
 
-variable_starter:
-    IDENTIFIER '=' IDENTIFIER
-    ;
+

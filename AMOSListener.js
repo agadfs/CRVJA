@@ -59,6 +59,24 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#variable_starter.
+	enterVariable_starter(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#variable_starter.
+	exitVariable_starter(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#function_call_or_array_access.
+	enterFunction_call_or_array_access(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#function_call_or_array_access.
+	exitFunction_call_or_array_access(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#screen_open.
 	enterScreen_open(ctx) {
 	}
@@ -155,15 +173,6 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#procedure.
 	exitProcedure(ctx) {
-	}
-
-
-	// Enter a parse tree produced by AMOSParser#variable_starter.
-	enterVariable_starter(ctx) {
-	}
-
-	// Exit a parse tree produced by AMOSParser#variable_starter.
-	exitVariable_starter(ctx) {
 	}
 
 
