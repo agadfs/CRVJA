@@ -35,8 +35,8 @@ keyCodes();
   }
 /* ADDED A GREY BACKGROUND FOR VISUAL PURPOSE */
   enterScreen_open(ctx) {
-    const width = ctx.children[3].getText();
-    const height = ctx.children[5].getText();
+    const width = ctx.children[3]?.getText();
+    const height = ctx.children[5]?.getText();
 
     this.output += `
 ${this.indent()}const screenDiv = document.createElement('div');
@@ -65,7 +65,7 @@ ${this.indent()}document.getElementById('amos-screen').style.cursor = 'auto';
   }
 
   enterInk(ctx) {
-    const colorIndex = ctx.children[1].getText();
+    const colorIndex = ctx.children[1]?.getText();
     const colorMapping = {
       1: "black",
       2: "white",
@@ -79,10 +79,10 @@ ${this.indent()}document.getElementById('amos-screen').style.cursor = 'auto';
   
   enterBar(ctx) {
     this.id++;
-    let x1 = ctx.expression1(0).getText();
-    let y1 = ctx.expression2(0).getText();
-    let x2 = ctx.expression1(1).getText();
-    let y2 = ctx.expression2(1).getText();
+    let x1 = ctx.expression1(0)?.getText();
+    let y1 = ctx.expression2(0)?.getText();
+    let x2 = ctx.expression1(1)?.getText();
+    let y2 = ctx.expression2(1)?.getText();
 
     this.output += `
 ${this.indent()}const screenBarDiv${this.id} = document.createElement('div');
@@ -123,14 +123,14 @@ ${this.indent()}let ${name} = ${value};
   }
   enterProcedure(ctx) {
     this.id++;
-    let name = ctx.children[1].getText();
+    let name = ctx.children[1]?.getText();
     let props = "";
     for (let i = 3; i < ctx.children.length; i++) {
-      if (ctx.children[i].getText() === "]") {
+      if (ctx.children[i]?.getText() === "]") {
         break;
       }
-      props += ctx.children[i].getText();
-      if (ctx.children[i + 1].getText() !== "]") {
+      props += ctx.children[i]?.getText();
+      if (ctx.children[i + 1]?.getText() !== "]") {
         props += " ";
         props += ",";
       }
@@ -150,9 +150,9 @@ ${this.indent()}}`;
   }
 
   enterText(ctx) {
-    const x = ctx.children[1].getText();
-    const y = ctx.children[3].getText();
-    const text = ctx.children[5].getText().replace(/\"/g, "");
+    const x = ctx.children[1]?.getText();
+    const y = ctx.children[3]?.getText();
+    const text = ctx.children[5]?.getText().replace(/\"/g, "");
 
     this.output += `
 ${this.indent()}const textDiv${x}${y} = document.createElement('div');
@@ -191,9 +191,9 @@ ${this.indent()}}, 100);`;
     let variable;
     let start;
     let end;
-    variable = ctx.children[1].getText();
-    start = ctx.children[3].getText();
-    end = ctx.children[5].getText();
+    variable = ctx.children[1]?.getText();
+    start = ctx.children[3]?.getText();
+    end = ctx.children[5]?.getText();
     this.output += `
 ${this.indent()}for (let ${variable} = ${start}; ${variable} <= ${end}; ${variable}++) {
         `;
@@ -212,10 +212,10 @@ ${this.indent()}}`;
     let rightExpression = "";
 
     // Get the left-hand side expression (e.g., PRESSEDKEYNUMBER)
-    leftExpression = ctx.expression1(0).getText();
+    leftExpression = ctx.expression1(0)?.getText();
 
     // Get the comparison operator (e.g., =, <>)
-    comparator = ctx.children[2].getText();
+    comparator = ctx.children[2]?.getText();
     if (comparator === "=") {
       comparator = "==";
     }
@@ -224,7 +224,7 @@ ${this.indent()}}`;
     }
 
     // Get the right-hand side expression (e.g., 2 * I + 1)
-    rightExpression = ctx.expression2(0).getText();
+    rightExpression = ctx.expression2(0)?.getText();
 
     // Output the if statement
     this.output += `
@@ -255,7 +255,7 @@ ${this.indent()}}`;
     }
   }
   enterIf_statement_key_state(ctx) {
-    let leftExpression = ctx.current_Key_State(0).expression1(0).getText();
+    let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();
     // Check if the leftExpression contains a `$` and adjust accordingly
     if (leftExpression.includes('$')) {
         // Remove the '$' and parse the remaining string as a hexadecimal number
