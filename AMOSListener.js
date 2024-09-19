@@ -59,12 +59,39 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#play_sound.
+	enterPlay_sound(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#play_sound.
+	exitPlay_sound(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#wait_key_break.
+	enterWait_key_break(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#wait_key_break.
+	exitWait_key_break(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#variable_starter.
 	enterVariable_starter(ctx) {
 	}
 
 	// Exit a parse tree produced by AMOSParser#variable_starter.
 	exitVariable_starter(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#function_starter.
+	enterFunction_starter(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#function_starter.
+	exitFunction_starter(ctx) {
 	}
 
 
@@ -131,6 +158,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#while_wend.
+	enterWhile_wend(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#while_wend.
+	exitWhile_wend(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#for_loop.
 	enterFor_loop(ctx) {
 	}
@@ -146,6 +182,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#if_statement.
 	exitIf_statement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#else_statement.
+	enterElse_statement(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#else_statement.
+	exitElse_statement(ctx) {
 	}
 
 
@@ -173,6 +218,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#procedure.
 	exitProcedure(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#current_Key_State.
+	enterCurrent_Key_State(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#current_Key_State.
+	exitCurrent_Key_State(ctx) {
 	}
 
 

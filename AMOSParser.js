@@ -2,75 +2,92 @@
 // jshint ignore: start
 import antlr4 from 'antlr4';
 import AMOSListener from './AMOSListener.js';
-const serializedATN = [4,1,49,225,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
+const serializedATN = [4,1,48,277,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
 4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,
-2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,1,0,1,0,1,0,
-5,0,42,8,0,10,0,12,0,45,9,0,1,1,1,1,1,1,5,1,50,8,1,10,1,12,1,53,9,1,1,2,
-1,2,1,2,5,2,58,8,2,10,2,12,2,61,9,2,1,3,1,3,1,3,1,3,1,3,1,3,3,3,69,8,3,1,
-4,5,4,72,8,4,10,4,12,4,75,9,4,1,4,1,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,
-5,1,5,1,5,1,5,1,5,3,5,92,8,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
-1,7,3,7,106,8,7,1,7,1,7,5,7,110,8,7,10,7,12,7,113,9,7,1,7,3,7,116,8,7,1,
-8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,9,1,9,1,10,1,10,1,11,1,11,1,
-11,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,13,1,13,5,13,145,8,13,10,13,12,13,
-148,9,13,1,13,1,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,159,8,14,10,14,
-12,14,162,9,14,1,14,1,14,1,14,1,15,1,15,1,15,1,15,1,15,5,15,172,8,15,10,
-15,12,15,175,9,15,1,15,1,15,5,15,179,8,15,10,15,12,15,182,9,15,3,15,184,
-8,15,1,15,1,15,1,16,1,16,1,16,1,16,1,16,1,16,5,16,194,8,16,10,16,12,16,197,
-9,16,1,16,1,16,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,1,18,1,18,1,
-18,1,18,3,18,214,8,18,1,18,1,18,5,18,218,8,18,10,18,12,18,221,9,18,1,18,
-1,18,1,18,0,0,19,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,0,4,
-1,0,48,49,1,0,46,47,1,0,11,12,1,0,1,6,234,0,38,1,0,0,0,2,46,1,0,0,0,4,54,
-1,0,0,0,6,68,1,0,0,0,8,73,1,0,0,0,10,91,1,0,0,0,12,93,1,0,0,0,14,115,1,0,
-0,0,16,117,1,0,0,0,18,128,1,0,0,0,20,130,1,0,0,0,22,132,1,0,0,0,24,135,1,
-0,0,0,26,142,1,0,0,0,28,151,1,0,0,0,30,166,1,0,0,0,32,187,1,0,0,0,34,200,
-1,0,0,0,36,209,1,0,0,0,38,43,3,4,2,0,39,40,7,0,0,0,40,42,3,4,2,0,41,39,1,
-0,0,0,42,45,1,0,0,0,43,41,1,0,0,0,43,44,1,0,0,0,44,1,1,0,0,0,45,43,1,0,0,
-0,46,51,3,4,2,0,47,48,7,0,0,0,48,50,3,4,2,0,49,47,1,0,0,0,50,53,1,0,0,0,
-51,49,1,0,0,0,51,52,1,0,0,0,52,3,1,0,0,0,53,51,1,0,0,0,54,59,3,6,3,0,55,
-56,7,1,0,0,56,58,3,6,3,0,57,55,1,0,0,0,58,61,1,0,0,0,59,57,1,0,0,0,59,60,
-1,0,0,0,60,5,1,0,0,0,61,59,1,0,0,0,62,69,5,10,0,0,63,69,5,37,0,0,64,65,5,
-39,0,0,65,66,3,2,1,0,66,67,5,40,0,0,67,69,1,0,0,0,68,62,1,0,0,0,68,63,1,
-0,0,0,68,64,1,0,0,0,69,7,1,0,0,0,70,72,3,10,5,0,71,70,1,0,0,0,72,75,1,0,
-0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,76,1,0,0,0,75,73,1,0,0,0,76,77,5,0,0,
-1,77,9,1,0,0,0,78,92,3,36,18,0,79,92,3,16,8,0,80,92,3,18,9,0,81,92,3,20,
-10,0,82,92,3,22,11,0,83,92,3,24,12,0,84,92,3,26,13,0,85,92,3,28,14,0,86,
-92,3,32,16,0,87,92,3,30,15,0,88,92,3,34,17,0,89,92,3,14,7,0,90,92,3,12,6,
-0,91,78,1,0,0,0,91,79,1,0,0,0,91,80,1,0,0,0,91,81,1,0,0,0,91,82,1,0,0,0,
-91,83,1,0,0,0,91,84,1,0,0,0,91,85,1,0,0,0,91,86,1,0,0,0,91,87,1,0,0,0,91,
-88,1,0,0,0,91,89,1,0,0,0,91,90,1,0,0,0,92,11,1,0,0,0,93,94,5,37,0,0,94,95,
-5,1,0,0,95,96,3,2,1,0,96,13,1,0,0,0,97,98,5,37,0,0,98,99,5,41,0,0,99,100,
-3,2,1,0,100,101,5,42,0,0,101,116,1,0,0,0,102,103,5,37,0,0,103,105,5,39,0,
-0,104,106,3,2,1,0,105,104,1,0,0,0,105,106,1,0,0,0,106,111,1,0,0,0,107,108,
-5,13,0,0,108,110,3,2,1,0,109,107,1,0,0,0,110,113,1,0,0,0,111,109,1,0,0,0,
-111,112,1,0,0,0,112,114,1,0,0,0,113,111,1,0,0,0,114,116,5,40,0,0,115,97,
-1,0,0,0,115,102,1,0,0,0,116,15,1,0,0,0,117,118,5,9,0,0,118,119,5,10,0,0,
-119,120,5,13,0,0,120,121,5,10,0,0,121,122,5,13,0,0,122,123,5,10,0,0,123,
-124,5,13,0,0,124,125,5,10,0,0,125,126,5,13,0,0,126,127,7,2,0,0,127,17,1,
-0,0,0,128,129,5,16,0,0,129,19,1,0,0,0,130,131,5,17,0,0,131,21,1,0,0,0,132,
-133,5,18,0,0,133,134,5,10,0,0,134,23,1,0,0,0,135,136,5,19,0,0,136,137,5,
-10,0,0,137,138,5,13,0,0,138,139,5,10,0,0,139,140,5,13,0,0,140,141,5,20,0,
-0,141,25,1,0,0,0,142,146,5,21,0,0,143,145,3,10,5,0,144,143,1,0,0,0,145,148,
-1,0,0,0,146,144,1,0,0,0,146,147,1,0,0,0,147,149,1,0,0,0,148,146,1,0,0,0,
-149,150,5,22,0,0,150,27,1,0,0,0,151,152,5,23,0,0,152,153,5,37,0,0,153,154,
-5,1,0,0,154,155,5,10,0,0,155,156,5,24,0,0,156,160,5,10,0,0,157,159,3,10,
-5,0,158,157,1,0,0,0,159,162,1,0,0,0,160,158,1,0,0,0,160,161,1,0,0,0,161,
-163,1,0,0,0,162,160,1,0,0,0,163,164,5,25,0,0,164,165,5,37,0,0,165,29,1,0,
-0,0,166,167,5,26,0,0,167,168,3,2,1,0,168,169,7,3,0,0,169,173,3,0,0,0,170,
-172,3,10,5,0,171,170,1,0,0,0,172,175,1,0,0,0,173,171,1,0,0,0,173,174,1,0,
-0,0,174,183,1,0,0,0,175,173,1,0,0,0,176,180,5,27,0,0,177,179,3,10,5,0,178,
-177,1,0,0,0,179,182,1,0,0,0,180,178,1,0,0,0,180,181,1,0,0,0,181,184,1,0,
-0,0,182,180,1,0,0,0,183,176,1,0,0,0,183,184,1,0,0,0,184,185,1,0,0,0,185,
-186,5,28,0,0,186,31,1,0,0,0,187,188,5,26,0,0,188,189,5,7,0,0,189,190,5,8,
-0,0,190,191,5,38,0,0,191,195,3,0,0,0,192,194,3,10,5,0,193,192,1,0,0,0,194,
-197,1,0,0,0,195,193,1,0,0,0,195,196,1,0,0,0,196,198,1,0,0,0,197,195,1,0,
-0,0,198,199,5,28,0,0,199,33,1,0,0,0,200,201,5,34,0,0,201,202,3,2,1,0,202,
-203,5,13,0,0,203,204,3,0,0,0,204,205,5,24,0,0,205,206,3,2,1,0,206,207,5,
-13,0,0,207,208,3,0,0,0,208,35,1,0,0,0,209,210,5,32,0,0,210,211,5,37,0,0,
-211,213,5,41,0,0,212,214,5,37,0,0,213,212,1,0,0,0,213,214,1,0,0,0,214,215,
-1,0,0,0,215,219,5,42,0,0,216,218,3,10,5,0,217,216,1,0,0,0,218,221,1,0,0,
-0,219,217,1,0,0,0,219,220,1,0,0,0,220,222,1,0,0,0,221,219,1,0,0,0,222,223,
-5,33,0,0,223,37,1,0,0,0,17,43,51,59,68,73,91,105,111,115,146,160,173,180,
-183,195,213,219];
+2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,
+20,7,20,2,21,7,21,2,22,7,22,2,23,7,23,2,24,7,24,1,0,1,0,1,0,5,0,54,8,0,10,
+0,12,0,57,9,0,1,1,1,1,1,1,5,1,62,8,1,10,1,12,1,65,9,1,1,2,1,2,1,2,5,2,70,
+8,2,10,2,12,2,73,9,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,83,8,3,1,4,5,4,
+86,8,4,10,4,12,4,89,9,4,1,4,1,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,
+1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,111,8,5,1,6,1,6,1,6,1,6,1,6,3,6,118,
+8,6,1,6,1,6,1,6,1,7,1,7,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,10,1,10,1,
+10,1,10,1,10,1,10,1,10,1,10,3,10,142,8,10,1,10,1,10,5,10,146,8,10,10,10,
+12,10,149,9,10,1,10,3,10,152,8,10,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
+1,11,1,11,1,11,1,12,1,12,1,13,1,13,1,14,1,14,1,14,1,15,1,15,1,15,1,15,1,
+15,1,15,1,15,1,16,1,16,5,16,181,8,16,10,16,12,16,184,9,16,1,16,1,16,1,17,
+1,17,1,17,5,17,191,8,17,10,17,12,17,194,9,17,1,17,1,17,1,18,1,18,1,18,1,
+18,1,18,1,18,1,18,5,18,205,8,18,10,18,12,18,208,9,18,1,18,1,18,1,18,1,19,
+1,19,1,19,1,19,1,19,5,19,218,8,19,10,19,12,19,221,9,19,1,19,1,19,3,19,225,
+8,19,1,20,1,20,5,20,229,8,20,10,20,12,20,232,9,20,1,20,1,20,1,21,1,21,1,
+21,5,21,239,8,21,10,21,12,21,242,9,21,1,21,1,21,3,21,246,8,21,1,22,1,22,
+1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,23,1,23,1,23,1,23,3,23,261,8,23,1,23,
+1,23,5,23,265,8,23,10,23,12,23,268,9,23,1,23,1,23,1,24,1,24,1,24,1,24,1,
+24,1,24,0,0,25,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,
+42,44,46,48,0,5,1,0,47,48,1,0,45,46,2,0,9,9,36,36,1,0,10,11,1,0,2,7,290,
+0,50,1,0,0,0,2,58,1,0,0,0,4,66,1,0,0,0,6,82,1,0,0,0,8,87,1,0,0,0,10,110,
+1,0,0,0,12,112,1,0,0,0,14,122,1,0,0,0,16,124,1,0,0,0,18,128,1,0,0,0,20,151,
+1,0,0,0,22,153,1,0,0,0,24,164,1,0,0,0,26,166,1,0,0,0,28,168,1,0,0,0,30,171,
+1,0,0,0,32,178,1,0,0,0,34,187,1,0,0,0,36,197,1,0,0,0,38,212,1,0,0,0,40,226,
+1,0,0,0,42,235,1,0,0,0,44,247,1,0,0,0,46,256,1,0,0,0,48,271,1,0,0,0,50,55,
+3,4,2,0,51,52,7,0,0,0,52,54,3,4,2,0,53,51,1,0,0,0,54,57,1,0,0,0,55,53,1,
+0,0,0,55,56,1,0,0,0,56,1,1,0,0,0,57,55,1,0,0,0,58,63,3,4,2,0,59,60,7,0,0,
+0,60,62,3,4,2,0,61,59,1,0,0,0,62,65,1,0,0,0,63,61,1,0,0,0,63,64,1,0,0,0,
+64,3,1,0,0,0,65,63,1,0,0,0,66,71,3,6,3,0,67,68,7,1,0,0,68,70,3,6,3,0,69,
+67,1,0,0,0,70,73,1,0,0,0,71,69,1,0,0,0,71,72,1,0,0,0,72,5,1,0,0,0,73,71,
+1,0,0,0,74,83,5,9,0,0,75,83,5,36,0,0,76,77,5,38,0,0,77,78,3,2,1,0,78,79,
+5,39,0,0,79,83,1,0,0,0,80,81,5,44,0,0,81,83,5,9,0,0,82,74,1,0,0,0,82,75,
+1,0,0,0,82,76,1,0,0,0,82,80,1,0,0,0,83,7,1,0,0,0,84,86,3,10,5,0,85,84,1,
+0,0,0,86,89,1,0,0,0,87,85,1,0,0,0,87,88,1,0,0,0,88,90,1,0,0,0,89,87,1,0,
+0,0,90,91,5,0,0,1,91,9,1,0,0,0,92,111,3,46,23,0,93,111,3,22,11,0,94,111,
+3,24,12,0,95,111,3,26,13,0,96,111,3,28,14,0,97,111,3,30,15,0,98,111,3,32,
+16,0,99,111,3,36,18,0,100,111,3,42,21,0,101,111,3,38,19,0,102,111,3,18,9,
+0,103,111,3,44,22,0,104,111,3,20,10,0,105,111,3,16,8,0,106,111,3,34,17,0,
+107,111,3,14,7,0,108,111,3,12,6,0,109,111,5,1,0,0,110,92,1,0,0,0,110,93,
+1,0,0,0,110,94,1,0,0,0,110,95,1,0,0,0,110,96,1,0,0,0,110,97,1,0,0,0,110,
+98,1,0,0,0,110,99,1,0,0,0,110,100,1,0,0,0,110,101,1,0,0,0,110,102,1,0,0,
+0,110,103,1,0,0,0,110,104,1,0,0,0,110,105,1,0,0,0,110,106,1,0,0,0,110,107,
+1,0,0,0,110,108,1,0,0,0,110,109,1,0,0,0,111,11,1,0,0,0,112,117,5,30,0,0,
+113,114,5,44,0,0,114,118,5,9,0,0,115,118,3,2,1,0,116,118,5,36,0,0,117,113,
+1,0,0,0,117,115,1,0,0,0,117,116,1,0,0,0,118,119,1,0,0,0,119,120,5,12,0,0,
+120,121,5,9,0,0,121,13,1,0,0,0,122,123,5,34,0,0,123,15,1,0,0,0,124,125,5,
+36,0,0,125,126,5,2,0,0,126,127,3,2,1,0,127,17,1,0,0,0,128,129,5,36,0,0,129,
+130,5,40,0,0,130,131,7,2,0,0,131,132,5,41,0,0,132,19,1,0,0,0,133,134,5,36,
+0,0,134,135,5,40,0,0,135,136,3,2,1,0,136,137,5,41,0,0,137,152,1,0,0,0,138,
+139,5,36,0,0,139,141,5,38,0,0,140,142,3,2,1,0,141,140,1,0,0,0,141,142,1,
+0,0,0,142,147,1,0,0,0,143,144,5,12,0,0,144,146,3,2,1,0,145,143,1,0,0,0,146,
+149,1,0,0,0,147,145,1,0,0,0,147,148,1,0,0,0,148,150,1,0,0,0,149,147,1,0,
+0,0,150,152,5,39,0,0,151,133,1,0,0,0,151,138,1,0,0,0,152,21,1,0,0,0,153,
+154,5,8,0,0,154,155,5,9,0,0,155,156,5,12,0,0,156,157,5,9,0,0,157,158,5,12,
+0,0,158,159,5,9,0,0,159,160,5,12,0,0,160,161,5,9,0,0,161,162,5,12,0,0,162,
+163,7,3,0,0,163,23,1,0,0,0,164,165,5,15,0,0,165,25,1,0,0,0,166,167,5,16,
+0,0,167,27,1,0,0,0,168,169,5,17,0,0,169,170,5,9,0,0,170,29,1,0,0,0,171,172,
+5,18,0,0,172,173,5,9,0,0,173,174,5,12,0,0,174,175,5,9,0,0,175,176,5,12,0,
+0,176,177,5,19,0,0,177,31,1,0,0,0,178,182,5,20,0,0,179,181,3,10,5,0,180,
+179,1,0,0,0,181,184,1,0,0,0,182,180,1,0,0,0,182,183,1,0,0,0,183,185,1,0,
+0,0,184,182,1,0,0,0,185,186,5,21,0,0,186,33,1,0,0,0,187,188,5,28,0,0,188,
+192,3,48,24,0,189,191,3,10,5,0,190,189,1,0,0,0,191,194,1,0,0,0,192,190,1,
+0,0,0,192,193,1,0,0,0,193,195,1,0,0,0,194,192,1,0,0,0,195,196,5,29,0,0,196,
+35,1,0,0,0,197,198,5,22,0,0,198,199,5,36,0,0,199,200,5,2,0,0,200,201,5,9,
+0,0,201,202,5,23,0,0,202,206,5,9,0,0,203,205,3,10,5,0,204,203,1,0,0,0,205,
+208,1,0,0,0,206,204,1,0,0,0,206,207,1,0,0,0,207,209,1,0,0,0,208,206,1,0,
+0,0,209,210,5,24,0,0,210,211,5,36,0,0,211,37,1,0,0,0,212,213,5,25,0,0,213,
+214,3,2,1,0,214,215,7,4,0,0,215,219,3,0,0,0,216,218,3,10,5,0,217,216,1,0,
+0,0,218,221,1,0,0,0,219,217,1,0,0,0,219,220,1,0,0,0,220,224,1,0,0,0,221,
+219,1,0,0,0,222,225,3,40,20,0,223,225,5,27,0,0,224,222,1,0,0,0,224,223,1,
+0,0,0,225,39,1,0,0,0,226,230,5,26,0,0,227,229,3,10,5,0,228,227,1,0,0,0,229,
+232,1,0,0,0,230,228,1,0,0,0,230,231,1,0,0,0,231,233,1,0,0,0,232,230,1,0,
+0,0,233,234,5,27,0,0,234,41,1,0,0,0,235,236,5,25,0,0,236,240,3,48,24,0,237,
+239,3,10,5,0,238,237,1,0,0,0,239,242,1,0,0,0,240,238,1,0,0,0,240,241,1,0,
+0,0,241,245,1,0,0,0,242,240,1,0,0,0,243,246,3,40,20,0,244,246,5,27,0,0,245,
+243,1,0,0,0,245,244,1,0,0,0,246,43,1,0,0,0,247,248,5,33,0,0,248,249,3,2,
+1,0,249,250,5,12,0,0,250,251,3,0,0,0,251,252,5,23,0,0,252,253,3,2,1,0,253,
+254,5,12,0,0,254,255,3,0,0,0,255,45,1,0,0,0,256,257,5,31,0,0,257,258,5,36,
+0,0,258,260,5,40,0,0,259,261,5,36,0,0,260,259,1,0,0,0,260,261,1,0,0,0,261,
+262,1,0,0,0,262,266,5,41,0,0,263,265,3,10,5,0,264,263,1,0,0,0,265,268,1,
+0,0,0,266,264,1,0,0,0,266,267,1,0,0,0,267,269,1,0,0,0,268,266,1,0,0,0,269,
+270,5,32,0,0,270,47,1,0,0,0,271,272,5,35,0,0,272,273,5,38,0,0,273,274,3,
+2,1,0,274,275,5,39,0,0,275,49,1,0,0,0,20,55,63,71,82,87,110,117,141,147,
+151,182,192,206,219,224,230,240,245,260,266];
 
 
 const atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -82,18 +99,18 @@ const sharedContextCache = new antlr4.atn.PredictionContextCache();
 export default class AMOSParser extends antlr4.Parser {
 
     static grammarFileName = "AMOS.g4";
-    static literalNames = [ null, "'='", "'<>'", "'>='", "'>'", "'<='", 
-                            "'<'", "'Key'", "'State'", "'Screen Open'", 
-                            null, "'Lowres'", "'Hires'", "','", null, null, 
-                            "'Curs Off'", "'Curs On'", "'Ink'", "'Text'", 
-                            null, "'Do'", "'Loop'", "'For'", "'To'", "'Next'", 
-                            "'If'", "'Else'", "'End If'", "'While'", "'Wend'", 
-                            "'Play'", "'Procedure'", "'End Proc'", "'Bar'", 
-                            "'Wait Key'", "'Key State'", null, null, "'('", 
-                            "')'", "'['", "']'", "'{'", "'}'", "'$'", "'*'", 
-                            "'/'", "'+'", "'-'" ];
+    static literalNames = [ null, "'End'", "'='", "'<>'", "'>='", "'>'", 
+                            "'<='", "'<'", "'Screen Open'", null, "'Lowres'", 
+                            "'Hires'", "','", null, null, "'Curs Off'", 
+                            "'Curs On'", "'Ink'", "'Text'", null, "'Do'", 
+                            "'Loop'", "'For'", "'To'", "'Next'", "'If'", 
+                            "'Else'", "'End If'", "'While'", "'Wend'", "'Play'", 
+                            "'Procedure'", "'End Proc'", "'Bar'", "'Wait Key'", 
+                            "'Key State'", null, null, "'('", "')'", "'['", 
+                            "']'", "'{'", "'}'", "'$'", "'*'", "'/'", "'+'", 
+                            "'-'" ];
     static symbolicNames = [ null, null, null, null, null, null, null, null, 
-                             null, "SCREENOPEN", "NUMBER", "LOWRES", "HIRES", 
+                             "SCREENOPEN", "NUMBER", "LOWRES", "HIRES", 
                              "COMMA", "COMMENT", "WS", "CURSOFF", "CURSON", 
                              "INK", "TEXT", "STRING", "DO", "LOOP", "FOR", 
                              "TO", "NEXT", "IF", "ELSE", "ENDIF", "WHILE", 
@@ -104,10 +121,12 @@ export default class AMOSParser extends antlr4.Parser {
                              "HECADECIMAL", "MULTIPLY", "DIVIDE", "ADD", 
                              "SUBTRACT" ];
     static ruleNames = [ "expression2", "expression1", "term", "factor", 
-                         "program", "statement", "variable_starter", "function_call_or_array_access", 
+                         "program", "statement", "play_sound", "wait_key_break", 
+                         "variable_starter", "function_starter", "function_call_or_array_access", 
                          "screen_open", "curs_off", "curs_on", "ink", "text", 
-                         "do_loop", "for_loop", "if_statement", "if_statement_key_state", 
-                         "bar", "procedure" ];
+                         "do_loop", "while_wend", "for_loop", "if_statement", 
+                         "else_statement", "if_statement_key_state", "bar", 
+                         "procedure", "current_Key_State" ];
 
     constructor(input) {
         super(input);
@@ -125,24 +144,24 @@ export default class AMOSParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 38;
+	        this.state = 50;
 	        this.term();
-	        this.state = 43;
+	        this.state = 55;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(_la===48 || _la===49) {
-	            this.state = 39;
+	        while(_la===47 || _la===48) {
+	            this.state = 51;
 	            _la = this._input.LA(1);
-	            if(!(_la===48 || _la===49)) {
+	            if(!(_la===47 || _la===48)) {
 	            this._errHandler.recoverInline(this);
 	            }
 	            else {
 	            	this._errHandler.reportMatch(this);
 	                this.consume();
 	            }
-	            this.state = 40;
+	            this.state = 52;
 	            this.term();
-	            this.state = 45;
+	            this.state = 57;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -168,24 +187,24 @@ export default class AMOSParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 46;
+	        this.state = 58;
 	        this.term();
-	        this.state = 51;
+	        this.state = 63;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(_la===48 || _la===49) {
-	            this.state = 47;
+	        while(_la===47 || _la===48) {
+	            this.state = 59;
 	            _la = this._input.LA(1);
-	            if(!(_la===48 || _la===49)) {
+	            if(!(_la===47 || _la===48)) {
 	            this._errHandler.recoverInline(this);
 	            }
 	            else {
 	            	this._errHandler.reportMatch(this);
 	                this.consume();
 	            }
-	            this.state = 48;
+	            this.state = 60;
 	            this.term();
-	            this.state = 53;
+	            this.state = 65;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -211,24 +230,24 @@ export default class AMOSParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 54;
+	        this.state = 66;
 	        this.factor();
-	        this.state = 59;
+	        this.state = 71;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(_la===46 || _la===47) {
-	            this.state = 55;
+	        while(_la===45 || _la===46) {
+	            this.state = 67;
 	            _la = this._input.LA(1);
-	            if(!(_la===46 || _la===47)) {
+	            if(!(_la===45 || _la===46)) {
 	            this._errHandler.recoverInline(this);
 	            }
 	            else {
 	            	this._errHandler.reportMatch(this);
 	                this.consume();
 	            }
-	            this.state = 56;
+	            this.state = 68;
 	            this.factor();
-	            this.state = 61;
+	            this.state = 73;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -252,27 +271,34 @@ export default class AMOSParser extends antlr4.Parser {
 	    let localctx = new FactorContext(this, this._ctx, this.state);
 	    this.enterRule(localctx, 6, AMOSParser.RULE_factor);
 	    try {
-	        this.state = 68;
+	        this.state = 82;
 	        this._errHandler.sync(this);
 	        switch(this._input.LA(1)) {
-	        case 10:
+	        case 9:
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 62;
+	            this.state = 74;
 	            this.match(AMOSParser.NUMBER);
 	            break;
-	        case 37:
+	        case 36:
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 63;
+	            this.state = 75;
 	            this.match(AMOSParser.IDENTIFIER);
 	            break;
-	        case 39:
+	        case 38:
 	            this.enterOuterAlt(localctx, 3);
-	            this.state = 64;
+	            this.state = 76;
 	            this.match(AMOSParser.BRACKETOPEN_PROP);
-	            this.state = 65;
+	            this.state = 77;
 	            this.expression1();
-	            this.state = 66;
+	            this.state = 78;
 	            this.match(AMOSParser.BRACKETCLOSE_PROP);
+	            break;
+	        case 44:
+	            this.enterOuterAlt(localctx, 4);
+	            this.state = 80;
+	            this.match(AMOSParser.HECADECIMAL);
+	            this.state = 81;
+	            this.match(AMOSParser.NUMBER);
 	            break;
 	        default:
 	            throw new antlr4.error.NoViableAltException(this);
@@ -299,17 +325,17 @@ export default class AMOSParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 73;
+	        this.state = 87;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 70;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 84;
 	            this.statement();
-	            this.state = 75;
+	            this.state = 89;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 76;
+	        this.state = 90;
 	        this.match(AMOSParser.EOF);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -331,86 +357,116 @@ export default class AMOSParser extends antlr4.Parser {
 	    let localctx = new StatementContext(this, this._ctx, this.state);
 	    this.enterRule(localctx, 10, AMOSParser.RULE_statement);
 	    try {
-	        this.state = 91;
+	        this.state = 110;
 	        this._errHandler.sync(this);
 	        var la_ = this._interp.adaptivePredict(this._input,5,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 78;
+	            this.state = 92;
 	            this.procedure();
 	            break;
 
 	        case 2:
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 79;
+	            this.state = 93;
 	            this.screen_open();
 	            break;
 
 	        case 3:
 	            this.enterOuterAlt(localctx, 3);
-	            this.state = 80;
+	            this.state = 94;
 	            this.curs_off();
 	            break;
 
 	        case 4:
 	            this.enterOuterAlt(localctx, 4);
-	            this.state = 81;
+	            this.state = 95;
 	            this.curs_on();
 	            break;
 
 	        case 5:
 	            this.enterOuterAlt(localctx, 5);
-	            this.state = 82;
+	            this.state = 96;
 	            this.ink();
 	            break;
 
 	        case 6:
 	            this.enterOuterAlt(localctx, 6);
-	            this.state = 83;
+	            this.state = 97;
 	            this.text();
 	            break;
 
 	        case 7:
 	            this.enterOuterAlt(localctx, 7);
-	            this.state = 84;
+	            this.state = 98;
 	            this.do_loop();
 	            break;
 
 	        case 8:
 	            this.enterOuterAlt(localctx, 8);
-	            this.state = 85;
+	            this.state = 99;
 	            this.for_loop();
 	            break;
 
 	        case 9:
 	            this.enterOuterAlt(localctx, 9);
-	            this.state = 86;
+	            this.state = 100;
 	            this.if_statement_key_state();
 	            break;
 
 	        case 10:
 	            this.enterOuterAlt(localctx, 10);
-	            this.state = 87;
+	            this.state = 101;
 	            this.if_statement();
 	            break;
 
 	        case 11:
 	            this.enterOuterAlt(localctx, 11);
-	            this.state = 88;
-	            this.bar();
+	            this.state = 102;
+	            this.function_starter();
 	            break;
 
 	        case 12:
 	            this.enterOuterAlt(localctx, 12);
-	            this.state = 89;
-	            this.function_call_or_array_access();
+	            this.state = 103;
+	            this.bar();
 	            break;
 
 	        case 13:
 	            this.enterOuterAlt(localctx, 13);
-	            this.state = 90;
+	            this.state = 104;
+	            this.function_call_or_array_access();
+	            break;
+
+	        case 14:
+	            this.enterOuterAlt(localctx, 14);
+	            this.state = 105;
 	            this.variable_starter();
+	            break;
+
+	        case 15:
+	            this.enterOuterAlt(localctx, 15);
+	            this.state = 106;
+	            this.while_wend();
+	            break;
+
+	        case 16:
+	            this.enterOuterAlt(localctx, 16);
+	            this.state = 107;
+	            this.wait_key_break();
+	            break;
+
+	        case 17:
+	            this.enterOuterAlt(localctx, 17);
+	            this.state = 108;
+	            this.play_sound();
+	            break;
+
+	        case 18:
+	            this.enterOuterAlt(localctx, 18);
+	            this.state = 109;
+	            this.match(AMOSParser.T__0);
 	            break;
 
 	        }
@@ -430,17 +486,126 @@ export default class AMOSParser extends antlr4.Parser {
 
 
 
-	variable_starter() {
-	    let localctx = new Variable_starterContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 12, AMOSParser.RULE_variable_starter);
+	play_sound() {
+	    let localctx = new Play_soundContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 12, AMOSParser.RULE_play_sound);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 93;
+	        this.state = 112;
+	        this.match(AMOSParser.PLAY);
+	        this.state = 117;
+	        this._errHandler.sync(this);
+	        var la_ = this._interp.adaptivePredict(this._input,6,this._ctx);
+	        switch(la_) {
+	        case 1:
+	            this.state = 113;
+	            this.match(AMOSParser.HECADECIMAL);
+	            this.state = 114;
+	            this.match(AMOSParser.NUMBER);
+	            break;
+
+	        case 2:
+	            this.state = 115;
+	            this.expression1();
+	            break;
+
+	        case 3:
+	            this.state = 116;
+	            this.match(AMOSParser.IDENTIFIER);
+	            break;
+
+	        }
+	        this.state = 119;
+	        this.match(AMOSParser.COMMA);
+	        this.state = 120;
+	        this.match(AMOSParser.NUMBER);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	wait_key_break() {
+	    let localctx = new Wait_key_breakContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 14, AMOSParser.RULE_wait_key_break);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 122;
+	        this.match(AMOSParser.WAITKEY);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	variable_starter() {
+	    let localctx = new Variable_starterContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 16, AMOSParser.RULE_variable_starter);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 124;
 	        this.match(AMOSParser.IDENTIFIER);
-	        this.state = 94;
-	        this.match(AMOSParser.T__0);
-	        this.state = 95;
+	        this.state = 125;
+	        this.match(AMOSParser.T__1);
+	        this.state = 126;
 	        this.expression1();
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	function_starter() {
+	    let localctx = new Function_starterContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 18, AMOSParser.RULE_function_starter);
+	    var _la = 0;
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 128;
+	        this.match(AMOSParser.IDENTIFIER);
+	        this.state = 129;
+	        this.match(AMOSParser.BRACKETOPEN_ARRAY);
+	        this.state = 130;
+	        _la = this._input.LA(1);
+	        if(!(_la===9 || _la===36)) {
+	        this._errHandler.recoverInline(this);
+	        }
+	        else {
+	        	this._errHandler.reportMatch(this);
+	            this.consume();
+	        }
+	        this.state = 131;
+	        this.match(AMOSParser.BRACKETCLOSE_ARRAY);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -459,52 +624,52 @@ export default class AMOSParser extends antlr4.Parser {
 
 	function_call_or_array_access() {
 	    let localctx = new Function_call_or_array_accessContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 14, AMOSParser.RULE_function_call_or_array_access);
+	    this.enterRule(localctx, 20, AMOSParser.RULE_function_call_or_array_access);
 	    var _la = 0;
 	    try {
-	        this.state = 115;
+	        this.state = 151;
 	        this._errHandler.sync(this);
-	        var la_ = this._interp.adaptivePredict(this._input,8,this._ctx);
+	        var la_ = this._interp.adaptivePredict(this._input,9,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 97;
+	            this.state = 133;
 	            this.match(AMOSParser.IDENTIFIER);
-	            this.state = 98;
+	            this.state = 134;
 	            this.match(AMOSParser.BRACKETOPEN_ARRAY);
-	            this.state = 99;
+	            this.state = 135;
 	            this.expression1();
-	            this.state = 100;
+	            this.state = 136;
 	            this.match(AMOSParser.BRACKETCLOSE_ARRAY);
 	            break;
 
 	        case 2:
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 102;
+	            this.state = 138;
 	            this.match(AMOSParser.IDENTIFIER);
-	            this.state = 103;
+	            this.state = 139;
 	            this.match(AMOSParser.BRACKETOPEN_PROP);
-	            this.state = 105;
+	            this.state = 141;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
-	            if(((((_la - 10)) & ~0x1f) === 0 && ((1 << (_la - 10)) & 671088641) !== 0)) {
-	                this.state = 104;
+	            if(_la===9 || ((((_la - 36)) & ~0x1f) === 0 && ((1 << (_la - 36)) & 261) !== 0)) {
+	                this.state = 140;
 	                this.expression1();
 	            }
 
-	            this.state = 111;
+	            this.state = 147;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
-	            while(_la===13) {
-	                this.state = 107;
+	            while(_la===12) {
+	                this.state = 143;
 	                this.match(AMOSParser.COMMA);
-	                this.state = 108;
+	                this.state = 144;
 	                this.expression1();
-	                this.state = 113;
+	                this.state = 149;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
-	            this.state = 114;
+	            this.state = 150;
 	            this.match(AMOSParser.BRACKETCLOSE_PROP);
 	            break;
 
@@ -527,31 +692,31 @@ export default class AMOSParser extends antlr4.Parser {
 
 	screen_open() {
 	    let localctx = new Screen_openContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 16, AMOSParser.RULE_screen_open);
+	    this.enterRule(localctx, 22, AMOSParser.RULE_screen_open);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 117;
+	        this.state = 153;
 	        this.match(AMOSParser.SCREENOPEN);
-	        this.state = 118;
+	        this.state = 154;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 119;
+	        this.state = 155;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 120;
+	        this.state = 156;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 121;
+	        this.state = 157;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 122;
+	        this.state = 158;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 123;
+	        this.state = 159;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 124;
+	        this.state = 160;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 125;
+	        this.state = 161;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 126;
+	        this.state = 162;
 	        _la = this._input.LA(1);
-	        if(!(_la===11 || _la===12)) {
+	        if(!(_la===10 || _la===11)) {
 	        this._errHandler.recoverInline(this);
 	        }
 	        else {
@@ -576,10 +741,10 @@ export default class AMOSParser extends antlr4.Parser {
 
 	curs_off() {
 	    let localctx = new Curs_offContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 18, AMOSParser.RULE_curs_off);
+	    this.enterRule(localctx, 24, AMOSParser.RULE_curs_off);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 128;
+	        this.state = 164;
 	        this.match(AMOSParser.CURSOFF);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -599,10 +764,10 @@ export default class AMOSParser extends antlr4.Parser {
 
 	curs_on() {
 	    let localctx = new Curs_onContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 20, AMOSParser.RULE_curs_on);
+	    this.enterRule(localctx, 26, AMOSParser.RULE_curs_on);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 130;
+	        this.state = 166;
 	        this.match(AMOSParser.CURSON);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -622,12 +787,12 @@ export default class AMOSParser extends antlr4.Parser {
 
 	ink() {
 	    let localctx = new InkContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 22, AMOSParser.RULE_ink);
+	    this.enterRule(localctx, 28, AMOSParser.RULE_ink);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 132;
+	        this.state = 168;
 	        this.match(AMOSParser.INK);
-	        this.state = 133;
+	        this.state = 169;
 	        this.match(AMOSParser.NUMBER);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -647,20 +812,20 @@ export default class AMOSParser extends antlr4.Parser {
 
 	text() {
 	    let localctx = new TextContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 24, AMOSParser.RULE_text);
+	    this.enterRule(localctx, 30, AMOSParser.RULE_text);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 135;
+	        this.state = 171;
 	        this.match(AMOSParser.TEXT);
-	        this.state = 136;
+	        this.state = 172;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 137;
+	        this.state = 173;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 138;
+	        this.state = 174;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 139;
+	        this.state = 175;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 140;
+	        this.state = 176;
 	        this.match(AMOSParser.STRING);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -680,24 +845,62 @@ export default class AMOSParser extends antlr4.Parser {
 
 	do_loop() {
 	    let localctx = new Do_loopContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 26, AMOSParser.RULE_do_loop);
+	    this.enterRule(localctx, 32, AMOSParser.RULE_do_loop);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 142;
+	        this.state = 178;
 	        this.match(AMOSParser.DO);
-	        this.state = 146;
+	        this.state = 182;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 143;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 179;
 	            this.statement();
-	            this.state = 148;
+	            this.state = 184;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 149;
+	        this.state = 185;
 	        this.match(AMOSParser.LOOP);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	while_wend() {
+	    let localctx = new While_wendContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 34, AMOSParser.RULE_while_wend);
+	    var _la = 0;
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 187;
+	        this.match(AMOSParser.WHILE);
+	        this.state = 188;
+	        this.current_Key_State();
+	        this.state = 192;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 189;
+	            this.statement();
+	            this.state = 194;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 195;
+	        this.match(AMOSParser.WEND);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -716,35 +919,35 @@ export default class AMOSParser extends antlr4.Parser {
 
 	for_loop() {
 	    let localctx = new For_loopContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 28, AMOSParser.RULE_for_loop);
+	    this.enterRule(localctx, 36, AMOSParser.RULE_for_loop);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 151;
+	        this.state = 197;
 	        this.match(AMOSParser.FOR);
-	        this.state = 152;
+	        this.state = 198;
 	        this.match(AMOSParser.IDENTIFIER);
-	        this.state = 153;
-	        this.match(AMOSParser.T__0);
-	        this.state = 154;
+	        this.state = 199;
+	        this.match(AMOSParser.T__1);
+	        this.state = 200;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 155;
+	        this.state = 201;
 	        this.match(AMOSParser.TO);
-	        this.state = 156;
+	        this.state = 202;
 	        this.match(AMOSParser.NUMBER);
-	        this.state = 160;
+	        this.state = 206;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 157;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 203;
 	            this.statement();
-	            this.state = 162;
+	            this.state = 208;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 163;
+	        this.state = 209;
 	        this.match(AMOSParser.NEXT);
-	        this.state = 164;
+	        this.state = 210;
 	        this.match(AMOSParser.IDENTIFIER);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -764,54 +967,84 @@ export default class AMOSParser extends antlr4.Parser {
 
 	if_statement() {
 	    let localctx = new If_statementContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 30, AMOSParser.RULE_if_statement);
+	    this.enterRule(localctx, 38, AMOSParser.RULE_if_statement);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 166;
+	        this.state = 212;
 	        this.match(AMOSParser.IF);
-	        this.state = 167;
+	        this.state = 213;
 	        this.expression1();
-	        this.state = 168;
+	        this.state = 214;
 	        _la = this._input.LA(1);
-	        if(!((((_la) & ~0x1f) === 0 && ((1 << _la) & 126) !== 0))) {
+	        if(!((((_la) & ~0x1f) === 0 && ((1 << _la) & 252) !== 0))) {
 	        this._errHandler.recoverInline(this);
 	        }
 	        else {
 	        	this._errHandler.reportMatch(this);
 	            this.consume();
 	        }
-	        this.state = 169;
+	        this.state = 215;
 	        this.expression2();
-	        this.state = 173;
+	        this.state = 219;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 170;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 216;
 	            this.statement();
-	            this.state = 175;
+	            this.state = 221;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 183;
+	        this.state = 224;
+	        this._errHandler.sync(this);
+	        switch(this._input.LA(1)) {
+	        case 26:
+	            this.state = 222;
+	            this.else_statement();
+	            break;
+	        case 27:
+	            this.state = 223;
+	            this.match(AMOSParser.ENDIF);
+	            break;
+	        default:
+	            throw new antlr4.error.NoViableAltException(this);
+	        }
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	else_statement() {
+	    let localctx = new Else_statementContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 40, AMOSParser.RULE_else_statement);
+	    var _la = 0;
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 226;
+	        this.match(AMOSParser.ELSE);
+	        this.state = 230;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        if(_la===27) {
-	            this.state = 176;
-	            this.match(AMOSParser.ELSE);
-	            this.state = 180;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 227;
+	            this.statement();
+	            this.state = 232;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
-	            while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	                this.state = 177;
-	                this.statement();
-	                this.state = 182;
-	                this._errHandler.sync(this);
-	                _la = this._input.LA(1);
-	            }
 	        }
-
-	        this.state = 185;
+	        this.state = 233;
 	        this.match(AMOSParser.ENDIF);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -831,32 +1064,38 @@ export default class AMOSParser extends antlr4.Parser {
 
 	if_statement_key_state() {
 	    let localctx = new If_statement_key_stateContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 32, AMOSParser.RULE_if_statement_key_state);
+	    this.enterRule(localctx, 42, AMOSParser.RULE_if_statement_key_state);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 187;
+	        this.state = 235;
 	        this.match(AMOSParser.IF);
-	        this.state = 188;
-	        this.match(AMOSParser.T__6);
-	        this.state = 189;
-	        this.match(AMOSParser.T__7);
-	        this.state = 190;
-	        this.match(AMOSParser.COMPARISON);
-	        this.state = 191;
-	        this.expression2();
-	        this.state = 195;
+	        this.state = 236;
+	        this.current_Key_State();
+	        this.state = 240;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 192;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 237;
 	            this.statement();
-	            this.state = 197;
+	            this.state = 242;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 198;
-	        this.match(AMOSParser.ENDIF);
+	        this.state = 245;
+	        this._errHandler.sync(this);
+	        switch(this._input.LA(1)) {
+	        case 26:
+	            this.state = 243;
+	            this.else_statement();
+	            break;
+	        case 27:
+	            this.state = 244;
+	            this.match(AMOSParser.ENDIF);
+	            break;
+	        default:
+	            throw new antlr4.error.NoViableAltException(this);
+	        }
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -875,24 +1114,24 @@ export default class AMOSParser extends antlr4.Parser {
 
 	bar() {
 	    let localctx = new BarContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 34, AMOSParser.RULE_bar);
+	    this.enterRule(localctx, 44, AMOSParser.RULE_bar);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 200;
+	        this.state = 247;
 	        this.match(AMOSParser.BAR);
-	        this.state = 201;
+	        this.state = 248;
 	        this.expression1();
-	        this.state = 202;
+	        this.state = 249;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 203;
+	        this.state = 250;
 	        this.expression2();
-	        this.state = 204;
+	        this.state = 251;
 	        this.match(AMOSParser.TO);
-	        this.state = 205;
+	        this.state = 252;
 	        this.expression1();
-	        this.state = 206;
+	        this.state = 253;
 	        this.match(AMOSParser.COMMA);
-	        this.state = 207;
+	        this.state = 254;
 	        this.expression2();
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -912,38 +1151,67 @@ export default class AMOSParser extends antlr4.Parser {
 
 	procedure() {
 	    let localctx = new ProcedureContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 36, AMOSParser.RULE_procedure);
+	    this.enterRule(localctx, 46, AMOSParser.RULE_procedure);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 209;
+	        this.state = 256;
 	        this.match(AMOSParser.PROC);
-	        this.state = 210;
+	        this.state = 257;
 	        this.match(AMOSParser.IDENTIFIER);
-	        this.state = 211;
+	        this.state = 258;
 	        this.match(AMOSParser.BRACKETOPEN_ARRAY);
-	        this.state = 213;
+	        this.state = 260;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        if(_la===37) {
-	            this.state = 212;
+	        if(_la===36) {
+	            this.state = 259;
 	            this.match(AMOSParser.IDENTIFIER);
 	        }
 
-	        this.state = 215;
+	        this.state = 262;
 	        this.match(AMOSParser.BRACKETCLOSE_ARRAY);
-	        this.state = 219;
+	        this.state = 266;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
-	        while(((((_la - 9)) & ~0x1f) === 0 && ((1 << (_la - 9)) & 310531969) !== 0)) {
-	            this.state = 216;
+	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3528950018) !== 0) || ((((_la - 33)) & ~0x1f) === 0 && ((1 << (_la - 33)) & 11) !== 0)) {
+	            this.state = 263;
 	            this.statement();
-	            this.state = 221;
+	            this.state = 268;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 222;
+	        this.state = 269;
 	        this.match(AMOSParser.ENDPROC);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	current_Key_State() {
+	    let localctx = new Current_Key_StateContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 48, AMOSParser.RULE_current_Key_State);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 271;
+	        this.match(AMOSParser.KEYSTATE);
+	        this.state = 272;
+	        this.match(AMOSParser.BRACKETOPEN_PROP);
+	        this.state = 273;
+	        this.expression1();
+	        this.state = 274;
+	        this.match(AMOSParser.BRACKETCLOSE_PROP);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -969,48 +1237,47 @@ AMOSParser.T__3 = 4;
 AMOSParser.T__4 = 5;
 AMOSParser.T__5 = 6;
 AMOSParser.T__6 = 7;
-AMOSParser.T__7 = 8;
-AMOSParser.SCREENOPEN = 9;
-AMOSParser.NUMBER = 10;
-AMOSParser.LOWRES = 11;
-AMOSParser.HIRES = 12;
-AMOSParser.COMMA = 13;
-AMOSParser.COMMENT = 14;
-AMOSParser.WS = 15;
-AMOSParser.CURSOFF = 16;
-AMOSParser.CURSON = 17;
-AMOSParser.INK = 18;
-AMOSParser.TEXT = 19;
-AMOSParser.STRING = 20;
-AMOSParser.DO = 21;
-AMOSParser.LOOP = 22;
-AMOSParser.FOR = 23;
-AMOSParser.TO = 24;
-AMOSParser.NEXT = 25;
-AMOSParser.IF = 26;
-AMOSParser.ELSE = 27;
-AMOSParser.ENDIF = 28;
-AMOSParser.WHILE = 29;
-AMOSParser.WEND = 30;
-AMOSParser.PLAY = 31;
-AMOSParser.PROC = 32;
-AMOSParser.ENDPROC = 33;
-AMOSParser.BAR = 34;
-AMOSParser.WAITKEY = 35;
-AMOSParser.KEYSTATE = 36;
-AMOSParser.IDENTIFIER = 37;
-AMOSParser.COMPARISON = 38;
-AMOSParser.BRACKETOPEN_PROP = 39;
-AMOSParser.BRACKETCLOSE_PROP = 40;
-AMOSParser.BRACKETOPEN_ARRAY = 41;
-AMOSParser.BRACKETCLOSE_ARRAY = 42;
-AMOSParser.BRACKETOPEN_FUNCTION = 43;
-AMOSParser.BRACKETCLOSE_FUNCTION = 44;
-AMOSParser.HECADECIMAL = 45;
-AMOSParser.MULTIPLY = 46;
-AMOSParser.DIVIDE = 47;
-AMOSParser.ADD = 48;
-AMOSParser.SUBTRACT = 49;
+AMOSParser.SCREENOPEN = 8;
+AMOSParser.NUMBER = 9;
+AMOSParser.LOWRES = 10;
+AMOSParser.HIRES = 11;
+AMOSParser.COMMA = 12;
+AMOSParser.COMMENT = 13;
+AMOSParser.WS = 14;
+AMOSParser.CURSOFF = 15;
+AMOSParser.CURSON = 16;
+AMOSParser.INK = 17;
+AMOSParser.TEXT = 18;
+AMOSParser.STRING = 19;
+AMOSParser.DO = 20;
+AMOSParser.LOOP = 21;
+AMOSParser.FOR = 22;
+AMOSParser.TO = 23;
+AMOSParser.NEXT = 24;
+AMOSParser.IF = 25;
+AMOSParser.ELSE = 26;
+AMOSParser.ENDIF = 27;
+AMOSParser.WHILE = 28;
+AMOSParser.WEND = 29;
+AMOSParser.PLAY = 30;
+AMOSParser.PROC = 31;
+AMOSParser.ENDPROC = 32;
+AMOSParser.BAR = 33;
+AMOSParser.WAITKEY = 34;
+AMOSParser.KEYSTATE = 35;
+AMOSParser.IDENTIFIER = 36;
+AMOSParser.COMPARISON = 37;
+AMOSParser.BRACKETOPEN_PROP = 38;
+AMOSParser.BRACKETCLOSE_PROP = 39;
+AMOSParser.BRACKETOPEN_ARRAY = 40;
+AMOSParser.BRACKETCLOSE_ARRAY = 41;
+AMOSParser.BRACKETOPEN_FUNCTION = 42;
+AMOSParser.BRACKETCLOSE_FUNCTION = 43;
+AMOSParser.HECADECIMAL = 44;
+AMOSParser.MULTIPLY = 45;
+AMOSParser.DIVIDE = 46;
+AMOSParser.ADD = 47;
+AMOSParser.SUBTRACT = 48;
 
 AMOSParser.RULE_expression2 = 0;
 AMOSParser.RULE_expression1 = 1;
@@ -1018,19 +1285,25 @@ AMOSParser.RULE_term = 2;
 AMOSParser.RULE_factor = 3;
 AMOSParser.RULE_program = 4;
 AMOSParser.RULE_statement = 5;
-AMOSParser.RULE_variable_starter = 6;
-AMOSParser.RULE_function_call_or_array_access = 7;
-AMOSParser.RULE_screen_open = 8;
-AMOSParser.RULE_curs_off = 9;
-AMOSParser.RULE_curs_on = 10;
-AMOSParser.RULE_ink = 11;
-AMOSParser.RULE_text = 12;
-AMOSParser.RULE_do_loop = 13;
-AMOSParser.RULE_for_loop = 14;
-AMOSParser.RULE_if_statement = 15;
-AMOSParser.RULE_if_statement_key_state = 16;
-AMOSParser.RULE_bar = 17;
-AMOSParser.RULE_procedure = 18;
+AMOSParser.RULE_play_sound = 6;
+AMOSParser.RULE_wait_key_break = 7;
+AMOSParser.RULE_variable_starter = 8;
+AMOSParser.RULE_function_starter = 9;
+AMOSParser.RULE_function_call_or_array_access = 10;
+AMOSParser.RULE_screen_open = 11;
+AMOSParser.RULE_curs_off = 12;
+AMOSParser.RULE_curs_on = 13;
+AMOSParser.RULE_ink = 14;
+AMOSParser.RULE_text = 15;
+AMOSParser.RULE_do_loop = 16;
+AMOSParser.RULE_while_wend = 17;
+AMOSParser.RULE_for_loop = 18;
+AMOSParser.RULE_if_statement = 19;
+AMOSParser.RULE_else_statement = 20;
+AMOSParser.RULE_if_statement_key_state = 21;
+AMOSParser.RULE_bar = 22;
+AMOSParser.RULE_procedure = 23;
+AMOSParser.RULE_current_Key_State = 24;
 
 class Expression2Context extends antlr4.ParserRuleContext {
 
@@ -1264,6 +1537,10 @@ class FactorContext extends antlr4.ParserRuleContext {
 	    return this.getToken(AMOSParser.BRACKETCLOSE_PROP, 0);
 	};
 
+	HECADECIMAL() {
+	    return this.getToken(AMOSParser.HECADECIMAL, 0);
+	};
+
 	enterRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.enterFactor(this);
@@ -1381,6 +1658,10 @@ class StatementContext extends antlr4.ParserRuleContext {
 	    return this.getTypedRuleContext(If_statementContext,0);
 	};
 
+	function_starter() {
+	    return this.getTypedRuleContext(Function_starterContext,0);
+	};
+
 	bar() {
 	    return this.getTypedRuleContext(BarContext,0);
 	};
@@ -1393,6 +1674,18 @@ class StatementContext extends antlr4.ParserRuleContext {
 	    return this.getTypedRuleContext(Variable_starterContext,0);
 	};
 
+	while_wend() {
+	    return this.getTypedRuleContext(While_wendContext,0);
+	};
+
+	wait_key_break() {
+	    return this.getTypedRuleContext(Wait_key_breakContext,0);
+	};
+
+	play_sound() {
+	    return this.getTypedRuleContext(Play_soundContext,0);
+	};
+
 	enterRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.enterStatement(this);
@@ -1402,6 +1695,104 @@ class StatementContext extends antlr4.ParserRuleContext {
 	exitRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.exitStatement(this);
+		}
+	}
+
+
+}
+
+
+
+class Play_soundContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_play_sound;
+    }
+
+	PLAY() {
+	    return this.getToken(AMOSParser.PLAY, 0);
+	};
+
+	COMMA() {
+	    return this.getToken(AMOSParser.COMMA, 0);
+	};
+
+	NUMBER = function(i) {
+		if(i===undefined) {
+			i = null;
+		}
+	    if(i===null) {
+	        return this.getTokens(AMOSParser.NUMBER);
+	    } else {
+	        return this.getToken(AMOSParser.NUMBER, i);
+	    }
+	};
+
+
+	expression1() {
+	    return this.getTypedRuleContext(Expression1Context,0);
+	};
+
+	IDENTIFIER() {
+	    return this.getToken(AMOSParser.IDENTIFIER, 0);
+	};
+
+	HECADECIMAL() {
+	    return this.getToken(AMOSParser.HECADECIMAL, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterPlay_sound(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitPlay_sound(this);
+		}
+	}
+
+
+}
+
+
+
+class Wait_key_breakContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_wait_key_break;
+    }
+
+	WAITKEY() {
+	    return this.getToken(AMOSParser.WAITKEY, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterWait_key_break(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitWait_key_break(this);
 		}
 	}
 
@@ -1441,6 +1832,61 @@ class Variable_starterContext extends antlr4.ParserRuleContext {
 	exitRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.exitVariable_starter(this);
+		}
+	}
+
+
+}
+
+
+
+class Function_starterContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_function_starter;
+    }
+
+	IDENTIFIER = function(i) {
+		if(i===undefined) {
+			i = null;
+		}
+	    if(i===null) {
+	        return this.getTokens(AMOSParser.IDENTIFIER);
+	    } else {
+	        return this.getToken(AMOSParser.IDENTIFIER, i);
+	    }
+	};
+
+
+	BRACKETOPEN_ARRAY() {
+	    return this.getToken(AMOSParser.BRACKETOPEN_ARRAY, 0);
+	};
+
+	BRACKETCLOSE_ARRAY() {
+	    return this.getToken(AMOSParser.BRACKETCLOSE_ARRAY, 0);
+	};
+
+	NUMBER() {
+	    return this.getToken(AMOSParser.NUMBER, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterFunction_starter(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitFunction_starter(this);
 		}
 	}
 
@@ -1812,6 +2258,60 @@ class Do_loopContext extends antlr4.ParserRuleContext {
 
 
 
+class While_wendContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_while_wend;
+    }
+
+	WHILE() {
+	    return this.getToken(AMOSParser.WHILE, 0);
+	};
+
+	current_Key_State() {
+	    return this.getTypedRuleContext(Current_Key_StateContext,0);
+	};
+
+	WEND() {
+	    return this.getToken(AMOSParser.WEND, 0);
+	};
+
+	statement = function(i) {
+	    if(i===undefined) {
+	        i = null;
+	    }
+	    if(i===null) {
+	        return this.getTypedRuleContexts(StatementContext);
+	    } else {
+	        return this.getTypedRuleContext(StatementContext,i);
+	    }
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterWhile_wend(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitWhile_wend(this);
+		}
+	}
+
+
+}
+
+
+
 class For_loopContext extends antlr4.ParserRuleContext {
 
     constructor(parser, parent, invokingState) {
@@ -1916,6 +2416,10 @@ class If_statementContext extends antlr4.ParserRuleContext {
 	    return this.getTypedRuleContext(Expression2Context,0);
 	};
 
+	else_statement() {
+	    return this.getTypedRuleContext(Else_statementContext,0);
+	};
+
 	ENDIF() {
 	    return this.getToken(AMOSParser.ENDIF, 0);
 	};
@@ -1931,10 +2435,6 @@ class If_statementContext extends antlr4.ParserRuleContext {
 	    }
 	};
 
-	ELSE() {
-	    return this.getToken(AMOSParser.ELSE, 0);
-	};
-
 	enterRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.enterIf_statement(this);
@@ -1944,6 +2444,56 @@ class If_statementContext extends antlr4.ParserRuleContext {
 	exitRule(listener) {
 	    if(listener instanceof AMOSListener ) {
 	        listener.exitIf_statement(this);
+		}
+	}
+
+
+}
+
+
+
+class Else_statementContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_else_statement;
+    }
+
+	ELSE() {
+	    return this.getToken(AMOSParser.ELSE, 0);
+	};
+
+	ENDIF() {
+	    return this.getToken(AMOSParser.ENDIF, 0);
+	};
+
+	statement = function(i) {
+	    if(i===undefined) {
+	        i = null;
+	    }
+	    if(i===null) {
+	        return this.getTypedRuleContexts(StatementContext);
+	    } else {
+	        return this.getTypedRuleContext(StatementContext,i);
+	    }
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterElse_statement(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitElse_statement(this);
 		}
 	}
 
@@ -1970,12 +2520,12 @@ class If_statement_key_stateContext extends antlr4.ParserRuleContext {
 	    return this.getToken(AMOSParser.IF, 0);
 	};
 
-	COMPARISON() {
-	    return this.getToken(AMOSParser.COMPARISON, 0);
+	current_Key_State() {
+	    return this.getTypedRuleContext(Current_Key_StateContext,0);
 	};
 
-	expression2() {
-	    return this.getTypedRuleContext(Expression2Context,0);
+	else_statement() {
+	    return this.getTypedRuleContext(Else_statementContext,0);
 	};
 
 	ENDIF() {
@@ -2153,6 +2703,53 @@ class ProcedureContext extends antlr4.ParserRuleContext {
 
 
 
+class Current_Key_StateContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = AMOSParser.RULE_current_Key_State;
+    }
+
+	KEYSTATE() {
+	    return this.getToken(AMOSParser.KEYSTATE, 0);
+	};
+
+	BRACKETOPEN_PROP() {
+	    return this.getToken(AMOSParser.BRACKETOPEN_PROP, 0);
+	};
+
+	expression1() {
+	    return this.getTypedRuleContext(Expression1Context,0);
+	};
+
+	BRACKETCLOSE_PROP() {
+	    return this.getToken(AMOSParser.BRACKETCLOSE_PROP, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.enterCurrent_Key_State(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof AMOSListener ) {
+	        listener.exitCurrent_Key_State(this);
+		}
+	}
+
+
+}
+
+
+
 
 AMOSParser.Expression2Context = Expression2Context; 
 AMOSParser.Expression1Context = Expression1Context; 
@@ -2160,7 +2757,10 @@ AMOSParser.TermContext = TermContext;
 AMOSParser.FactorContext = FactorContext; 
 AMOSParser.ProgramContext = ProgramContext; 
 AMOSParser.StatementContext = StatementContext; 
+AMOSParser.Play_soundContext = Play_soundContext; 
+AMOSParser.Wait_key_breakContext = Wait_key_breakContext; 
 AMOSParser.Variable_starterContext = Variable_starterContext; 
+AMOSParser.Function_starterContext = Function_starterContext; 
 AMOSParser.Function_call_or_array_accessContext = Function_call_or_array_accessContext; 
 AMOSParser.Screen_openContext = Screen_openContext; 
 AMOSParser.Curs_offContext = Curs_offContext; 
@@ -2168,8 +2768,11 @@ AMOSParser.Curs_onContext = Curs_onContext;
 AMOSParser.InkContext = InkContext; 
 AMOSParser.TextContext = TextContext; 
 AMOSParser.Do_loopContext = Do_loopContext; 
+AMOSParser.While_wendContext = While_wendContext; 
 AMOSParser.For_loopContext = For_loopContext; 
 AMOSParser.If_statementContext = If_statementContext; 
+AMOSParser.Else_statementContext = Else_statementContext; 
 AMOSParser.If_statement_key_stateContext = If_statement_key_stateContext; 
 AMOSParser.BarContext = BarContext; 
 AMOSParser.ProcedureContext = ProcedureContext; 
+AMOSParser.Current_Key_StateContext = Current_Key_StateContext; 

@@ -44,6 +44,7 @@ DIVIDE: '/';
 ADD: '+';
 SUBTRACT: '-';
 
+
 // Expression captures more complex expressions
 expression2:
     term ((ADD | SUBTRACT) term)* // Handle addition and subtraction
@@ -60,6 +61,7 @@ factor:
     NUMBER                     // A number
     | IDENTIFIER                // A variable
     | '(' expression1 ')'        // Parentheses for grouping
+    | (HECADECIMAL NUMBER)
 
     ;
 
@@ -67,7 +69,8 @@ factor:
 // Parser rules
 
 program:
-    (statement)* EOF 
+    (statement)* EOF
+    
     ;
 
 statement:
@@ -81,13 +84,29 @@ statement:
     | for_loop
     | if_statement_key_state
     | if_statement
+    | function_starter
     | bar
     | function_call_or_array_access // Nova regra para chamadas de função ou acesso a array
     | variable_starter
+    | while_wend
+    | wait_key_break
+    | play_sound
+    | 'End'
+    
     ;
 
+
+play_sound:
+    'Play' ((HECADECIMAL NUMBER) | expression1 | IDENTIFIER) COMMA NUMBER
+    ;
+wait_key_break:
+    WAITKEY
+    ;
 variable_starter:
     IDENTIFIER '=' expression1 // Agora captura apenas atribuições de variáveis
+    ;
+function_starter:
+    IDENTIFIER BRACKETOPEN_ARRAY (NUMBER | IDENTIFIER) BRACKETCLOSE_ARRAY
     ;
 
 function_call_or_array_access:
@@ -121,6 +140,10 @@ do_loop:
     (statement)*
     LOOP
     ;
+while_wend:
+    WHILE current_Key_State
+    (statement)*
+    WEND;
 
 for_loop:
     FOR IDENTIFIER '=' NUMBER TO NUMBER
@@ -132,15 +155,18 @@ for_loop:
 if_statement:
     IF expression1 ('=' | '<>' | '>=' | '>' | '<=' | '<') expression2
     (statement)* 
-    (ELSE (statement)*)? 
-    ENDIF
+    (else_statement | ENDIF )
     ;
-
-// If-End If statement for key state comparison
-if_statement_key_state:
-    IF 'Key' 'State' COMPARISON expression2
+else_statement:
+    ELSE
     (statement)*
     ENDIF
+    ;
+// If-End If statement for key state comparison
+if_statement_key_state:
+    IF current_Key_State
+    (statement)*
+    (else_statement | ENDIF )
     ;
 
 bar:
@@ -151,6 +177,10 @@ procedure:
     PROC IDENTIFIER BRACKETOPEN_ARRAY IDENTIFIER? BRACKETCLOSE_ARRAY // Modified to properly capture the brackets and optional parameter
     (statement)* 
     ENDPROC
+    ;
+
+current_Key_State:
+    KEYSTATE BRACKETOPEN_PROP expression1 BRACKETCLOSE_PROP
     ;
 
 
