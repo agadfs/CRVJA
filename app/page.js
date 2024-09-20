@@ -66,13 +66,6 @@ function App() {
       <h1>AMOS Basic parser to JavaScript</h1>
       <div>Open browser console to see full results</div>
       <div>For now, only accepts single file .asc apps</div>
-      <div style={{marginBlock:"20px"}} >TO DO:
-        <div>Fix and map ALL keyboard keys with hexadecimals id</div>
-        <div>Add rule for file input for audio</div>
-        <div>Add rule for file input for sprites</div>
-        <div>Fix rule If Else because is very ugly right now</div>
-        <div>any created function needs to be on top?</div>
-      </div>
       {/* File input to upload the AMOS BASIC file */}
       <input type="file" onChange={handleFileUpload} />
 
