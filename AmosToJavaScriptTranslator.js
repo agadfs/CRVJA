@@ -388,7 +388,6 @@ function soundPlayer(noteId, cooldown) {
         soundPlayerTimeTracker = currentTime;
 
         const frequency = pitchToFrequency[noteId];
-        console.log("Playing sound with frequency: " + frequency + " Hz, cooldown: " + cooldown + " ms");
 
         // Check if there's already an oscillator for this noteId
         if (activeOscillators[noteId]) {
@@ -661,13 +660,13 @@ ${this.indent()}setInterval(() => {
     this.indentLevel++; // Increase indentation inside the loop
   }
   /* WAIT KEY FUNCTION */
-  /*   enterWait_key_break(ctx) {
+    enterWait_key_break(ctx) {
     this.output += `
 ${this.indent()}if (!isPressed) {
 ${this.indent()}return;
 ${this.indent()}}
         `;
-  } */
+  } 
   exitDo_loop(ctx) {
     this.indentLevel--; // Decrease indentation after exiting the loop
     this.output += `
