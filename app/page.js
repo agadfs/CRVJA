@@ -57,6 +57,7 @@ function App() {
         }
         const func = new Function(jsCode); // Create a function from the JS code
         func(); // Execute the function (it should render the game)
+        console.log("JavaScript code executed successfully: ", jsCode);
       } catch (err) {
         console.error("Error rendering JavaScript:", err);
       }
