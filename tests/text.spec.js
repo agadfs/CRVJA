@@ -35,5 +35,10 @@ test("Text", () => {
 
   expect(translatedJsCode).toContain(`const textDiv${position_x}${position_y} = document.createElement('div');`);
   expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.innerText = '${content}';`);
+  expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.style.position = 'absolute';`);
+  expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.style.left = '${position_x}px';`);
+  expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.style.top = '${position_y}px';`);
+  expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.style.fontSize = '14px';`);
+  expect(translatedJsCode).toContain(`textDiv${position_x}${position_y}.style.color = 'black';`);
 
 });
