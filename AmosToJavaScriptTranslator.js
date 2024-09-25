@@ -384,7 +384,7 @@ let activeOscillators = {}; // Object to store active oscillators keyed by noteI
 function soundPlayer(noteId, cooldown) {
      let currentTime = Date.now();
 
-    if (currentTime - soundPlayerTimeTracker > cooldown) {
+    if (currentTime - soundPlayerTimeTracker > cooldown/2) {
         soundPlayerTimeTracker = currentTime;
 
         const frequency = pitchToFrequency[noteId];
