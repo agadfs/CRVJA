@@ -3,7 +3,7 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("amos_screen", () => {
+test("screen_open", () => {
     
     /* Properties of amos screen */
 
