@@ -8,7 +8,7 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.id = 0;
     this.current_Ink = "black";
     this.functionStarters = "";
-
+    this.variables = {};
     this.output += `
       const keyMapping = {
         1: "Escape",
@@ -589,10 +589,21 @@ ${this.indent()}}`;
   enterVariable_starter(ctx) {
     let name = ctx.children[0]?.getText() || "";
     let value = ctx.children[2]?.getText() || 0;
-    this.output += `
+
+    if (this.variables[name]) {
+        // Variable already exists at this indent level
+        this.output += `
+${this.indent()}${name} = ${value};
+        `;
+    } else {
+        // Variable doesn't exist at this indent level, so create it
+        this.output += `
 ${this.indent()}let ${name} = ${value};
         `;
-  }
+        // Store the variable in the current indent level
+        this.variables[name] = value;
+    }
+}
 
   enterProcedure(ctx) {
     this.id++;
@@ -755,7 +766,7 @@ ${this.indent()}}`;
         // Check if the leftExpression is just a hexadecimal value
         if (hexValueMatch[0] === leftExpression) {
           // If it's only a hex value, convert it to a key mapping lookup
-          leftExpression = `keyMapping[${hexValue}]`;
+          leftExpression = `keyMapping[${hexValue}`;
         } else {
           let variable = leftExpression.split("$")[0];
           console.log(variable);
