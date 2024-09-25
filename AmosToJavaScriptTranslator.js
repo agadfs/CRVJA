@@ -556,7 +556,10 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
 
   /* WHILE for key pressed */
   enterWhile_wend(ctx) {
-    let leftExpression = ctx.current_Key_State(0).expression1(0).getText();
+    let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();
+    if(!leftExpression) {
+      return;
+    }
     if (leftExpression.includes("$")) {
       let hexValueMatch = leftExpression.match(/\$[0-9A-Fa-f]+/);
 

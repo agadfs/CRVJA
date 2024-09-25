@@ -4,10 +4,12 @@ import antlr4 from "antlr4";
 import AmosToJavaScriptTranslator from "@/AmosToJavaScriptTranslator";
 import AMOSParser from "@/AMOSParser";
 import AMOSLexer from "@/AMOSLexer";
+import { Amiri } from "next/font/google";
 
 function App() {
   const [jsCode, setJsCode] = useState(""); // Store the translated JavaScript code
-
+  const [option, setOption] = useState("file"); // Store the selected option
+  const [AmosCode, setAmosCode] = useState(""); // Store the AMOS BASIC code
   // Function to handle file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0]; // Get the uploaded file
@@ -16,7 +18,7 @@ function App() {
     // When the file is loaded, read the content
     reader.onload = (event) => {
       const amosBasicCode = event.target.result;
-
+      setAmosCode(amosBasicCode);
       // Parse and translate the code
       parseAmosCode(amosBasicCode);
     };
@@ -40,19 +42,19 @@ function App() {
     console.log("Starting the walk");
     walker.walk(translator, tree);
     console.log("Completed the walk");
-    
+
     const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
     setJsCode(translatedJsCode); // Store the translated code in the state
-  
-   
   };
 
   // Function to dynamically render the translated JavaScript code
   useEffect(() => {
     if (jsCode) {
-      console.log("Translated JS Code: ", jsCode);
-    
       try {
+        const existingContainer = document.getElementById("amos-screen");
+        if (existingContainer) {
+          existingContainer.remove();
+        }
         const func = new Function(jsCode); // Create a function from the JS code
         func(); // Execute the function (it should render the game)
       } catch (err) {
@@ -67,10 +69,64 @@ function App() {
       <div>Open browser console to see full results</div>
       <div>For now, only accepts single file .asc apps</div>
       {/* File input to upload the AMOS BASIC file */}
-      <input type="file" onChange={handleFileUpload} />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <select
+          style={{ width: "fit-content" }}
+          value={option}
+          onChange={(e) => setOption(e.target.value)}
+        >
+          <option value="file">File</option>
+          <option value="text">Code Text</option>
+        </select>
+        {option === "text" && (
+          <div style={{ display: "flex", gap: "1%" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1%",
+                marginBlock: "1%",
+              }}
+            >
+              <button
+                onClick={() => {
+                  parseAmosCode(AmosCode);
+                }}
+              >
+                Run Code
+              </button>
+              <button onClick={() => {
+                setAmosCode("")
+                setJsCode("");
+                const existingContainer =
+                  document.getElementById("amos-screen");
+                if (existingContainer) {
+                  existingContainer.remove();
+                }
+              }}>Clear Code</button>
+            </div>
+            <textarea
+              value={AmosCode}
+              onChange={(e) => {
+                setAmosCode(e.target.value);
+                
+              }}
+              placeholder="Enter AMOS BASIC code here"
+            />
 
-      {/* Canvas will be appended here by the dynamically generated code */}
-      <div id="game-container"></div>
+            {/* Canvas will be appended here by the dynamically generated code */}
+            <div id="game-container"></div>
+          </div>
+        )}
+        {option === "file" && (
+          <div>
+            <input type="file" onChange={handleFileUpload} />
+
+            {/* Canvas will be appended here by the dynamically generated code */}
+            <div id="game-container"></div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
