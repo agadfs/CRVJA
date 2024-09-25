@@ -1,5 +1,21 @@
 import AMOSListener from "./AMOSListener";
 
+
+/* QUESTIONS
+
+variable starter if exists?
+color mapping for screen open?
+key mapping for key pressed?
+sound player function?
+bar function?
+procedure cooldown?
+do loop?
+
+if key with hex value?
+
+
+*/
+
 class AmosToJavaScriptTranslator extends AMOSListener {
   constructor() {
     super();
