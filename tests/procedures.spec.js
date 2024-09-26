@@ -93,5 +93,11 @@ test("procedures", () => {
   expect(translatedJsCode).toContain(
     `}, 100 - timeSinceLastCall);`
   );
+  expect(translatedJsCode).toContain(
+    `lastTimeP_DRAWKEYS = currentTime;`
+  );
+  expect(translatedJsCode).toContain(
+    `timeoutIdP_DRAWKEYS = null;`
+  );
   
 });
