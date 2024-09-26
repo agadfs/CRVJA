@@ -72,5 +72,26 @@ test("procedures", () => {
   expect(translatedJsCode).toContain(
     `const timeSinceLastCall = currentTime - lastTimeP_DRAWKEYS;`
   );
+  expect(translatedJsCode).toContain(
+    `let lastTimeP_DRAWKEYS = 0;`
+  );
+  expect(translatedJsCode).toContain(
+    `let timeoutIdP_DRAWKEYS = null;`
+  );
+  expect(translatedJsCode).toContain(
+    `if (timeSinceLastCall < 16) {`
+  );
+  expect(translatedJsCode).toContain(
+    `if (timeoutIdP_DRAWKEYS) clearTimeout(timeoutIdP_DRAWKEYS);`
+  );
+  expect(translatedJsCode).toContain(
+    `timeoutIdP_DRAWKEYS = setTimeout(() => {`
+  );
+  expect(translatedJsCode).toContain(
+    `P_DRAWKEYS(PRESSEDKEYNUMBER);`
+  );
+  expect(translatedJsCode).toContain(
+    `}, 100 - timeSinceLastCall);`
+  );
   
 });
