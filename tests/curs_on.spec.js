@@ -3,13 +3,11 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("Text", () => {
+test("curs_on", () => {
 
   const amosBasicCode = `
-        Text 10,10,"ReAnimate(d) Piano"
+       Curs On
     `;
-
-  /* construct */
 
   const chars = new antlr4.InputStream(amosBasicCode);
   const lexer = new AMOSLexer(chars);
@@ -26,12 +24,8 @@ test("Text", () => {
 
   /* test */
 
-  expect(translatedJsCode).toContain(`const textDiv1010 = document.createElement('div');`);
-  expect(translatedJsCode).toContain(`textDiv1010.innerText = 'ReAnimate(d) Piano';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.position = 'absolute';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.left = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.top = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.fontSize = '14px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.color = 'black';`);
-
+  expect(translatedJsCode).toContain(
+    `document.getElementById('amos-screen').style.cursor = 'auto';`
+  );
+  
 });

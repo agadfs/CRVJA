@@ -4,32 +4,10 @@ import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
 test("screen_open", () => {
-    
-    /* Properties of amos screen */
-
-  const width = 600;
-  const height = 400;
-  const screenNumber = 1;
-  let colorScreen = 8;
-  const screenResolution = "Hires";
-
 
   const amosBasicCode = `
-        Screen Open ${screenNumber.toString()},${width.toString()},${height.toString()},${colorScreen},${screenResolution}
+        Screen Open 1,600,400,8,Hires
     `;
-
-
- /* convert color screen id to a color */
-  const colorMapping = {
-    1: "black",
-    2: "white",
-    3: "red",
-    5: "green",
-    8: "rgb(160, 64, 0)",
-  };
-  colorScreen = colorMapping[colorScreen] || "black";
-
-  /* construct */
 
   const chars = new antlr4.InputStream(amosBasicCode);
   const lexer = new AMOSLexer(chars);
@@ -49,8 +27,8 @@ test("screen_open", () => {
   expect(translatedJsCode).toContain(
     `const screenDiv = document.createElement('div');`
   );
-  expect(translatedJsCode).toContain(`screenDiv.style.width = '${width}px';`);
-  expect(translatedJsCode).toContain(`screenDiv.style.height = '${height}px';`);
+  expect(translatedJsCode).toContain(`screenDiv.style.width = '600px';`);
+  expect(translatedJsCode).toContain(`screenDiv.style.height = '400px';`);
   expect(translatedJsCode).toContain(`screenDiv.style.border = '1px solid red';`);
   expect(translatedJsCode).toContain("screenDiv.style.overflow = 'hidden'; ");
   expect(translatedJsCode).toContain("screenDiv.style.padding = '0'; ");
@@ -60,6 +38,6 @@ test("screen_open", () => {
     `document.getElementById('game-container').appendChild(screenDiv);`
   );
   expect(translatedJsCode).toContain(
-    `document.getElementById('amos-screen').style.backgroundColor = "${colorScreen}";`
+    `document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";`
   );
 });
