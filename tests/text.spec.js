@@ -33,5 +33,5 @@ test("Text", () => {
   expect(translatedJsCode).toContain(`textDiv1010.style.top = '10px';`);
   expect(translatedJsCode).toContain(`textDiv1010.style.fontSize = '14px';`);
   expect(translatedJsCode).toContain(`textDiv1010.style.color = 'black';`);
-
+  expect(translatedJsCode).toContain(`document.getElementById('amos-screen').appendChild(textDiv1010);`);
 });

@@ -590,7 +590,7 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
           // If it's a variable or expression with a hex part, construct it accordingly
           leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/, hexValue);
         }
-        console.log(leftExpression);
+
       }
       this.output += `
 
@@ -785,7 +785,7 @@ ${this.indent()}}`;
           leftExpression = `keyMapping[${hexValue}`;
         } else {
           let variable = leftExpression.split("$")[0];
-          console.log(variable);
+
           // If it's a variable or expression with a hex part, construct it accordingly
           leftExpression = leftExpression.replace(
             /\$[0-9A-Fa-f]+/,
