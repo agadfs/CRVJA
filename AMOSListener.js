@@ -59,6 +59,24 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#sin_function.
+	enterSin_function(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#sin_function.
+	exitSin_function(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#cos_function.
+	enterCos_function(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#cos_function.
+	exitCos_function(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#play_sound.
 	enterPlay_sound(ctx) {
 	}
@@ -101,6 +119,33 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#function_call_or_array_access.
 	exitFunction_call_or_array_access(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#array_structure.
+	enterArray_structure(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#array_structure.
+	exitArray_structure(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#array_create.
+	enterArray_create(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#array_create.
+	exitArray_create(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#array_update.
+	enterArray_update(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#array_update.
+	exitArray_update(ctx) {
 	}
 
 

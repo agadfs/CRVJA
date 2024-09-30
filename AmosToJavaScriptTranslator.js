@@ -16,6 +16,13 @@ if key with hex value?
 
 */
 
+/* 
+AMIGA
+50 fps
+or
+60 
+*/
+
 class AmosToJavaScriptTranslator extends AMOSListener {
   constructor() {
     super();
@@ -605,7 +612,10 @@ ${this.indent()}}`;
   enterVariable_starter(ctx) {
     let name = ctx.children[0]?.getText() || "";
     let value = ctx.children[2]?.getText() || 0;
-
+    let lineNumber = ctx.start.line;
+    if (value > 2147483647) {
+      throw new Error(`ERROR: Amos code line ${lineNumber}: Value for variable "${name}" exceeds the allowed limit of 2,147,483,647.`);
+    }
     if (this.variables[name]) {
         // Variable already exists at this indent level
         this.output += `
@@ -715,11 +725,39 @@ ${this.indent()}for (let ${variable} = ${start}; ${variable} <= ${end}; ${variab
         `;
     this.indentLevel++; // Increase indentation inside the loop
   }
-
+  enterArray_create(ctx) {
+  
+    for(let i = 0; i < ctx.array_structure().length ; i++){
+      this.output += `
+${this.indent()}const ${ctx.array_structure(i).IDENTIFIER(0).getText()} = new Array(${ctx.array_structure(i).NUMBER(0).getText()});
+        `;
+      
+    }
+  }
   exitFor_loop(ctx) {
     this.indentLevel--; // Decrease indentation after exiting the loop
     this.output += `
 ${this.indent()}}`;
+  }
+
+  enterArray_update(ctx) {
+    let arrayName = ctx.IDENTIFIER(0)?.getText();
+    let arrayIndex = ctx.NUMBER(0)?.getText();
+    let arrayTargetValue = ctx.expression1(1)?.getText();
+    if(arrayIndex === undefined){
+      arrayIndex = ctx.IDENTIFIER(1)?.getText();
+      if(arrayIndex === undefined){
+        arrayIndex =  ctx.expression1(0)?.getText();
+        arrayTargetValue =  ctx.expression1(1)?.getText();
+      }
+    }
+    if(arrayTargetValue === undefined){
+      arrayTargetValue =  ctx.expression1(0)?.getText();
+    }
+
+   this.output += `
+   ${this.indent()}${arrayName}[${arrayIndex}] = ${arrayTargetValue};
+           `;
   }
 
   enterIf_statement(ctx) {

@@ -3,12 +3,10 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("number_bigger_8bits", () => {
-   const variable = 93;
-  const amosBasicCode = `
+test("create_array", () => {
 
-   XW=${variable}
-  
+  const amosBasicCode = `
+ Dim C(359),S(359)
     `;
 
   const chars = new antlr4.InputStream(amosBasicCode);
@@ -26,7 +24,8 @@ test("number_bigger_8bits", () => {
 
   /* test */
 
-  expect(translatedJsCode).toContain(`let XW = ${variable};`);
+  expect(translatedJsCode).toContain(`const C = new Array(359)`);
+  expect(translatedJsCode).toContain(`const S = new Array(359)`);
    
   
 });

@@ -43,6 +43,7 @@ MULTIPLY: '*';
 DIVIDE: '/';
 ADD: '+';
 SUBTRACT: '-';
+STATEMENT_SEPARATOR: ':';
 
 
 // Expression captures more complex expressions
@@ -62,6 +63,8 @@ factor:
     | IDENTIFIER                // A variable
     | '(' expression1 ')'        // Parentheses for grouping
     | (HECADECIMAL NUMBER)
+    | sin_function
+    | cos_function
 
     ;
 
@@ -77,6 +80,7 @@ statement:
     procedure
     | screen_open
     | curs_off
+    | array_update
     | curs_on
     | ink
     | text
@@ -92,10 +96,19 @@ statement:
     | wait_key_break
     | play_sound
     | 'End'
+    | STATEMENT_SEPARATOR
+    | array_create
+
 
     
     ;
 
+sin_function:
+    'Sin' BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP
+    ;
+cos_function:
+    'Cos' BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP
+    ;
 
 play_sound:
     'Play' ((HECADECIMAL NUMBER) | expression1 | IDENTIFIER) COMMA NUMBER
@@ -114,8 +127,17 @@ function_call_or_array_access:
     IDENTIFIER BRACKETOPEN_ARRAY expression1 BRACKETCLOSE_ARRAY // Acesso a array
     | IDENTIFIER BRACKETOPEN_PROP expression1? (COMMA expression1)* BRACKETCLOSE_PROP // Chamadas de função com ou sem parâmetros
     ;
+array_structure:
+  IDENTIFIER BRACKETOPEN_PROP NUMBER BRACKETCLOSE_PROP
+  ;
+array_create:
+    'Dim' array_structure (COMMA? array_structure)*
+    ;
 
-
+array_update:
+    IDENTIFIER BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP '=' expression1
+    
+    ;
 screen_open:
     SCREENOPEN NUMBER COMMA NUMBER COMMA NUMBER COMMA NUMBER COMMA (LOWRES | HIRES)
     ; 
@@ -149,7 +171,7 @@ while_wend:
 for_loop:
     FOR IDENTIFIER '=' NUMBER TO NUMBER
     (statement)*
-    NEXT IDENTIFIER // Match IDENTIFIER, not NUMBER
+    (NEXT? | NEXT IDENTIFIER) 
     ;
 
 // If-End If statement that compares a variable to an expression
