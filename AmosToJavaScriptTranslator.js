@@ -1,28 +1,5 @@
 import AMOSListener from "./AMOSListener";
 
-
-/* QUESTIONS
-
-variable starter if exists?
-color mapping for screen open?
-key mapping for key pressed?
-sound player function?
-bar function?
-procedure cooldown?
-do loop?
-
-if key with hex value?
-
-
-*/
-
-/* 
-AMIGA
-50 fps
-or
-60 
-*/
-
 class AmosToJavaScriptTranslator extends AMOSListener {
   constructor() {
     super();
@@ -720,9 +697,7 @@ ${this.indent()}}, 16);`;
     variable = ctx.children[1]?.getText();
     start = ctx.children[3]?.getText();
     end = ctx.children[5]?.getText();
-    this.output += `
-${this.indent()}for (let ${variable} = ${start}; ${variable} <= ${end}; ${variable}++) {
-        `;
+    this.output += `${this.indent()}for (let ${variable} = ${start}; ${variable} <= ${end}; ${variable}++) {`;
     this.indentLevel++; // Increase indentation inside the loop
   }
   enterArray_create(ctx) {
@@ -736,8 +711,7 @@ ${this.indent()}const ${ctx.array_structure(i).IDENTIFIER(0).getText()} = new Ar
   }
   exitFor_loop(ctx) {
     this.indentLevel--; // Decrease indentation after exiting the loop
-    this.output += `
-${this.indent()}}`;
+    this.output += `${this.indent()}}`;
   }
 
   enterArray_update(ctx) {

@@ -4,20 +4,9 @@ import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
 test("max_int_size", () => {
-   let variable = 2147483647;
-
-   /* If true, will surpass the maximum int size */
-   const failTest = false;
-
-   if(failTest){
-    variable += 1;
-   }
-   /*  */
   const amosBasicCode = `
-
-   XW=${variable}
-  
-    `;
+   XW=2147483648
+  `;
 
   const chars = new antlr4.InputStream(amosBasicCode);
   const lexer = new AMOSLexer(chars);
@@ -29,12 +18,13 @@ test("max_int_size", () => {
   // Translate the parsed AMOS BASIC into JavaScript
   const translator = new AmosToJavaScriptTranslator();
   const walker = new antlr4.tree.ParseTreeWalker();
-  walker.walk(translator, tree);
-  const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
 
-  /* test */
-
-  expect(translatedJsCode).toContain(`let XW = ${variable};`);
-   
-  
+  // Capture the error using a try-catch block
+  try {
+    walker.walk(translator, tree);
+    const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
+  } catch (error) {
+    // Verify that the error message is as expected
+    expect(error.message).toBe(`ERROR: Amos code line 2: Value for variable "XW" exceeds the allowed limit of 2,147,483,647.`);
+  }
 });

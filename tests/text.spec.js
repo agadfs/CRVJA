@@ -23,15 +23,18 @@ test("Text", () => {
   const walker = new antlr4.tree.ParseTreeWalker();
   walker.walk(translator, tree);
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
-
+  let targetString = 
+  `const textDiv1010 = document.createElement('div');
+  textDiv1010.innerText = 'ReAnimate(d) Piano';
+  textDiv1010.style.position = 'absolute';
+  textDiv1010.style.left = '10px';
+  textDiv1010.style.top = '10px';
+  textDiv1010.style.fontSize = '14px';
+  textDiv1010.style.color = 'black';
+  document.getElementById('amos-screen').appendChild(textDiv1010);`
   /* test */
-
-  expect(translatedJsCode).toContain(`const textDiv1010 = document.createElement('div');`);
-  expect(translatedJsCode).toContain(`textDiv1010.innerText = 'ReAnimate(d) Piano';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.position = 'absolute';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.left = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.top = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.fontSize = '14px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.color = 'black';`);
-  expect(translatedJsCode).toContain(`document.getElementById('amos-screen').appendChild(textDiv1010);`);
+  const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
+  const normalizedExpectedJsCode = targetString.replace(/\s+/g, ' ').trim();
+    expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
+ 
 });

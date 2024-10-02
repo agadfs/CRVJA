@@ -23,21 +23,25 @@ test("screen_open", () => {
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
 
   /* test */
+  const expectedJsCode = `
+  const screenDiv = document.createElement('div');
+  screenDiv.style.width = '600px';
+  screenDiv.style.height = '400px';
+  screenDiv.style.border = '1px solid red';
+  screenDiv.style.overflow = 'hidden';
+  screenDiv.style.padding = '0';
+  screenDiv.style.position = 'relative';
+  screenDiv.id = 'amos-screen';
+  document.getElementById('game-container').appendChild(screenDiv);
+  document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";
 
-  expect(translatedJsCode).toContain(
-    `const screenDiv = document.createElement('div');`
-  );
-  expect(translatedJsCode).toContain(`screenDiv.style.width = '600px';`);
-  expect(translatedJsCode).toContain(`screenDiv.style.height = '400px';`);
-  expect(translatedJsCode).toContain(`screenDiv.style.border = '1px solid red';`);
-  expect(translatedJsCode).toContain("screenDiv.style.overflow = 'hidden'; ");
-  expect(translatedJsCode).toContain("screenDiv.style.padding = '0'; ");
-  expect(translatedJsCode).toContain("screenDiv.style.position = 'relative'; ");
-  expect(translatedJsCode).toContain("screenDiv.id = 'amos-screen'; ");
-  expect(translatedJsCode).toContain(
-    `document.getElementById('game-container').appendChild(screenDiv);`
-  );
-  expect(translatedJsCode).toContain(
-    `document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";`
-  );
+`;
+
+// Normalizar a string gerada e a esperada para remover quebras de linha e espaços extras
+const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
+const normalizedExpectedJsCode = expectedJsCode.replace(/\s+/g, ' ').trim();
+
+expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
+
+  
 });

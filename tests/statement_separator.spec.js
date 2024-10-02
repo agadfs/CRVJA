@@ -4,7 +4,6 @@ import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
 test("statement_separator", () => {
-
   const amosBasicCode = `
        Screen Open 1,600,400,8,Hires : Curs Off : Text 10,10,"ReAnimate(d) Piano"
     `;
@@ -23,35 +22,34 @@ test("statement_separator", () => {
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
 
   /* test */
-  expect(translatedJsCode).toContain(
-    `const screenDiv = document.createElement('div');`
-  );
-  expect(translatedJsCode).toContain(`screenDiv.style.width = '600px';`);
-  expect(translatedJsCode).toContain(`screenDiv.style.height = '400px';`);
-  expect(translatedJsCode).toContain(`screenDiv.style.border = '1px solid red';`);
-  expect(translatedJsCode).toContain("screenDiv.style.overflow = 'hidden'; ");
-  expect(translatedJsCode).toContain("screenDiv.style.padding = '0'; ");
-  expect(translatedJsCode).toContain("screenDiv.style.position = 'relative'; ");
-  expect(translatedJsCode).toContain("screenDiv.id = 'amos-screen'; ");
-  expect(translatedJsCode).toContain(
-    `document.getElementById('game-container').appendChild(screenDiv);`
-  );
-  expect(translatedJsCode).toContain(
-    `document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";`
-  );
-
-
-  expect(translatedJsCode).toContain(
-    `document.getElementById('amos-screen').style.cursor = 'none';`
-  );
   
+  const expectedJsCode = `
+    const screenDiv = document.createElement('div');
+    screenDiv.style.width = '600px';
+    screenDiv.style.height = '400px';
+    screenDiv.style.border = '1px solid red';
+    screenDiv.style.overflow = 'hidden';
+    screenDiv.style.padding = '0';
+    screenDiv.style.position = 'relative';
+    screenDiv.id = 'amos-screen';
+    document.getElementById('game-container').appendChild(screenDiv);
+    document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";
+    document.getElementById('amos-screen').style.cursor = 'none';
 
-  expect(translatedJsCode).toContain(`const textDiv1010 = document.createElement('div');`);
-  expect(translatedJsCode).toContain(`textDiv1010.innerText = 'ReAnimate(d) Piano';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.position = 'absolute';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.left = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.top = '10px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.fontSize = '14px';`);
-  expect(translatedJsCode).toContain(`textDiv1010.style.color = 'black';`);
-  expect(translatedJsCode).toContain(`document.getElementById('amos-screen').appendChild(textDiv1010);`);
+    const textDiv1010 = document.createElement('div');
+    textDiv1010.innerText = 'ReAnimate(d) Piano';
+    textDiv1010.style.position = 'absolute';
+    textDiv1010.style.left = '10px';
+    textDiv1010.style.top = '10px';
+    textDiv1010.style.fontSize = '14px';
+    textDiv1010.style.color = 'black';
+    document.getElementById('amos-screen').appendChild(textDiv1010);
+  `;
+
+  // Normalizar a string gerada e a esperada para remover quebras de linha e espaços extras
+  const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
+  const normalizedExpectedJsCode = expectedJsCode.replace(/\s+/g, ' ').trim();
+
+  expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
 });
+

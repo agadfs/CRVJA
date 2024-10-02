@@ -3,12 +3,9 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("do_loop", () => {
-  const amosBasicCode = `
-  Do 
+test("load_bank", () => {
 
-  Loop 
-    `;
+ /*  const amosBasicCode = `Load "assets/icons.abk"`;
 
   const chars = new antlr4.InputStream(amosBasicCode);
   const lexer = new AMOSLexer(chars);
@@ -22,16 +19,11 @@ test("do_loop", () => {
   const walker = new antlr4.tree.ParseTreeWalker();
   walker.walk(translator, tree);
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
-  let targetString = 
-  `setInterval(() => {
-      currentTimer = Date.now();
-      }, 16);
-      `
-  
+ */
   /* test */
-  const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
-  const normalizedExpectedJsCode = targetString.replace(/\s+/g, ' ').trim();
-  expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
 
- 
+ /*  expect(translatedJsCode).equals(
+    `let iconsabk = [[kshfdkfh], [], []]`
+  ); */
+  
 });

@@ -3,11 +3,17 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("procedures", () => {
-
+test("for_loop_filled", () => {
   const amosBasicCode = `
-  Procedure P_DRAWKEYS[PRESSEDKEYNUMBER]
-  End Proc
+  For I=0 To 10
+      If Key State($10+I)
+         P_DRAWKEYS[I]
+         While Key State($10+I)
+            Play 37+I,1
+         Wend 
+         P_DRAWKEYS[-1]
+      End If 
+   Next I
     `;
 
   const chars = new antlr4.InputStream(amosBasicCode);
@@ -24,22 +30,29 @@ test("procedures", () => {
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
 
   /* test */
-  const expectedJsCode = `let lastTimeP_DRAWKEYS = 0; 
-  let timeoutIdP_DRAWKEYS = null; // Track the timeout ID 
-  const P_DRAWKEYS = (PRESSEDKEYNUMBER) => { 
-    const currentTime = Date.now(); 
-    const timeSinceLastCall = currentTime - lastTimeP_DRAWKEYS; 
-    if (timeSinceLastCall < 16) { 
-    if (timeoutIdP_DRAWKEYS) clearTimeout(timeoutIdP_DRAWKEYS); // Clear any existing timeout 
-    timeoutIdP_DRAWKEYS = setTimeout(() => { P_DRAWKEYS(PRESSEDKEYNUMBER); }, 100 - timeSinceLastCall); 
-    return; } lastTimeP_DRAWKEYS = currentTime; timeoutIdP_DRAWKEYS = null; // Clear the timeout ID after execution }
-`;
+  let targetString = 
+`for (let I = 0; I <= 10; I++) {
+
+  if (currentPressedKey === keyMapping[16+I]) {
+
+
+
+      P_DRAWKEYS(I); // Function call
+
+
+    if (currentPressedKey === keyMapping[16+I]) {
+
+    soundPlayer(37+I, 1*1000);
+
+    }
+      P_DRAWKEYS(-1); // Function call
+
+
+}}`
+
 
 // Normalizar a string gerada e a esperada para remover quebras de linha e espaços extras
 const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
-const normalizedExpectedJsCode = expectedJsCode.replace(/\s+/g, ' ').trim();
-
-expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
-  
-  
+const normalizedExpectedJsCode = targetString.replace(/\s+/g, ' ').trim();
+  expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
 });
