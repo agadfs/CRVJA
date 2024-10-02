@@ -275,5 +275,23 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#print_options.
+	enterPrint_options(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#print_options.
+	exitPrint_options(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#print_something.
+	enterPrint_something(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#print_something.
+	exitPrint_something(ctx) {
+	}
+
+
 
 }

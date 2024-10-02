@@ -478,6 +478,37 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "
         `;
   }
 
+  enterPrint_something(ctx) {
+    
+    for(let i = 0; i < ctx.print_options().length; i++){
+      let text = ctx.print_options(i).getText();
+      if(ctx.print_options(i)?.STRING(0)?.getText()){
+        text = ctx.print_options(i).STRING(0).getText().replace(/["']/g, "");
+        this.output += `
+  ${this.indent()}const printDiv${i} = document.createElement('div');
+  ${this.indent()}printDiv${i}.innerText = '${text}';
+  ${this.indent()}printDiv${i}.style.position = 'relative';
+  ${this.indent()}printDiv${i}.style.left = '50%';
+  ${this.indent()}printDiv${i}.style.top = '50%';
+  ${this.indent()}printDiv${i}.style.fontSize = '14px';
+  ${this.indent()}printDiv${i}.style.color = 'black';
+  ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
+  `
+      }else{
+        this.output += `
+        ${this.indent()}const printDiv${i} = document.createElement('div');
+        ${this.indent()}printDiv${i}.innerText = (${text}).toString();
+        ${this.indent()}printDiv${i}.style.position = 'relative';
+        ${this.indent()}printDiv${i}.style.left = '50%';
+        ${this.indent()}printDiv${i}.style.top = '50%';
+        ${this.indent()}printDiv${i}.style.fontSize = '14px';
+        ${this.indent()}printDiv${i}.style.color = 'black';
+        ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
+        `
+      }
+      }
+    }
+
   enterCurs_off(ctx) {
     this.output += `
 ${this.indent()}document.getElementById('amos-screen').style.cursor = 'none';   

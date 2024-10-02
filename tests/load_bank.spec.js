@@ -3,9 +3,9 @@ import AmosToJavaScriptTranslator from "../AmosToJavaScriptTranslator";
 import AMOSParser from "../AMOSParser";
 import AMOSLexer from "../AMOSLexer";
 
-test("load_bank", () => {
-
- /*  const amosBasicCode = `Load "assets/icons.abk"`;
+test("load_banks", () => {
+/* 
+  const amosBasicCode = `Load "assets/icons.abk"`;
 
   const chars = new antlr4.InputStream(amosBasicCode);
   const lexer = new AMOSLexer(chars);
@@ -19,10 +19,9 @@ test("load_bank", () => {
   const walker = new antlr4.tree.ParseTreeWalker();
   walker.walk(translator, tree);
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
- */
-  /* test */
 
- /*  expect(translatedJsCode).equals(
+
+  expect(translatedJsCode).equals(
     `let iconsabk = [[kshfdkfh], [], []]`
   ); */
   

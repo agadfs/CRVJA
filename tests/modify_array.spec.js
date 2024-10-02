@@ -21,9 +21,16 @@ test("modify_array", () => {
   const walker = new antlr4.tree.ParseTreeWalker();
   walker.walk(translator, tree);
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
-
-  /* test */
-  expect(translatedJsCode).toContain(`C[I] = 256*Cos(I)`);
-  expect(translatedJsCode).toContain(`S[I] = 256*Sin(I)`);
+  let targetString = 
+  `
+  C[I] = 256*Cos(I);
+  S[I] = 256*Sin(I);
+  `
   
+  /* test */
+  const normalizedTranslatedJsCode = translatedJsCode.replace(/\s+/g, ' ').trim();
+  const normalizedExpectedJsCode = targetString.replace(/\s+/g, ' ').trim();
+  expect(normalizedTranslatedJsCode).toContain(normalizedExpectedJsCode);
+
+
 });

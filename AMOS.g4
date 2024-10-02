@@ -44,6 +44,7 @@ DIVIDE: '/';
 ADD: '+';
 SUBTRACT: '-';
 STATEMENT_SEPARATOR: ':';
+FINISH_AND_ADD_OTHER_STATEMENT: ';';
 
 
 // Expression captures more complex expressions
@@ -98,6 +99,7 @@ statement:
     | 'End'
     | STATEMENT_SEPARATOR
     | array_create
+    | print_something
 
 
     
@@ -205,5 +207,11 @@ procedure:
 current_Key_State:
     KEYSTATE BRACKETOPEN_PROP expression1 BRACKETCLOSE_PROP
     ;
-
+print_options:
+    STRING 
+    | expression1
+    ;
+print_something:
+    'Print' print_options ((COMMA | FINISH_AND_ADD_OTHER_STATEMENT) print_options)*?
+    ;
 
