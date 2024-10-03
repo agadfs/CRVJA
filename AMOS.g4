@@ -58,14 +58,17 @@ expression1:
 term:
     factor ((MULTIPLY | DIVIDE) factor)* // Handle multiplication and division
     ;
-
+array_index_get:
+    IDENTIFIER BRACKETOPEN_PROP (expression1) BRACKETCLOSE_PROP
+    ;
 factor:
     NUMBER                     // A number
+    | array_index_get
+    | sin_function
+    | cos_function
     | IDENTIFIER                // A variable
     | '(' expression1 ')'        // Parentheses for grouping
     | (HECADECIMAL NUMBER)
-    | sin_function
-    | cos_function
 
     ;
 
@@ -100,14 +103,76 @@ statement:
     | STATEMENT_SEPARATOR
     | array_create
     | print_something
+    | flash_off
+    | flash_on
+    | hide
+    | degree
+    | paper
+    | cls
+    | palette
+    | pen
+    | double_buffer
+    | autoback
+    | blitter
+    | add
+    | locate
+    | turbo_draw
 
 
     
+    ;
+    turbo_draw:
+    'Turbo' 'Draw' expression1 COMMA expression1 'To' expression1 COMMA expression1
+    ;
+    locate:
+    'Locate' NUMBER COMMA? NUMBER?
+    ;
+    add:
+    'Add' IDENTIFIER COMMA expression1 (COMMA expression1 'To' 'NUMBER')?
+    ;
+    blitter:
+    'Blitter' 'Copy'  'Limit'? NUMBER COMMA NUMBER 'To' NUMBER COMMA NUMBER
+    ;
+    autoback:
+    'Autoback' NUMBER
+    ;
+    palette:
+    'Palette' (HECADECIMAL (NUMBER | IDENTIFIER) COMMA?)*
+    ;
+    double_buffer:
+    'Double' 'Buffer'
+    ;
+    pen:
+    'Pen' NUMBER
+    ;
+    cls:
+    'Cls'
+    ;
+
+    paper:
+    'Paper' NUMBER
+    ;
+
+    degree:
+    'Degree'
+    ;
+
+    hide:
+    'Hide'
+    ;
+
+    flash_off:
+    'Flash' 'Off'
+    ;
+
+     flash_on:
+    'Flash' 'On'
     ;
 
 sin_function:
     'Sin' BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP
     ;
+
 cos_function:
     'Cos' BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP
     ;

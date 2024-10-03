@@ -7,6 +7,8 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.indentLevel = 0; // Track current indentation level
     this.id = 0;
     this.current_Ink = "black";
+    this.globalVariables = "";
+    this.globalVariablesStorage ={};
     this.functionStarters = "";
     this.variables = {};
     this.output += `
@@ -443,7 +445,17 @@ function soundPlayer(noteId, cooldown) {
         });
     }
 }
+    function Cos(angle) {
+    return Math.cos(angle * Math.PI / 180);
+}
 
+function Sin(angle) {
+    return Math.sin(angle * Math.PI / 180);
+}
+
+function Tan(angle) {
+    return Math.tan(angle * Math.PI / 180);
+}
   `;
   }
 
@@ -451,6 +463,7 @@ function soundPlayer(noteId, cooldown) {
   indent() {
     return "  ".repeat(this.indentLevel); // Each level indents by two spaces
   }
+
   /* ADDED A GREY BACKGROUND FOR VISUAL PURPOSE */
   enterScreen_open(ctx) {
     const colorMapping = {
@@ -542,6 +555,74 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
     this.current_Ink = color;
     this.output += `Ink = "${color}";`;
   }
+ enterTurbo_draw(ctx) {
+    function generateRandomID() {
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let id = '';
+        for (let i = 0; i < 9; i++) {
+            let randomIndex = Math.floor(Math.random() * characters.length);
+            id += characters[randomIndex];
+        }
+        return id;
+    }
+
+    let x1 = ctx.expression1(0)?.getText();
+    let y1 = ctx.expression1(1)?.getText();
+    let x2 = ctx.expression1(2)?.getText();
+    let y2 = ctx.expression1(3)?.getText();
+    let the_ID = generateRandomID();
+
+    // Calculate the length and angle of the line
+
+    this.output += `
+    // Calculate the length and angle of the line
+    
+    const TurboDrawX1${the_ID} = ${x1};
+    const TurboDrawX2${the_ID} = ${x2};
+    const TurboDrawY1${the_ID} = ${y1};
+    const TurboDrawY2${the_ID} = ${y2};
+    const idBar${the_ID} = "TurboDraw" + "${the_ID}";
+    
+    let lineDiv${the_ID} = document.getElementById(idBar${the_ID});
+
+    const deltaX${the_ID} = TurboDrawX2${the_ID} - TurboDrawX1${the_ID};
+    const deltaY${the_ID} = TurboDrawY2${the_ID} - TurboDrawY1${the_ID};
+    const length${the_ID} = Math.sqrt(deltaX${the_ID} * deltaX${the_ID} + deltaY${the_ID} * deltaY${the_ID}); // Pythagorean theorem
+    const angle${the_ID} = Math.atan2(deltaY${the_ID}, deltaX${the_ID}) * (180 / Math.PI); // Convert angle to degrees
+
+    if (lineDiv${the_ID}) {
+        // If the div exists, update its properties
+        lineDiv${the_ID}.style.backgroundColor = Ink;
+        lineDiv${the_ID}.style.left = TurboDrawX1${the_ID} + 'px';
+        lineDiv${the_ID}.style.top = TurboDrawY1${the_ID} + 'px';
+        lineDiv${the_ID}.style.width = length${the_ID} + 'px';
+        lineDiv${the_ID}.style.height = '2px'; // Line height
+        lineDiv${the_ID}.style.transform = 'rotate(' + angle${the_ID} + 'deg)';
+        lineDiv${the_ID}.style.transformOrigin = '0 0'; // Rotate from the starting point
+        lineDiv${the_ID}.style.position = 'absolute';
+        lineDiv${the_ID}.style.borderRadius = '1px';
+        lineDiv${the_ID}.style.borderColor = Ink;
+    } else {
+        // If the div doesn't exist, create it
+        lineDiv${the_ID} = document.createElement('div');
+        lineDiv${the_ID}.style.position = 'absolute';
+        lineDiv${the_ID}.id = idBar${the_ID};
+        lineDiv${the_ID}.style.backgroundColor = Ink;
+        lineDiv${the_ID}.style.left = TurboDrawX1${the_ID} + 'px';
+        lineDiv${the_ID}.style.top = TurboDrawY1${the_ID} + 'px';
+        lineDiv${the_ID}.style.width = length${the_ID} + 'px';
+        lineDiv${the_ID}.style.height = '2px'; // Line height
+        lineDiv${the_ID}.style.transform = 'rotate(' + angle${the_ID} + 'deg)';
+        lineDiv${the_ID}.style.transformOrigin = '0 0'; // Rotate from the starting point
+        lineDiv${the_ID}.style.borderRadius = '1px';
+        lineDiv${the_ID}.style.borderColor = Ink;
+
+        document.getElementById('amos-screen').appendChild(lineDiv${the_ID});
+    }
+    console.log(A);
+    `;
+}
+
 
   enterBar(ctx) {
     let x1 = ctx.expression1(0)?.getText();
@@ -621,10 +702,26 @@ ${this.indent()}}`;
     let name = ctx.children[0]?.getText() || "";
     let value = ctx.children[2]?.getText() || 0;
     let lineNumber = ctx.start.line;
+
     if (value > 2147483647) {
-      throw new Error(`ERROR: Amos code line ${lineNumber}: Value for variable "${name}" exceeds the allowed limit of 2,147,483,647.`);
+        throw new Error(`ERROR: Amos code line ${lineNumber}: Value for variable "${name}" exceeds the allowed limit of 2,147,483,647.`);
     }
+
     if (this.variables[name]) {
+        // Iterate over all terms and factors in expression1
+        for (let j = 0; ctx.expression1(0)?.term(j); j++) {
+            for (let i = 0; ctx.expression1(0)?.term(j)?.factor(i); i++) {
+                let arrayIndexGet = ctx.expression1(0)?.term(j)?.factor(i)?.array_index_get(0);
+                
+                if (arrayIndexGet) {
+                    // Get the text and replace parentheses with square brackets
+                    let text = arrayIndexGet.getText();
+                    let modifiedText = text.replace(/\(/g, '[').replace(/\)/g, ']');
+                    value = value.replace(text, modifiedText);
+                }
+            }
+        }
+
         // Variable already exists at this indent level
         this.output += `
 ${this.indent()}${name} = ${value};
@@ -638,6 +735,37 @@ ${this.indent()}let ${name} = ${value};
         this.variables[name] = value;
     }
 }
+enterAdd(ctx) {
+  let variable = ctx.children[1]?.getText(); 
+  let valueExpression = ctx.children[3]?.getText(); 
+
+  let valueStarter;
+  let valueEndIteration;
+  if(!this.variables[variable]){
+    this.globalVariables += `${this.indent()}let ${variable} = 0;`;
+    this.variables[variable] = 0;
+
+  }
+
+  if (ctx.children.length > 4) {
+    valueStarter = ctx.children[5]?.getText(); 
+    valueEndIteration = ctx.children[7]?.getText(); 
+
+
+    this.output += `
+    ${this.indent()}${variable} = (${variable} + ${valueExpression}) % ${valueEndIteration};
+    ${this.indent()}if (${variable} < ${valueStarter}) {
+      ${this.indent()}${variable} += ${valueEndIteration};
+    }
+    `;
+  } else {
+    this.output += `
+    ${this.indent()}${variable} = ${variable} + ${valueExpression};
+    `;
+  }
+}
+
+
 
   enterProcedure(ctx) {
     this.id++;
@@ -863,7 +991,7 @@ ${this.indent()}
     this.output += ``;
   }
   getJavaScript() {
-    return this.output + this.functionStarters;
+    return this.globalVariables + this.output + this.functionStarters;
   }
 }
 

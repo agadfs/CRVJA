@@ -32,6 +32,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#array_index_get.
+	enterArray_index_get(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#array_index_get.
+	exitArray_index_get(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#factor.
 	enterFactor(ctx) {
 	}
@@ -56,6 +65,132 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#statement.
 	exitStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#turbo_draw.
+	enterTurbo_draw(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#turbo_draw.
+	exitTurbo_draw(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#locate.
+	enterLocate(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#locate.
+	exitLocate(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#add.
+	enterAdd(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#add.
+	exitAdd(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#blitter.
+	enterBlitter(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#blitter.
+	exitBlitter(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#autoback.
+	enterAutoback(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#autoback.
+	exitAutoback(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#palette.
+	enterPalette(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#palette.
+	exitPalette(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#double_buffer.
+	enterDouble_buffer(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#double_buffer.
+	exitDouble_buffer(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#pen.
+	enterPen(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#pen.
+	exitPen(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#cls.
+	enterCls(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#cls.
+	exitCls(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#paper.
+	enterPaper(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#paper.
+	exitPaper(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#degree.
+	enterDegree(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#degree.
+	exitDegree(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#hide.
+	enterHide(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#hide.
+	exitHide(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#flash_off.
+	enterFlash_off(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#flash_off.
+	exitFlash_off(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#flash_on.
+	enterFlash_on(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#flash_on.
+	exitFlash_on(ctx) {
 	}
 
 
