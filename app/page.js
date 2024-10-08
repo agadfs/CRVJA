@@ -50,6 +50,7 @@ function App() {
   // Function to dynamically render the translated JavaScript code
   useEffect(() => {
     if (jsCode) {
+      
       try {
         const existingContainer = document.getElementById("amos-screen");
         if (existingContainer) {

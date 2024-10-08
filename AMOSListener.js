@@ -68,6 +68,33 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#repeat_key.
+	enterRepeat_key(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#repeat_key.
+	exitRepeat_key(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#set_buffer.
+	enterSet_buffer(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#set_buffer.
+	exitSet_buffer(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#global.
+	enterGlobal(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#global.
+	exitGlobal(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#turbo_draw.
 	enterTurbo_draw(ctx) {
 	}
@@ -95,12 +122,30 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by AMOSParser#blitter.
-	enterBlitter(ctx) {
+	// Enter a parse tree produced by AMOSParser#blitter_copy.
+	enterBlitter_copy(ctx) {
 	}
 
-	// Exit a parse tree produced by AMOSParser#blitter.
-	exitBlitter(ctx) {
+	// Exit a parse tree produced by AMOSParser#blitter_copy.
+	exitBlitter_copy(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#blitter_fill.
+	enterBlitter_fill(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#blitter_fill.
+	exitBlitter_fill(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#blitter_clear.
+	enterBlitter_clear(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#blitter_clear.
+	exitBlitter_clear(ctx) {
 	}
 
 

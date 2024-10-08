@@ -7,8 +7,21 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.indentLevel = 0; // Track current indentation level
     this.id = 0;
     this.current_Ink = "black";
+    this.colorMapping = {
+      1: "black",
+      2: "white",
+      3: "red",
+      5: "green",
+      8: "rgb(160, 64, 0)",
+    };
+    this.pallette = `const colorMapping = ${JSON.stringify(
+      this.colorMapping,
+      null,
+      2
+    )};`;
+    this.lineData = this.lineData || [];
     this.globalVariables = "";
-    this.globalVariablesStorage ={};
+    this.globalVariablesStorage = {};
     this.functionStarters = "";
     this.variables = {};
     this.output += `
@@ -257,6 +270,7 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.output += `
     let currentTimer = Date.now();
   let Ink = "black";
+  let Timer = 0;
   let currentPressedKey = null;
   let isPressed = false;
  const keyCodes = () => {
@@ -466,17 +480,10 @@ function Tan(angle) {
 
   /* ADDED A GREY BACKGROUND FOR VISUAL PURPOSE */
   enterScreen_open(ctx) {
-    const colorMapping = {
-      1: "black",
-      2: "white",
-      3: "red",
-      5: "green",
-      8: "rgb(160, 64, 0)",
-    };
     const width = ctx.children[3]?.getText();
     const height = ctx.children[5]?.getText();
     const color = ctx.children[7]?.getText();
-    const colortarget = colorMapping[color] || "white";
+    const colortarget = this.colorMapping[color] || "white";
     this.output += `
 ${this.indent()}const screenDiv = document.createElement('div');
 ${this.indent()}screenDiv.style.width = '${width}px';
@@ -486,18 +493,26 @@ ${this.indent()}screenDiv.style.overflow = 'hidden';
 ${this.indent()}screenDiv.style.padding = '0'; 
 ${this.indent()}screenDiv.style.position = 'relative'; 
 ${this.indent()}screenDiv.id = 'amos-screen'; 
+${this.indent()}screenDiv.style.zIndex = 1;
 ${this.indent()}document.getElementById('game-container').appendChild(screenDiv);
 ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "${colortarget}";
         `;
   }
+  enterBlitter_fill(ctx) {
+   
+  }
+  
+  
+  
 
   enterPrint_something(ctx) {
-    
-    for(let i = 0; i < ctx.print_options().length; i++){
+    for (let i = 0; i < ctx.print_options().length; i++) {
       let text = ctx.print_options(i).getText();
-      if(ctx.print_options(i)?.STRING(0)?.getText()){
+      if (ctx.print_options(i)?.STRING(0)?.getText()) {
         text = ctx.print_options(i).STRING(0).getText().replace(/["']/g, "");
         this.output += `
+      ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
+       ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
   ${this.indent()}const printDiv${i} = document.createElement('div');
   ${this.indent()}printDiv${i}.innerText = '${text}';
   ${this.indent()}printDiv${i}.style.position = 'relative';
@@ -505,10 +520,13 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "
   ${this.indent()}printDiv${i}.style.top = '50%';
   ${this.indent()}printDiv${i}.style.fontSize = '14px';
   ${this.indent()}printDiv${i}.style.color = 'black';
+  ${this.indent()}printDiv${i}.id = 'printDiv${i}' + '${text}';
   ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
-  `
-      }else{
+  `;
+      } else {
         this.output += `
+         ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
+       ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
         ${this.indent()}const printDiv${i} = document.createElement('div');
         ${this.indent()}printDiv${i}.innerText = (${text}).toString();
         ${this.indent()}printDiv${i}.style.position = 'relative';
@@ -516,11 +534,12 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "
         ${this.indent()}printDiv${i}.style.top = '50%';
         ${this.indent()}printDiv${i}.style.fontSize = '14px';
         ${this.indent()}printDiv${i}.style.color = 'black';
+          ${this.indent()}printDiv${i}.id = 'printDiv${i}' + '${text}';
         ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
-        `
-      }
+        `;
       }
     }
+  }
 
   enterCurs_off(ctx) {
     this.output += `
@@ -545,32 +564,79 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
 
   enterInk(ctx) {
     const colorIndex = ctx.children[1]?.getText();
-    const colorMapping = {
-      1: "black",
-      2: "white",
-      3: "red",
-      5: "green",
-    };
-    const color = colorMapping[colorIndex] || "black";
+
+    const color = this.colorMapping[colorIndex] || "black";
     this.current_Ink = color;
     this.output += `Ink = "${color}";`;
   }
- enterTurbo_draw(ctx) {
-    function generateRandomID() {
-        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let id = '';
-        for (let i = 0; i < 9; i++) {
-            let randomIndex = Math.floor(Math.random() * characters.length);
-            id += characters[randomIndex];
+  enterPalette(ctx) {
+    // Array to collect complete hex color values from the Palette
+    const hexColors = [];
+    let currentHex = "";
+
+    // Loop through each child in `ctx` to gather colors
+    for (const child of ctx.children) {
+      const text = child.getText().trim();
+
+      if (text === "$") {
+        // Start of a new hex color, initialize currentHex
+        currentHex = "$";
+      } else if (text === ",") {
+        // End of a hex color, parse it if currentHex has a complete hex value
+        if (currentHex.length > 1) {
+          hexColors.push(currentHex);
+          currentHex = ""; // Reset for the next hex color
         }
-        return id;
+      } else {
+        // Append hex digits to currentHex
+        currentHex += text;
+      }
+    }
+
+    // Handle the last hex color if there's no trailing comma
+    if (currentHex.length > 1) {
+      hexColors.push(currentHex);
+    }
+
+    // Convert and map hex colors
+    this.colorMapping = {};
+    hexColors.forEach((hex, index) => {
+      const hexValue = parseInt(hex.slice(1), 16); // Remove '$' and parse as hex
+
+      // Extract R, G, B components
+      const red = ((hexValue >> 8) & 0xf) * 17;
+      const green = ((hexValue >> 4) & 0xf) * 17;
+      const blue = (hexValue & 0xf) * 17;
+
+      // Map color in `rgb` format
+      this.colorMapping[index + 1] = `rgb(${red}, ${green}, ${blue})`;
+    });
+    this.pallette = `const colorMapping = ${JSON.stringify(
+      this.colorMapping,
+      null,
+      2
+    )};`;
+  }
+
+  enterTurbo_draw(ctx) {
+    function generateRandomID() {
+      let characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let id = "";
+      for (let i = 0; i < 9; i++) {
+        let randomIndex = Math.floor(Math.random() * characters.length);
+        id += characters[randomIndex];
+      }
+      return id;
     }
 
     let x1 = ctx.expression1(0)?.getText();
     let y1 = ctx.expression1(1)?.getText();
     let x2 = ctx.expression1(2)?.getText();
     let y2 = ctx.expression1(3)?.getText();
+    let color = `colorMapping[${ctx.expression1(4)?.getText()}]`;
     let the_ID = generateRandomID();
+    let index = ctx.expression1(5)?.getText();
 
     // Calculate the length and angle of the line
 
@@ -592,7 +658,7 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
 
     if (lineDiv${the_ID}) {
         // If the div exists, update its properties
-        lineDiv${the_ID}.style.backgroundColor = Ink;
+        lineDiv${the_ID}.style.backgroundColor = ${color};
         lineDiv${the_ID}.style.left = TurboDrawX1${the_ID} + 'px';
         lineDiv${the_ID}.style.top = TurboDrawY1${the_ID} + 'px';
         lineDiv${the_ID}.style.width = length${the_ID} + 'px';
@@ -601,13 +667,15 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
         lineDiv${the_ID}.style.transformOrigin = '0 0'; // Rotate from the starting point
         lineDiv${the_ID}.style.position = 'absolute';
         lineDiv${the_ID}.style.borderRadius = '1px';
-        lineDiv${the_ID}.style.borderColor = Ink;
+        lineDiv${the_ID}.style.borderColor = ${color};
+        lineDiv${the_ID}.style.zIndex = 1000${index};
+         lineDiv${the_ID}.indexPlacer = 1000${index};
     } else {
         // If the div doesn't exist, create it
         lineDiv${the_ID} = document.createElement('div');
         lineDiv${the_ID}.style.position = 'absolute';
         lineDiv${the_ID}.id = idBar${the_ID};
-        lineDiv${the_ID}.style.backgroundColor = Ink;
+        lineDiv${the_ID}.style.backgroundColor = ${color};
         lineDiv${the_ID}.style.left = TurboDrawX1${the_ID} + 'px';
         lineDiv${the_ID}.style.top = TurboDrawY1${the_ID} + 'px';
         lineDiv${the_ID}.style.width = length${the_ID} + 'px';
@@ -615,14 +683,15 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
         lineDiv${the_ID}.style.transform = 'rotate(' + angle${the_ID} + 'deg)';
         lineDiv${the_ID}.style.transformOrigin = '0 0'; // Rotate from the starting point
         lineDiv${the_ID}.style.borderRadius = '1px';
-        lineDiv${the_ID}.style.borderColor = Ink;
-
+        lineDiv${the_ID}.style.borderColor = ${color};
+        lineDiv${the_ID}.style.zIndex = 1000${index};
+    lineDiv${the_ID}.indexPlacer = 1000${index};
         document.getElementById('amos-screen').appendChild(lineDiv${the_ID});
     }
-    console.log(A);
-    `;
-}
 
+    `;
+   
+  }
 
   enterBar(ctx) {
     let x1 = ctx.expression1(0)?.getText();
@@ -669,7 +738,7 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
   /* WHILE for key pressed */
   enterWhile_wend(ctx) {
     let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();
-    if(!leftExpression) {
+    if (!leftExpression) {
       return;
     }
     if (leftExpression.includes("$")) {
@@ -686,7 +755,6 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
           // If it's a variable or expression with a hex part, construct it accordingly
           leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/, hexValue);
         }
-
       }
       this.output += `
 
@@ -702,70 +770,87 @@ ${this.indent()}}`;
     let name = ctx.children[0]?.getText() || "";
     let value = ctx.children[2]?.getText() || 0;
     let lineNumber = ctx.start.line;
+    if (name !== "Timer") {
+      if (value > 2147483647) {
+        throw new Error(
+          `ERROR: Amos code line ${lineNumber}: Value for variable "${name}" exceeds the allowed limit of 2,147,483,647.`
+        );
+      }
 
-    if (value > 2147483647) {
-        throw new Error(`ERROR: Amos code line ${lineNumber}: Value for variable "${name}" exceeds the allowed limit of 2,147,483,647.`);
-    }
-
-    if (this.variables[name]) {
+      if (this.variables[name]) {
         // Iterate over all terms and factors in expression1
         for (let j = 0; ctx.expression1(0)?.term(j); j++) {
-            for (let i = 0; ctx.expression1(0)?.term(j)?.factor(i); i++) {
-                let arrayIndexGet = ctx.expression1(0)?.term(j)?.factor(i)?.array_index_get(0);
-                
-                if (arrayIndexGet) {
-                    // Get the text and replace parentheses with square brackets
-                    let text = arrayIndexGet.getText();
-                    let modifiedText = text.replace(/\(/g, '[').replace(/\)/g, ']');
-                    value = value.replace(text, modifiedText);
-                }
+          for (let i = 0; ctx.expression1(0)?.term(j)?.factor(i); i++) {
+            let arrayIndexGet = ctx
+              .expression1(0)
+              ?.term(j)
+              ?.factor(i)
+              ?.array_index_get(0);
+            if (arrayIndexGet) {
+              // Get the text and replace parentheses with square brackets
+              let text = arrayIndexGet.getText();
+              let modifiedText = text.replace(/\(/g, "[").replace(/\)/g, "]");
+              value = value.replace(text, modifiedText);
             }
+          }
         }
 
         // Variable already exists at this indent level
         this.output += `
-${this.indent()}${name} = ${value};
-        `;
-    } else {
+  ${this.indent()}${name} = ${value};
+          `;
+      } else {
+        for (let j = 0; ctx.expression1(0)?.term(j); j++) {
+          for (let i = 0; ctx.expression1(0)?.term(j)?.factor(i); i++) {
+            let arrayIndexGet = ctx
+              .expression1(0)
+              ?.term(j)
+              ?.factor(i)
+              ?.array_index_get(0);
+            if (arrayIndexGet) {
+              // Get the text and replace parentheses with square brackets
+              let text = arrayIndexGet.getText();
+              let modifiedText = text.replace(/\(/g, "[").replace(/\)/g, "]");
+              value = value.replace(text, modifiedText);
+            }
+          }
+        }
         // Variable doesn't exist at this indent level, so create it
         this.output += `
-${this.indent()}let ${name} = ${value};
-        `;
+  ${this.indent()}let ${name} = ${value};
+          `;
         // Store the variable in the current indent level
         this.variables[name] = value;
+      }
     }
-}
-enterAdd(ctx) {
-  let variable = ctx.children[1]?.getText(); 
-  let valueExpression = ctx.children[3]?.getText(); 
-
-  let valueStarter;
-  let valueEndIteration;
-  if(!this.variables[variable]){
-    this.globalVariables += `${this.indent()}let ${variable} = 0;`;
-    this.variables[variable] = 0;
-
   }
+  enterAdd(ctx) {
+    let variable = ctx.children[1]?.getText();
+    let valueExpression = ctx.children[3]?.getText();
 
-  if (ctx.children.length > 4) {
-    valueStarter = ctx.children[5]?.getText(); 
-    valueEndIteration = ctx.children[7]?.getText(); 
+    let valueStarter;
+    let valueEndIteration;
+    if (!this.variables[variable]) {
+      this.globalVariables += `${this.indent()}let ${variable} = 0;`;
+      this.variables[variable] = 0;
+    }
 
+    if (ctx.children.length > 4) {
+      valueStarter = ctx.children[5]?.getText();
+      valueEndIteration = ctx.children[7]?.getText();
 
-    this.output += `
+      this.output += `
     ${this.indent()}${variable} = (${variable} + ${valueExpression}) % ${valueEndIteration};
     ${this.indent()}if (${variable} < ${valueStarter}) {
       ${this.indent()}${variable} += ${valueEndIteration};
     }
     `;
-  } else {
-    this.output += `
+    } else {
+      this.output += `
     ${this.indent()}${variable} = ${variable} + ${valueExpression};
     `;
+    }
   }
-}
-
-
 
   enterProcedure(ctx) {
     this.id++;
@@ -831,21 +916,37 @@ ${this.indent()}document.getElementById('amos-screen').appendChild(textDiv${x}${
     this.output += `
 ${this.indent()}setInterval(() => {
   currentTimer = Date.now();
+  Timer++;
 
         `;
     this.indentLevel++; // Increase indentation inside the loop
   }
-  /* WAIT KEY FUNCTION */
-    enterWait_key_break(ctx) {
+
+  enterRepeat_key(ctx) {
     this.output += `
-${this.indent()}if (!isPressed) {
-${this.indent()}return;
-${this.indent()}}
+${this.indent()}setInterval(() => {
+  currentTimer = Date.now();
+  Timer++;
+
         `;
-  } 
+    this.indentLevel++; // Increase indentation inside the loop
+  }
+  exitRepeat_key(ctx) {
+    this.indentLevel--; // Decrease indentation after exiting the loop
+    this.output += `
+    
+    
+    Timer = 9;
+  
+${this.indent()}}, 16);`;
+  }
   exitDo_loop(ctx) {
     this.indentLevel--; // Decrease indentation after exiting the loop
     this.output += `
+    
+    
+    Timer = 9;
+  
 ${this.indent()}}, 16);`;
   }
 
@@ -860,12 +961,13 @@ ${this.indent()}}, 16);`;
     this.indentLevel++; // Increase indentation inside the loop
   }
   enterArray_create(ctx) {
-  
-    for(let i = 0; i < ctx.array_structure().length ; i++){
+    for (let i = 0; i < ctx.array_structure().length; i++) {
       this.output += `
-${this.indent()}const ${ctx.array_structure(i).IDENTIFIER(0).getText()} = new Array(${ctx.array_structure(i).NUMBER(0).getText()});
+${this.indent()}const ${ctx
+        .array_structure(i)
+        .IDENTIFIER(0)
+        .getText()} = new Array(${ctx.array_structure(i).NUMBER(0).getText()});
         `;
-      
     }
   }
   exitFor_loop(ctx) {
@@ -877,20 +979,39 @@ ${this.indent()}const ${ctx.array_structure(i).IDENTIFIER(0).getText()} = new Ar
     let arrayName = ctx.IDENTIFIER(0)?.getText();
     let arrayIndex = ctx.NUMBER(0)?.getText();
     let arrayTargetValue = ctx.expression1(1)?.getText();
-    if(arrayIndex === undefined){
+    if (arrayIndex === undefined) {
       arrayIndex = ctx.IDENTIFIER(1)?.getText();
-      if(arrayIndex === undefined){
-        arrayIndex =  ctx.expression1(0)?.getText();
-        arrayTargetValue =  ctx.expression1(1)?.getText();
+      if (arrayIndex === undefined) {
+        arrayIndex = ctx.expression1(0)?.getText();
+        arrayTargetValue = ctx.expression1(1)?.getText();
       }
     }
-    if(arrayTargetValue === undefined){
-      arrayTargetValue =  ctx.expression1(0)?.getText();
+    if (arrayTargetValue === undefined) {
+      arrayTargetValue = ctx.expression1(0)?.getText();
     }
 
-   this.output += `
-   ${this.indent()}${arrayName}[${arrayIndex}] = ${arrayTargetValue};
-           `;
+    // Check for Qcos or Qsin and process the scaling
+    if (
+      arrayTargetValue.includes("Qcos") ||
+      arrayTargetValue.includes("Qsin")
+    ) {
+      // Extract the function name (Qcos or Qsin) and contents inside parentheses
+      const match = arrayTargetValue.match(/(Qcos|Qsin)\(([^,]+),([^)]+)\)/);
+
+      if (match) {
+        const funcName = match[1]; // Qcos or Qsin
+        const angle = match[2].trim(); // First value inside parentheses
+        const scale = match[3].trim(); // Second value inside parentheses
+
+        // Replace Qcos/Qsin with Cos/Sin and apply scaling
+        const trigFunction = funcName === "Qcos" ? "Cos" : "Sin";
+        arrayTargetValue = `${trigFunction}(${angle}) * ${scale}`;
+      }
+    }
+
+    this.output += `
+       ${this.indent()}${arrayName}[${arrayIndex}] = ${arrayTargetValue};
+    `;
   }
 
   enterIf_statement(ctx) {
@@ -991,7 +1112,10 @@ ${this.indent()}
     this.output += ``;
   }
   getJavaScript() {
-    return this.globalVariables + this.output + this.functionStarters;
+    console.log(this.lineData)
+    return (
+      this.pallette + this.globalVariables + this.output + this.functionStarters
+    );
   }
 }
 

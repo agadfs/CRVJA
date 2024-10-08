@@ -113,16 +113,33 @@ statement:
     | pen
     | double_buffer
     | autoback
-    | blitter
+    | blitter_copy
+    | blitter_fill
+    | blitter_clear
     | add
     | locate
     | turbo_draw
+    | global
+    | set_buffer
+    | repeat_key
 
 
     
     ;
+
+    repeat_key:
+    'Repeat'
+    (statement)*
+    'Until' 'Mouse' 'Key' '=' NUMBER
+    ;
+    set_buffer:
+    'Set' 'Buffer' NUMBER
+    ;
+    global:
+    'Global' (array_structure | IDENTIFIER) (COMMA (array_structure | IDENTIFIER))*?
+    ;
     turbo_draw:
-    'Turbo' 'Draw' expression1 COMMA expression1 'To' expression1 COMMA expression1
+    'Turbo' 'Draw' expression1 COMMA expression1 'To' expression1 COMMA expression1 COMMA expression1 COMMA expression1
     ;
     locate:
     'Locate' NUMBER COMMA? NUMBER?
@@ -130,8 +147,14 @@ statement:
     add:
     'Add' IDENTIFIER COMMA expression1 (COMMA expression1 'To' 'NUMBER')?
     ;
-    blitter:
+    blitter_copy:
     'Blitter' 'Copy'  'Limit'? NUMBER COMMA NUMBER 'To' NUMBER COMMA NUMBER
+    ;
+     blitter_fill:
+    'Blitter' 'Fill' NUMBER COMMA NUMBER (COMMA expression1 COMMA expression1 COMMA expression1 COMMA expression1)?
+    ;
+     blitter_clear:
+    'Blitter' 'Clear'  NUMBER COMMA NUMBER (COMMA expression1 COMMA expression1 'To' expression1 COMMA expression1)?
     ;
     autoback:
     'Autoback' NUMBER
@@ -238,7 +261,7 @@ while_wend:
 for_loop:
     FOR IDENTIFIER '=' NUMBER TO NUMBER
     (statement)*
-    (NEXT? | NEXT IDENTIFIER) 
+    (NEXT IDENTIFIER | NEXT) 
     ;
 
 // If-End If statement that compares a variable to an expression
