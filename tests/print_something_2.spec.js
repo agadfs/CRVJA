@@ -6,10 +6,10 @@ import AMOSLexer from "../AMOSLexer";
 test("print_something_2", () => {
   // const amosBasicCode = `Print #1,"_COLOR_TABLE("+Right$(Str$(L),Len(Str$(L))-1)+")="+Hex$(CV)`;
   const amosBasicCode = `
-  Open Out 1, TempFile
+  Open Out 1, "TempFile.txt"
   Print #1,"Hello, World!"
   Close 1
-  Open In 2, TempFile
+  Open In 2, "TempFile.txt"
   Input #2, A$
   Close 2
   Print A$`;
