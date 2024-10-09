@@ -45,6 +45,10 @@ ADD: '+';
 SUBTRACT: '-';
 STATEMENT_SEPARATOR: ':';
 FINISH_AND_ADD_OTHER_STATEMENT: ';';
+DOT: '.';
+HASHTAG: '#';
+PERCENT: '%';
+QUESTION: '?';
 
 
 // Expression captures more complex expressions
@@ -68,7 +72,7 @@ factor:
     | cos_function
     | IDENTIFIER                // A variable
     | '(' expression1 ')'        // Parentheses for grouping
-    | (HECADECIMAL NUMBER)
+    | (HECADECIMAL (NUMBER | IDENTIFIER))
 
     ;
 
@@ -122,11 +126,33 @@ statement:
     | global
     | set_buffer
     | repeat_key
+    | btst
+    | open_out_readfile
+    | close_file
+    | open_in_writefile
+    | input_variable
 
 
     
     ;
+    open_out_readfile:
+    'Open' 'Out' NUMBER COMMA IDENTIFIER
+    ;
+    open_in_writefile:
+    'Open' 'In' NUMBER COMMA IDENTIFIER
+    ;
+    close_file:
+    'Close' NUMBER
+    ;
 
+    input_variable:
+    'Input' HASHTAG NUMBER COMMA IDENTIFIER HECADECIMAL?
+    ;
+
+
+    btst:
+    'Btst' BRACKETOPEN_PROP expression1 COMMA expression1 BRACKETCLOSE_PROP
+    ;
     repeat_key:
     'Repeat'
     (statement)*
@@ -207,7 +233,7 @@ wait_key_break:
     WAITKEY
     ;
 variable_starter:
-    IDENTIFIER '=' expression1 // Agora captura apenas atribuições de variáveis
+    IDENTIFIER '=' (btst | expression1) // Agora captura apenas atribuições de variáveis
     ;
 function_starter:
     IDENTIFIER BRACKETOPEN_ARRAY (NUMBER | IDENTIFIER) BRACKETCLOSE_ARRAY
@@ -218,7 +244,7 @@ function_call_or_array_access:
     | IDENTIFIER BRACKETOPEN_PROP expression1? (COMMA expression1)* BRACKETCLOSE_PROP // Chamadas de função com ou sem parâmetros
     ;
 array_structure:
-  IDENTIFIER BRACKETOPEN_PROP NUMBER BRACKETCLOSE_PROP
+  IDENTIFIER BRACKETOPEN_PROP (NUMBER | expression1) BRACKETCLOSE_PROP
   ;
 array_create:
     'Dim' array_structure (COMMA? array_structure)*
@@ -296,8 +322,9 @@ current_Key_State:
     KEYSTATE BRACKETOPEN_PROP expression1 BRACKETCLOSE_PROP
     ;
 print_options:
-    STRING 
-    | expression1
+    expression1
+    | STRING
+    | HASHTAG NUMBER
     ;
 print_something:
     'Print' print_options ((COMMA | FINISH_AND_ADD_OTHER_STATEMENT) print_options)*?

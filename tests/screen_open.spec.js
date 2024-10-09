@@ -32,8 +32,9 @@ test("screen_open", () => {
   screenDiv.style.padding = '0';
   screenDiv.style.position = 'relative';
   screenDiv.id = 'amos-screen';
+  screenDiv.style.zIndex = 1;
   document.getElementById('game-container').appendChild(screenDiv);
-  document.getElementById('amos-screen').style.backgroundColor = "rgb(160, 64, 0)";
+  document.getElementById('amos-screen').style.backgroundColor = colorMapping[8];
 
 `;
 

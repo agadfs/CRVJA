@@ -68,6 +68,51 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#open_out_readfile.
+	enterOpen_out_readfile(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#open_out_readfile.
+	exitOpen_out_readfile(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#open_in_writefile.
+	enterOpen_in_writefile(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#open_in_writefile.
+	exitOpen_in_writefile(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#close_file.
+	enterClose_file(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#close_file.
+	exitClose_file(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#input_variable.
+	enterInput_variable(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#input_variable.
+	exitInput_variable(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#btst.
+	enterBtst(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#btst.
+	exitBtst(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#repeat_key.
 	enterRepeat_key(ctx) {
 	}

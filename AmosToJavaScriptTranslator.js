@@ -459,6 +459,60 @@ function soundPlayer(noteId, cooldown) {
         });
     }
 }
+
+const fs = require('fs');
+
+// Dictionary to hold file streams based on channels (0-10)
+const channels = {};
+
+// Function to open a file and assign it to a channel
+function openFile(fileName, channel, mode = 'w') {
+console.log(fileName, 'opened on channel', channel); 
+  if (channel < 0 || channel > 10) {
+    throw new Error('Channel must be between 0 and 10');
+  }
+  const stream = fs.createWriteStream(fileName, { flags: mode });
+  channels[channel] = stream;
+  console.log(fileName, 'opened on channel', channel);
+}
+
+// Function to write to a file based on the assigned channel
+function writeToChannel(channel, data) {
+  const stream = channels[channel];
+  if (!stream) {
+    throw new Error('No file opened on channel', channel);
+  }
+  stream.write(data + '\n', 'utf8', (err) => {
+    if (err) throw err;
+    console.log('Data written to channel', channel);
+  });
+}
+  // Function to read from a file based on the assigned channel
+  function readFromChannel(channel, callback) {
+    const stream = channels[channel];
+    if (!stream || !stream.readable) {
+      throw new Error('No readable file opened on channel', channel);
+    }
+    let data = '';
+    stream.on('data', chunk => data += chunk);
+    stream.on('end', () => {
+      callback(data.trim()); // Callback to return the read data
+    });
+  }
+
+// Function to close a file channel
+  function closeChannel(channel) {
+    const stream = channels[channel];
+    if (!stream) {
+      throw new Error('No file opened on channel', channel);
+    }
+    stream.end(() => {
+      console.log('Channel', channel, 'closed');
+    });
+    delete channels[channel];
+  }
+
+
     function Cos(angle) {
     return Math.cos(angle * Math.PI / 180);
 }
@@ -483,7 +537,7 @@ function Tan(angle) {
     const width = ctx.children[3]?.getText();
     const height = ctx.children[5]?.getText();
     const color = ctx.children[7]?.getText();
-    const colortarget = this.colorMapping[color] || "white";
+
     this.output += `
 ${this.indent()}const screenDiv = document.createElement('div');
 ${this.indent()}screenDiv.style.width = '${width}px';
@@ -495,7 +549,7 @@ ${this.indent()}screenDiv.style.position = 'relative';
 ${this.indent()}screenDiv.id = 'amos-screen'; 
 ${this.indent()}screenDiv.style.zIndex = 1;
 ${this.indent()}document.getElementById('game-container').appendChild(screenDiv);
-${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "${colortarget}";
+${this.indent()}document.getElementById('amos-screen').style.backgroundColor = colorMapping[${color}];
         `;
   }
   enterBlitter_fill(ctx) {
@@ -503,13 +557,59 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = "
   }
   
   
-  
+enterOpen_out_readfile(ctx) {
+    const channel = ctx.children[2]?.getText();
+    const fileName = ctx.children[4]?.getText();
+
+    this.output += `
+${this.indent()}openFile('${fileName}', ${channel}, 'w');
+    `;
+  }
+
+  enterOpen_in_writefile(ctx) {
+    const channel = ctx.children[2]?.getText();
+    const fileName = ctx.children[4]?.getText();
+
+    this.output += `
+${this.indent()}openFile('${fileName}', ${channel}, 'r');
+    `;
+  }
+
+  enterInput_variable(ctx) {
+    let channel = ctx.children[1]?.getText();
+    channel += ctx.children[2]?.getText();
+
+    let variable = ctx.children[4]?.getText();
+     variable += ctx.children[5]?.getText();
+    this.output += `
+    let ${variable} = '';
+    readFromChannel(${channel}, (data) => {
+      ${variable} = data;
+    });
+    `;
+  }
+  enterClose_file(ctx) {
+    const channel = ctx.children[1]?.getText();
+
+    this.output += `
+${this.indent()}closeChannel(${channel});
+    `;
+  }
+ 
 
   enterPrint_something(ctx) {
+    const printConfig = ctx.print_options(0).getText();
+    if(printConfig.includes("#")){
+      /* WRITE TO FILE */
+      let channel = ctx.print_options(0).getText();
+      let content = ctx.print_options(1).getText();
+      this.output += `writeToChannel(${channel}, ${content});`;
+      return;
+    }
     for (let i = 0; i < ctx.print_options().length; i++) {
       let text = ctx.print_options(i).getText();
-      if (ctx.print_options(i)?.STRING(0)?.getText()) {
-        text = ctx.print_options(i).STRING(0).getText().replace(/["']/g, "");
+      if (ctx.print_options(i)?.expression1(0)?.getText()) {
+        text = ctx.print_options(i).expression1(0).getText().replace(/["']/g, "");
         this.output += `
       ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
        ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
@@ -787,6 +887,7 @@ ${this.indent()}}`;
               ?.factor(i)
               ?.array_index_get(0);
             if (arrayIndexGet) {
+              
               // Get the text and replace parentheses with square brackets
               let text = arrayIndexGet.getText();
               let modifiedText = text.replace(/\(/g, "[").replace(/\)/g, "]");
@@ -797,7 +898,7 @@ ${this.indent()}}`;
 
         // Variable already exists at this indent level
         this.output += `
-  ${this.indent()}${name} = ${value};
+     ${this.indent()}${name} = ${value};
           `;
       } else {
         for (let j = 0; ctx.expression1(0)?.term(j); j++) {
@@ -817,7 +918,7 @@ ${this.indent()}}`;
         }
         // Variable doesn't exist at this indent level, so create it
         this.output += `
-  ${this.indent()}let ${name} = ${value};
+        ${this.indent()}let ${name} = ${value};
           `;
         // Store the variable in the current indent level
         this.variables[name] = value;
@@ -827,12 +928,13 @@ ${this.indent()}}`;
   enterAdd(ctx) {
     let variable = ctx.children[1]?.getText();
     let valueExpression = ctx.children[3]?.getText();
-
+    
     let valueStarter;
     let valueEndIteration;
-    if (!this.variables[variable]) {
-      this.globalVariables += `${this.indent()}let ${variable} = 0;`;
+    if (!this.variables[variable] && !this.globalVariables.includes(`let ${variable}`)) {
+    
       this.variables[variable] = 0;
+      this.globalVariables += `${this.indent()}let ${variable} = 0;`;
     }
 
     if (ctx.children.length > 4) {
@@ -966,8 +1068,11 @@ ${this.indent()}}, 16);`;
 ${this.indent()}const ${ctx
         .array_structure(i)
         .IDENTIFIER(0)
-        .getText()} = new Array(${ctx.array_structure(i).NUMBER(0).getText()});
+        .getText()} = new Array(${ctx.array_structure(i).NUMBER(0) === null ? ctx.array_structure(i).expression1(0).getText() : ctx.array_structure(i).NUMBER(0).getText()});
         `;
+        if(ctx.array_structure(i).NUMBER(0) === null){
+          console.log(ctx.array_structure(i).expression1(0).getText())
+        }
     }
   }
   exitFor_loop(ctx) {
@@ -1112,7 +1217,7 @@ ${this.indent()}
     this.output += ``;
   }
   getJavaScript() {
-    console.log(this.lineData)
+
     return (
       this.pallette + this.globalVariables + this.output + this.functionStarters
     );

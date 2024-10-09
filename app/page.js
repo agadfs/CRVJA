@@ -50,7 +50,7 @@ function App() {
   // Function to dynamically render the translated JavaScript code
   useEffect(() => {
     if (jsCode) {
-      
+      console.log("Executing JavaScript code: ", jsCode);
       try {
         const existingContainer = document.getElementById("amos-screen");
         if (existingContainer) {
@@ -58,7 +58,7 @@ function App() {
         }
         const func = new Function(jsCode); // Create a function from the JS code
         func(); // Execute the function (it should render the game)
-        console.log("JavaScript code executed successfully: ", jsCode);
+        console.log("JavaScript code executed successfully");
       } catch (err) {
         console.error("Error rendering JavaScript:", err);
       }

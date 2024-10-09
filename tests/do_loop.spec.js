@@ -23,9 +23,7 @@ test("do_loop", () => {
   walker.walk(translator, tree);
   const translatedJsCode = translator.getJavaScript(); // Get the translated JavaScript code
   let targetString = 
-  `setInterval(() => {
-      currentTimer = Date.now();
-      }, 16);
+  `setInterval(() => { currentTimer = Date.now(); Timer++; Timer = 9; }, 16);
       `
   
   /* test */
