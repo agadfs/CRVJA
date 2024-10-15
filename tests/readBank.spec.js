@@ -13,7 +13,7 @@ test("readBank", async () => {
 
     dataRead = data;
 
-    console.log(dataRead.toString("hex").replace(/(.)(.)/g, "$1$2 "));
+    
     let byte0 = data[0];
     let byte1 = data[1];
     let byte2 = data[2];
@@ -60,8 +60,9 @@ test("readBank", async () => {
       
       offset += 10 + dataSize;
     }
+    console.log("How many sprites: ", objectsArray.length);
     console.log("Array of sprites: ", objectsArray);
-    console.log("Array of objects with length: ", objectsArray.length);
+    console.log("Data being read: ",dataRead.toString("hex").replace(/(.)(.)/g, "$1$2 "));
   });
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
