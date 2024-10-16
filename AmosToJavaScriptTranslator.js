@@ -460,7 +460,7 @@ function soundPlayer(noteId, cooldown) {
     }
 }
 
-const fs = require('fs');
+
 
 // Dictionary to hold file streams based on channels (0-10)
 const channels = {};
@@ -482,7 +482,7 @@ function writeToChannel(channel, data) {
   if (!stream) {
     throw new Error('No file opened on channel', channel);
   }
-  stream.write(data + '\n', 'utf8', (err) => {
+  stream.write(data + '\\n', 'utf8', (err) => {
     if (err) throw err;
     console.log('Data written to channel', channel);
   });
