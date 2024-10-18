@@ -131,10 +131,16 @@ statement:
     | close_file
     | open_in_writefile
     | input_variable
+    | loadBank
 
 
     
     ;
+
+    loadBank:
+    'Load' STRING COMMA NUMBER
+    ;
+
     open_out_readfile:
     'Open' 'Out' NUMBER COMMA IDENTIFIER
     ;

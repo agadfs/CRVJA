@@ -68,6 +68,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#loadBank.
+	enterLoadBank(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#loadBank.
+	exitLoadBank(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#open_out_readfile.
 	enterOpen_out_readfile(ctx) {
 	}

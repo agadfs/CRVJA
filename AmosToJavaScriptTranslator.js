@@ -1,8 +1,11 @@
 import AMOSListener from "./AMOSListener";
-
+import bankReader from './src/tools/bankReader/bankReader.js';
 class AmosToJavaScriptTranslator extends AMOSListener {
   constructor() {
     super();
+    this.imports = `
+   
+    `
     this.output = "";
     this.indentLevel = 0; // Track current indentation level
     this.id = 0;
@@ -476,6 +479,7 @@ console.log(fileName, 'opened on channel', channel);
   console.log(fileName, 'opened on channel', channel);
 }
 
+
 // Function to write to a file based on the assigned channel
 function writeToChannel(channel, data) {
   const stream = channels[channel];
@@ -516,6 +520,8 @@ function writeToChannel(channel, data) {
     function Cos(angle) {
     return Math.cos(angle * Math.PI / 180);
 }
+   
+
 
 function Sin(angle) {
     return Math.sin(angle * Math.PI / 180);
@@ -524,6 +530,122 @@ function Sin(angle) {
 function Tan(angle) {
     return Math.tan(angle * Math.PI / 180);
 }
+let bankData = {
+  1: {
+  sprites: [],
+  palette: [],
+  },
+  2: {
+  sprites: [],
+  palette: [],
+  },
+  3: {
+  sprites: [],
+  palette: [],
+  },
+  4: {
+  sprites: [],
+  palette: [],
+  },
+  5: {
+  sprites: [],
+  palette: [],
+  },
+
+  }
+function loadBank(bank, bankId) {
+ 
+
+  const idBankInput = "bankStored" + "_AmosBank_" + bankId.replace(/"/g, ""); // Use the provided bankId for dynamic input
+
+  const inputElement = document.getElementById(idBankInput);
+ console.log(idBankInput);
+  if (!inputElement || !inputElement.files[0]) {
+    console.log('Bank',  bankId, 'failed to be loaded', ' on bank slot:', bank, 'No file was selected');
+    
+    return;
+  }
+
+  const file = inputElement.files[0]; // Get the file from the input element
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const arrayBuffer = e.target.result; // The result is now an ArrayBuffer
+    const buffer = new Uint8Array(arrayBuffer); // Convert to Uint8Array for easier byte manipulation
+
+    let offset = 6; // Adjust the starting offset as per the file format
+    const numberExpected = (buffer[4] << 8) | buffer[5]; // Check this is correct
+   
+
+    let objectsArray = [];
+    
+    for (let i = 0; i < numberExpected; i++) {
+      const width = (buffer[offset] << 8) | buffer[offset + 1];
+      const height = (buffer[offset + 2] << 8) | buffer[offset + 3];
+      const depth = (buffer[offset + 4] << 8) | buffer[offset + 5];
+      const hotspotX = (buffer[offset + 6] << 8) | buffer[offset + 7];
+      const hotspotY = (buffer[offset + 8] << 8) | buffer[offset + 9];
+
+      
+
+      const planarGraphicData = [];
+      const dataSize = width * 2 * height * depth; // Ensure this calculation is correct
+
+      for (let j = 0; j < dataSize; j++) {
+        planarGraphicData.push(buffer[offset + 10 + j]);
+      }
+
+      const objectBuilder = {
+        width,
+        height,
+        depth,
+        hotspotX,
+        hotspotY,
+        planarGraphicData,
+      };
+
+      objectsArray.push(objectBuilder);
+      offset += 10 + dataSize;
+    }
+
+    // Initialize colorPalette to hold 32 colors (64 bytes in total)
+    let colorPalette = [];
+
+    // Loop through each pair of bytes in the color palette section (32 colors x 2 bytes)
+    for (let k = offset; k < offset + 64; k += 2) {
+      const byte1 = buffer[k];
+      const byte2 = buffer[k + 1];
+
+      const color1 = (byte1 << 8) | byte2;
+
+      // Extract the red, green, and blue components (4 bits each)
+      const red = (color1 >> 8) & 0xF;
+      const green = (color1 >> 4) & 0xF;
+      const blue = color1 & 0xF;
+
+      // Convert 4-bit values (0-15) to 8-bit values (0-255) by multiplying by 17
+      const red8 = (red * 17).toString(16).padStart(2, "0");
+      const green8 = (green * 17).toString(16).padStart(2, "0");
+      const blue8 = (blue * 17).toString(16).padStart(2, "0");
+
+      // Format as HTML color code #RRGGBB
+      const color = '#' + red8 + green8 + blue8;
+      colorPalette.push(color.toUpperCase());
+    }
+
+    bankData[bank].sprites = objectsArray;
+    bankData[bank].palette = colorPalette;
+   
+    if(bankData[bank].sprites.length > 0){
+    console.log("Loaded bank slot:", bank, "with", bankData[bank].sprites.length, "sprites", "and color palette: ", bankData[bank].palette);
+    }else{
+       console.log('Bank',  bankId, 'failed to be loaded', ' on bank slot:', bank);
+    }
+  };
+
+  reader.readAsArrayBuffer(file); // Use readAsArrayBuffer for binary data
+}
+
   `;
   }
 
@@ -556,7 +678,14 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = c
    
   }
   
-  
+  enterLoadBank(ctx) {
+    const bank = ctx.children[3]?.getText();
+    const fileName = ctx.children[1]?.getText();
+
+    this.output += `
+${this.indent()}loadBank(${bank}, '${fileName}');
+    `;
+  }
 enterOpen_out_readfile(ctx) {
     const channel = ctx.children[2]?.getText();
     const fileName = ctx.children[4]?.getText();
@@ -1219,7 +1348,7 @@ ${this.indent()}
   getJavaScript() {
 
     return (
-      this.pallette + this.globalVariables + this.output + this.functionStarters
+      this.imports + this.pallette + this.globalVariables + this.output + this.functionStarters
     );
   }
 }

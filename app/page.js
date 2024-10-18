@@ -7,11 +7,17 @@ import AMOSLexer from "@/AMOSLexer";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
+  const [numBanks, setNumBanks] = useState(0);
+  const [bankFiles, setBankFiles] = useState([]);
   const [option, setOption] = useState("file");
   const [AmosCode, setAmosCode] = useState("");
-  const [sprites, setSprites] = useState([]);
-  const [palette, setPalette] = useState([]);
 
+
+  const handleNumBanksChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    setNumBanks(value);
+    setBankFiles(new Array(value).fill(null)); // Reset bankFiles array
+  };
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -24,6 +30,8 @@ function App() {
 
     reader.readAsText(file);
   };
+
+  
 
   const parseAmosCode = (amosBasicCode) => {
     console.log(amosBasicCode);
@@ -41,7 +49,7 @@ function App() {
     console.log(translatedJsCode);
   };
 
-  const readAndShowBank1 = async () => {
+  /* const readAndShowBank1 = async () => {
     try {
       const response = await fetch("/api/readBank1");
       let { data } = await response.json();
@@ -243,7 +251,7 @@ function App() {
         ))}
       </div>
     );
-  }
+  } */
 
   useEffect(() => {
     if (jsCode) {
@@ -260,33 +268,47 @@ function App() {
     }
   }, [jsCode]);
 
-  useEffect(() => {
-    console.log("Sprites: ", sprites);
-  }, [sprites]);
 
 
 
   return (
     <div className="App">
       <h1>AMOS Basic parser to JavaScript</h1>
-      <div>Open browser console to see full results</div>
-      <button
-        onClick={() => {
-          readAndShowBank1();
-        }}
-      >
-        Read the first sample sprite/icon bank
-      </button>
+      <div style={{marginBlock:"20px"}} >Open browser console to see full results</div>
+      <div style={{border:"2px solid black", padding:"5px"}} >
 
-      <button
-        onClick={() => {
-          readAndShowBank2();
-        }}
-      >
-        Read the second sample sprite/icon bank
-      </button>
-      <div>For now, only accepts single file .asc apps</div>
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div>
+        <label>STEP ONE: Select number of banks: </label>
+        <select value={numBanks} onChange={handleNumBanksChange}>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      {Array.from({ length: numBanks }, (_, index) => (
+  <div style={{marginBottom:"10px"}} key={index}>
+    <label>Bank {index + 1}: </label>
+    <input
+      id={`bankStored${index + 1}`}
+      type="file"
+      onChange={(e) => {
+        if (e.target.files.length > 0) {
+          const fileName = e.target.files[0].name;
+          e.target.id = `bankStored_${fileName.replace(/\s/g, "_")}`;
+        }
+      }}
+      multiple
+    />
+  </div>
+))}
+      </div>
+    <div style={{display:"flex", marginTop:"30px", border:"2px solid black", padding:"5px"}} >
+      <div>STEP TWO: Enter AMOS BASIC code or upload a file</div>
+      <div style={{ display: "flex", flexDirection: "column", marginTop:"10px" }}>
+        
         <select
           style={{ width: "fit-content" }}
           value={option}
@@ -343,17 +365,8 @@ function App() {
           </div>
         )}
       </div>
-      <div>
-        <h2>Rendered Sprites</h2>
-        {sprites.map((sprite, index) => (
-          <div
-            key={index}
-            style={{ marginBottom: "20px", border: "1px solid red" }}
-          >
-            <SpriteRenderer sprite={sprite} />
-          </div>
-        ))}
-      </div>
+      
+    </div>
     </div>
   );
 }
