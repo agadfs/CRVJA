@@ -132,13 +132,18 @@ statement:
     | open_in_writefile
     | input_variable
     | loadBank
+    | loadBankImgToSprite
 
 
     
     ;
 
     loadBank:
-    'Load' STRING COMMA NUMBER
+    'Load' STRING
+    ;
+    
+    loadBankImgToSprite:
+    'Sprite' NUMBER COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER)
     ;
 
     open_out_readfile:

@@ -641,11 +641,87 @@ function loadBank(bank, bankId) {
     }else{
        console.log('Bank',  bankId, 'failed to be loaded', ' on bank slot:', bank);
     }
+        console.log("Bank data updated:", bankData[bank]);
   };
 
   reader.readAsArrayBuffer(file); // Use readAsArrayBuffer for binary data
 }
 
+function renderSprite(spriteNumber, x, y, bankImgIndex) {
+   if (!bankData[1].sprites[bankImgIndex]) {
+    console.log("Sprite data is not loaded yet.");
+    setTimeout(() => {
+        renderSprite(spriteNumber, x, y, bankImgIndex);
+      }, 200);
+    return;
+  }
+
+  let { width, height, depth, planarGraphicData } = bankData[1].sprites[bankImgIndex];
+  let colorPalette = bankData[1].palette;
+  width = width * 16; // Convert width in 16-bit words to pixels
+
+  const pixels = [];
+  const bytesPerRow = width / 8;
+  const rowSize = bytesPerRow * depth;
+
+  // Build pixels array with hex color values based on the planar graphic data
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let colorIndex = 0;
+
+      // Build colorIndex by combining bits across planes
+      for (let plane = 0; plane < depth; plane++) {
+        const byteIndex = y * bytesPerRow + plane * (height * bytesPerRow) + Math.floor(x / 8);
+        const bitPos = 7 - (x % 8);
+        const bit = (planarGraphicData[byteIndex] >> bitPos) & 1;
+
+        colorIndex |= bit << plane;
+      }
+
+      const hexColor = colorPalette[colorIndex] || "#000000";
+      pixels.push(hexColor);
+    }
+  }
+ let spriteContainerCheck = document.getElementById("sprite" + spriteNumber);
+
+// If the sprite container already exists, remove it from the DOM
+if (spriteContainerCheck) {
+  spriteContainerCheck.remove();
+}
+
+// Create a container div for the new sprite
+const spriteContainer = document.createElement("div");
+spriteContainer.style.display = "grid";
+spriteContainer.style.gridTemplateColumns = "repeat(" + width + ", 1fr)";
+spriteContainer.style.position = "absolute";
+spriteContainer.style.left = x + "px";
+spriteContainer.style.top = y + "px";
+spriteContainer.id = "sprite" + spriteNumber; // Assign the ID for future reference
+
+// Append the new sprite container to the document body (or a specific parent container)
+document.body.appendChild(spriteContainer);
+
+// Continue rendering the sprite's pixels
+pixels.forEach((color) => {
+  if(color === colorPalette[0]){
+  const pixel = document.createElement("div");
+  pixel.style.width = "1px";
+  pixel.style.height = "1px";
+  pixel.style.backgroundColor = "transparent";
+  spriteContainer.appendChild(pixel);
+  }else{
+    const pixel = document.createElement("div");
+    pixel.style.width = "1px";
+    pixel.style.height = "1px";
+    pixel.style.backgroundColor = color;
+    spriteContainer.appendChild(pixel);
+  }
+});
+
+
+  // Append the container to the document body or a specific container element
+  document.getElementById('amos-screen').appendChild(spriteContainer);
+}
   `;
   }
 
@@ -679,13 +755,25 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = c
   }
   
   enterLoadBank(ctx) {
-    const bank = ctx.children[3]?.getText();
+
     const fileName = ctx.children[1]?.getText();
 
     this.output += `
-${this.indent()}loadBank(${bank}, '${fileName}');
+${this.indent()}loadBank(1, '${fileName}');
     `;
   }
+
+  enterLoadBankImgToSprite(ctx) {
+    const spriteNumber = ctx.children[1]?.getText();
+    const x = ctx.children[3]?.getText();
+    const y = ctx.children[5]?.getText();
+    const bankImgIndex = ctx.children[7]?.getText();
+    this.output += `
+    renderSprite(${spriteNumber}, ${x}, ${y}, ${bankImgIndex});
+    `;
+  }
+    
+
 enterOpen_out_readfile(ctx) {
     const channel = ctx.children[2]?.getText();
     const fileName = ctx.children[4]?.getText();
