@@ -646,13 +646,21 @@ function loadBank(bank, bankId) {
 
   reader.readAsArrayBuffer(file); // Use readAsArrayBuffer for binary data
 }
-
+let tries = 0;
 function renderSprite(spriteNumber, x, y, bankImgIndex) {
+  if(tries > 40){
+
+   console.error("Bank not found or could not be loaded");
+   location.reload();
+   return;
+  }
    if (!bankData[1].sprites[bankImgIndex]) {
     console.log("Sprite data is not loaded yet.");
+    tries++;
     setTimeout(() => {
         renderSprite(spriteNumber, x, y, bankImgIndex);
       }, 200);
+      
     return;
   }
 
