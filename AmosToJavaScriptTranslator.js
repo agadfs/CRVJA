@@ -572,7 +572,7 @@ function loadBank(bank, bankId) {
   reader.onload = function (e) {
     const arrayBuffer = e.target.result; // The result is now an ArrayBuffer
     const buffer = new Uint8Array(arrayBuffer); // Convert to Uint8Array for easier byte manipulation
-
+  console.log(buffer);
     let offset = 6; // Adjust the starting offset as per the file format
     const numberExpected = (buffer[4] << 8) | buffer[5]; // Check this is correct
    
@@ -686,7 +686,7 @@ function renderSprite(spriteNumber, x, y, bankImgIndex) {
         colorIndex |= bit << plane;
       }
 
-      const hexColor = colorPalette[colorIndex] || "#000000";
+      const hexColor = colorPalette[colorIndex];
       pixels.push(hexColor);
     }
   }
