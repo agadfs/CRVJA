@@ -1092,6 +1092,7 @@ ${this.indent()}}`;
   enterVariable_starter(ctx) {
     let name = ctx.children[0]?.getText() || "";
     let value = ctx.children[2]?.getText() || 0;
+
     let lineNumber = ctx.start.line;
     if (name !== "Timer") {
       if (value > 2147483647) {
@@ -1283,9 +1284,52 @@ ${this.indent()}}, 16);`;
     variable = ctx.children[1]?.getText();
     start = ctx.children[3]?.getText();
     end = ctx.children[5]?.getText();
+
     this.output += `${this.indent()}for (let ${variable} = ${start}; ${variable} <= ${end}; ${variable}++) {`;
     this.indentLevel++; // Increase indentation inside the loop
   }
+
+  enterIf_then(ctx) {
+    let expressions1 = [];
+    let expressions2 = [];
+    let comparators = [];
+    let or_and = [];
+    for(let i = 0; i < ctx.expression1().length; i++) {
+      expressions1.push(ctx.expression1(i).getText());
+    }
+    for(let i = 0; i < ctx.expression2().length; i++) {
+      expressions2.push(ctx.expression2(i).getText());
+    }
+    for(let i = 0; i < ctx.expressions_comparators().length; i++) {
+      comparators.push(ctx.expressions_comparators(i).getText());
+    }
+    for(let i = 0; i < ctx.or_and().length; i++) {
+      or_and.push(ctx.or_and(i).getText());
+    }
+
+   
+
+    let finalIfStatement = "";
+
+    for(let i = 0; i < expressions1.length; i++) {
+      finalIfStatement += expressions1[i] + " " + comparators[i] + " " + expressions2[i];
+      if(or_and[i] && or_and[i] === "AND") {
+
+        finalIfStatement += " && ";
+      
+      }
+      if(or_and[i] && or_and[i] === "OR") {
+
+        finalIfStatement += " || ";
+      
+      }
+
+
+    }
+
+    console.log(finalIfStatement);
+  }
+
   enterArray_create(ctx) {
     for (let i = 0; i < ctx.array_structure().length; i++) {
       if (ctx.array_structure(i).NUMBER().length > 1) {

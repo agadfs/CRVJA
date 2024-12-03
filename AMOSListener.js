@@ -68,6 +68,33 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#on_gosub.
+	enterOn_gosub(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#on_gosub.
+	exitOn_gosub(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#screen_offset.
+	enterScreen_offset(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#screen_offset.
+	exitScreen_offset(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#choose_Screen.
+	enterChoose_Screen(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#choose_Screen.
+	exitChoose_Screen(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#goto_label.
 	enterGoto_label(ctx) {
 	}
@@ -191,6 +218,24 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#loadBankImgToSprite.
 	exitLoadBankImgToSprite(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#expressions_comparators.
+	enterExpressions_comparators(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#expressions_comparators.
+	exitExpressions_comparators(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#or_and.
+	enterOr_and(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#or_and.
+	exitOr_and(ctx) {
 	}
 
 

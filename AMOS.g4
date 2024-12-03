@@ -56,7 +56,7 @@ expression2:
     term ((ADD | SUBTRACT) term)* // Handle addition and subtraction
     ;
 expression1:
-    term ((ADD | SUBTRACT) term)* // Handle addition and subtraction
+    term ((ADD | SUBTRACT) term)* NUMBER? // Handle addition and subtraction
     ;
 
 term:
@@ -146,10 +146,23 @@ statement:
     | bob_update_on
     | gosub
     | goto_label
+    | screen_offset
+    | choose_Screen
+    | on_gosub
 
 
 
     
+    ;
+
+    on_gosub:
+    'On' IDENTIFIER BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP 'Gosub' IDENTIFIER (COMMA IDENTIFIER)*
+    ;
+    screen_offset:
+    'Screen' 'Offset' NUMBER COMMA NUMBER COMMA NUMBER
+    ;
+    choose_Screen:
+    'Screen' NUMBER
     ;
 
     goto_label:
@@ -173,11 +186,11 @@ statement:
     ;
 
     set_rainbow:
-    'Set' 'Rainbow' (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING)? COMMA? (NUMBER | STRING)?
+    'Set' 'Rainbow' (expression1 | NUMBER | STRING) COMMA ( expression1 | NUMBER | STRING) COMMA ( expression1 | NUMBER | STRING) COMMA (expression1 | NUMBER | STRING) COMMA (expression1 | NUMBER | STRING)? COMMA? (expression1 | NUMBER | STRING)?
     ;
 
     use_rainbow:
-    'Rainbow' (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA? (NUMBER | STRING)? COMMA? (NUMBER | STRING)?
+    'Rainbow' (expression1 | NUMBER | STRING) COMMA (expression1 | NUMBER | STRING) COMMA (expression1 | NUMBER | STRING) COMMA (expression1 | NUMBER | STRING) COMMA? (expression1 | NUMBER | STRING)? COMMA? (expression1 | NUMBER | STRING)?
     ;
     label_title:
     IDENTIFIER ':'
@@ -202,8 +215,14 @@ statement:
     loadBankImgToSprite:
     'Sprite' (NUMBER COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) | 'Off' )
     ;
+    expressions_comparators:
+    '=' | '<>' | '>=' | '>' | '<=' | '<'
+    ;
+    or_and:
+    'or' | 'and'
+    ;
     if_then:
-    IF expression1 ('=' | '<>' | '>=' | '>' | '<=' | '<')? expression2 'then' statement
+    IF expression1 expressions_comparators? expression2 (or_and expression1 expressions_comparators expression2)? 'then' statement
     ;
     open_out_readfile:
     'Open' 'Out' NUMBER COMMA IDENTIFIER
@@ -303,7 +322,7 @@ wait_key_break:
     WAITKEY
     ;
 variable_starter:
-    IDENTIFIER '=' (btst | expression1) // Agora captura apenas atribuições de variáveis
+    IDENTIFIER '=' (expression1 | btst ) // Agora captura apenas atribuições de variáveis
     ;
 function_starter:
     IDENTIFIER BRACKETOPEN_ARRAY (NUMBER | IDENTIFIER) BRACKETCLOSE_ARRAY
@@ -355,7 +374,7 @@ while_wend:
     WEND;
 
 for_loop:
-    FOR IDENTIFIER '=' NUMBER TO NUMBER
+    FOR IDENTIFIER '=' expression1 TO expression1
     (statement)*
     (NEXT IDENTIFIER | NEXT) 
     ;
