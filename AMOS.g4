@@ -94,6 +94,7 @@ statement:
     | text
     | do_loop
     | for_loop
+    | if_then
     | if_statement_key_state
     | if_statement
     | function_starter
@@ -133,9 +134,65 @@ statement:
     | input_variable
     | loadBank
     | loadBankImgToSprite
+    | led_off
+    | sam_bank
+    | sam_loop
+    | key_speed 
+    | label_title
+    | set_rainbow
+    | use_rainbow
+    | bob_off
+    | clear_key
+    | bob_update_on
+    | gosub
+    | goto_label
+
 
 
     
+    ;
+
+    goto_label:
+    'Goto' IDENTIFIER
+    ;
+    gosub:
+    'Gosub' IDENTIFIER
+    ;
+
+    bob_update_on:
+    'Bob' 'Update' 'On'
+    ;
+
+
+    clear_key:
+    'Clear' 'Key'
+    ;
+
+    bob_off:
+    'Bob' 'Off'
+    ;
+
+    set_rainbow:
+    'Set' 'Rainbow' (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING)? COMMA? (NUMBER | STRING)?
+    ;
+
+    use_rainbow:
+    'Rainbow' (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA (NUMBER | STRING) COMMA? (NUMBER | STRING)? COMMA? (NUMBER | STRING)?
+    ;
+    label_title:
+    IDENTIFIER ':'
+    ;
+    key_speed:
+    'Key' 'Speed' NUMBER COMMA NUMBER
+    ;
+    sam_loop:
+    'SAM' 'LOOP' 'OFF'
+    ;
+    sam_bank:
+    'SAM' 'BANK' NUMBER
+    ;
+    led_off:
+    'LED' 'OFF'
     ;
 
     loadBank:
@@ -143,9 +200,11 @@ statement:
     ;
     
     loadBankImgToSprite:
-    'Sprite' NUMBER COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER)
+    'Sprite' (NUMBER COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) COMMA (IDENTIFIER | NUMBER) | 'Off' )
     ;
-
+    if_then:
+    IF expression1 ('=' | '<>' | '>=' | '>' | '<=' | '<')? expression2 'then' statement
+    ;
     open_out_readfile:
     'Open' 'Out' NUMBER COMMA IDENTIFIER
     ;
@@ -170,7 +229,7 @@ statement:
     'Until' 'Mouse' 'Key' '=' NUMBER
     ;
     set_buffer:
-    'Set' 'Buffer' NUMBER
+    'Set' 'Buffers' NUMBER
     ;
     global:
     'Global' (array_structure | IDENTIFIER) (COMMA (array_structure | IDENTIFIER))*?
@@ -218,7 +277,7 @@ statement:
     ;
 
     hide:
-    'Hide'
+    'Hide' 'On'?
     ;
 
     flash_off:
@@ -255,7 +314,7 @@ function_call_or_array_access:
     | IDENTIFIER BRACKETOPEN_PROP expression1? (COMMA expression1)* BRACKETCLOSE_PROP // Chamadas de função com ou sem parâmetros
     ;
 array_structure:
-  IDENTIFIER BRACKETOPEN_PROP (NUMBER | expression1) BRACKETCLOSE_PROP
+  IDENTIFIER BRACKETOPEN_PROP ((NUMBER | expression1) COMMA? (NUMBER | expression1)?) BRACKETCLOSE_PROP
   ;
 array_create:
     'Dim' array_structure (COMMA? array_structure)*
@@ -305,7 +364,7 @@ for_loop:
 if_statement:
     IF expression1 ('=' | '<>' | '>=' | '>' | '<=' | '<') expression2
     (statement)* 
-    (else_statement | ENDIF )
+    (('End' 'if') | else_statement | ENDIF )
     ;
 else_statement:
     ELSE

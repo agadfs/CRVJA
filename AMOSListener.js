@@ -68,6 +68,114 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#goto_label.
+	enterGoto_label(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#goto_label.
+	exitGoto_label(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#gosub.
+	enterGosub(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#gosub.
+	exitGosub(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#bob_update_on.
+	enterBob_update_on(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#bob_update_on.
+	exitBob_update_on(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#clear_key.
+	enterClear_key(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#clear_key.
+	exitClear_key(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#bob_off.
+	enterBob_off(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#bob_off.
+	exitBob_off(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#set_rainbow.
+	enterSet_rainbow(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#set_rainbow.
+	exitSet_rainbow(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#use_rainbow.
+	enterUse_rainbow(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#use_rainbow.
+	exitUse_rainbow(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#label_title.
+	enterLabel_title(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#label_title.
+	exitLabel_title(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#key_speed.
+	enterKey_speed(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#key_speed.
+	exitKey_speed(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#sam_loop.
+	enterSam_loop(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#sam_loop.
+	exitSam_loop(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#sam_bank.
+	enterSam_bank(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#sam_bank.
+	exitSam_bank(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#led_off.
+	enterLed_off(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#led_off.
+	exitLed_off(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#loadBank.
 	enterLoadBank(ctx) {
 	}
@@ -83,6 +191,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#loadBankImgToSprite.
 	exitLoadBankImgToSprite(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#if_then.
+	enterIf_then(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#if_then.
+	exitIf_then(ctx) {
 	}
 
 

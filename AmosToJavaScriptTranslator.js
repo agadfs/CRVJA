@@ -1,11 +1,11 @@
 import AMOSListener from "./AMOSListener";
-import bankReader from './src/tools/bankReader/bankReader.js';
+import bankReader from "./src/tools/bankReader/bankReader.js";
 class AmosToJavaScriptTranslator extends AMOSListener {
   constructor() {
     super();
     this.imports = `
    
-    `
+    `;
     this.output = "";
     this.indentLevel = 0; // Track current indentation level
     this.id = 0;
@@ -758,12 +758,9 @@ ${this.indent()}document.getElementById('game-container').appendChild(screenDiv)
 ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = colorMapping[${color}];
         `;
   }
-  enterBlitter_fill(ctx) {
-   
-  }
-  
-  enterLoadBank(ctx) {
+  enterBlitter_fill(ctx) {}
 
+  enterLoadBank(ctx) {
     const fileName = ctx.children[1]?.getText();
 
     this.output += `
@@ -780,9 +777,8 @@ ${this.indent()}loadBank(1, '${fileName}');
     renderSprite(${spriteNumber}, ${x}, ${y}, ${bankImgIndex});
     `;
   }
-    
 
-enterOpen_out_readfile(ctx) {
+  enterOpen_out_readfile(ctx) {
     const channel = ctx.children[2]?.getText();
     const fileName = ctx.children[4]?.getText();
 
@@ -805,7 +801,7 @@ ${this.indent()}openFile('${fileName}', ${channel}, 'r');
     channel += ctx.children[2]?.getText();
 
     let variable = ctx.children[4]?.getText();
-     variable += ctx.children[5]?.getText();
+    variable += ctx.children[5]?.getText();
     this.output += `
     let ${variable} = '';
     readFromChannel(${channel}, (data) => {
@@ -820,21 +816,24 @@ ${this.indent()}openFile('${fileName}', ${channel}, 'r');
 ${this.indent()}closeChannel(${channel});
     `;
   }
- 
 
   enterPrint_something(ctx) {
-    const printConfig = ctx.print_options(0).getText();
-    if(printConfig.includes("#")){
+    const printConfig = ctx.print_options(0)?.getText();
+    if (printConfig.includes("#")) {
       /* WRITE TO FILE */
-      let channel = ctx.print_options(0).getText();
-      let content = ctx.print_options(1).getText();
+      let channel = ctx.print_options(0)?.getText();
+      let content = ctx.print_options(1)?.getText();
       this.output += `writeToChannel(${channel}, ${content});`;
       return;
     }
     for (let i = 0; i < ctx.print_options().length; i++) {
-      let text = ctx.print_options(i).getText();
+      let text = ctx.print_options(i)?.getText();
       if (ctx.print_options(i)?.expression1(0)?.getText()) {
-        text = ctx.print_options(i).expression1(0).getText().replace(/["']/g, "");
+        text = ctx
+          .print_options(i)
+          ?.expression1(0)
+          ?.getText()
+          .replace(/["']/g, "");
         this.output += `
       ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
        ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
@@ -1015,7 +1014,6 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
     }
 
     `;
-   
   }
 
   enterBar(ctx) {
@@ -1112,7 +1110,6 @@ ${this.indent()}}`;
               ?.factor(i)
               ?.array_index_get(0);
             if (arrayIndexGet) {
-              
               // Get the text and replace parentheses with square brackets
               let text = arrayIndexGet.getText();
               let modifiedText = text.replace(/\(/g, "[").replace(/\)/g, "]");
@@ -1153,11 +1150,13 @@ ${this.indent()}}`;
   enterAdd(ctx) {
     let variable = ctx.children[1]?.getText();
     let valueExpression = ctx.children[3]?.getText();
-    
+
     let valueStarter;
     let valueEndIteration;
-    if (!this.variables[variable] && !this.globalVariables.includes(`let ${variable}`)) {
-    
+    if (
+      !this.variables[variable] &&
+      !this.globalVariables.includes(`let ${variable}`)
+    ) {
       this.variables[variable] = 0;
       this.globalVariables += `${this.indent()}let ${variable} = 0;`;
     }
@@ -1289,15 +1288,60 @@ ${this.indent()}}, 16);`;
   }
   enterArray_create(ctx) {
     for (let i = 0; i < ctx.array_structure().length; i++) {
-      this.output += `
-${this.indent()}const ${ctx
-        .array_structure(i)
-        .IDENTIFIER(0)
-        .getText()} = new Array(${ctx.array_structure(i).NUMBER(0) === null ? ctx.array_structure(i).expression1(0).getText() : ctx.array_structure(i).NUMBER(0).getText()});
-        `;
-        if(ctx.array_structure(i).NUMBER(0) === null){
-          console.log(ctx.array_structure(i).expression1(0).getText())
-        }
+      if (ctx.array_structure(i).NUMBER().length > 1) {
+        this.output += `
+        ${this.indent()}const ${ctx
+          .array_structure(i)
+          .IDENTIFIER(0)
+          ?.getText()}0 = new Array(${
+          ctx.array_structure(i).NUMBER(0) === null
+            ? ctx.array_structure(i).expression1(0)?.getText()
+            : ctx.array_structure(i).NUMBER(0)?.getText()
+        });
+                `;
+        this.output += `
+                ${this.indent()}const ${ctx
+          .array_structure(i)
+          .IDENTIFIER(0)
+          ?.getText()}1 = new Array(${
+          ctx.array_structure(i).NUMBER(0) === null
+            ? ctx.array_structure(i).expression1(0)?.getText()
+            : ctx.array_structure(i).NUMBER(1)?.getText()
+        });
+                        `;
+      } else if (ctx.array_structure(i).expression1().length > 1) {
+        this.output += `
+        ${this.indent()}const ${ctx
+          .array_structure(i)
+          .IDENTIFIER(0)
+          ?.getText()}0 = new Array(${
+          ctx.array_structure(i).NUMBER(0) === null
+            ? ctx.array_structure(i).expression1(0)?.getText()
+            : ctx.array_structure(i).NUMBER(0)?.getText()
+        });
+                `;
+        this.output += `
+                ${this.indent()}const ${ctx
+          .array_structure(i)
+          .IDENTIFIER(0)
+          ?.getText()}1 = new Array(${
+          ctx.array_structure(i).NUMBER(0) === null
+            ? ctx.array_structure(i).expression1(1)?.getText()
+            : ctx.array_structure(i).NUMBER(0)?.getText()
+        });
+                        `;
+      } else {
+        this.output += `
+  ${this.indent()}const ${ctx
+          .array_structure(i)
+          .IDENTIFIER(0)
+          ?.getText()} = new Array(${
+          ctx.array_structure(i).NUMBER(0) === null
+            ? ctx.array_structure(i).expression1(0)?.getText()
+            : ctx.array_structure(i).NUMBER(0)?.getText()
+        });
+          `;
+      }
     }
   }
   exitFor_loop(ctx) {
@@ -1442,9 +1486,12 @@ ${this.indent()}
     this.output += ``;
   }
   getJavaScript() {
-
     return (
-      this.imports + this.pallette + this.globalVariables + this.output + this.functionStarters
+      this.imports +
+      this.pallette +
+      this.globalVariables +
+      this.output +
+      this.functionStarters
     );
   }
 }
