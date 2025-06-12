@@ -37,7 +37,8 @@ BRACKETOPEN_ARRAY: '[';
 BRACKETCLOSE_ARRAY: ']';
 BRACKETOPEN_FUNCTION: '{';
 BRACKETCLOSE_FUNCTION: '}';
-HECADECIMAL: '$';
+HEX_NUMBER: '$' [0-9A-Fa-f]+;
+
 // Operators for arithmetic
 MULTIPLY: '*';
 DIVIDE: '/';
@@ -70,9 +71,10 @@ factor:
     | array_index_get
     | sin_function
     | cos_function
+    | rndFunction
     | IDENTIFIER                // A variable
     | '(' expression1 ')'        // Parentheses for grouping
-    | (HECADECIMAL (NUMBER | IDENTIFIER))
+    | HEX_NUMBER
 
     ;
 
@@ -149,12 +151,30 @@ statement:
     | screen_offset
     | choose_Screen
     | on_gosub
+    | data_statement
+    | read_statement
+    | box
+    | circle
+    | wait_key
+    
+   
 
 
 
     
     ;
 
+    
+    rndFunction: 'Rnd' '(' expression1 ')';
+    wait_key:
+    'Wait' NUMBER
+    ;
+    box:
+    'Box' expression1 COMMA expression1 'To' expression1 COMMA expression1
+    ;
+    circle:
+    'Circle' expression1 COMMA expression1 COMMA expression1
+    ;
     on_gosub:
     'On' IDENTIFIER BRACKETOPEN_PROP (NUMBER | IDENTIFIER | expression1) BRACKETCLOSE_PROP 'Gosub' IDENTIFIER (COMMA IDENTIFIER)*
     ;
@@ -164,7 +184,16 @@ statement:
     choose_Screen:
     'Screen' NUMBER
     ;
+    data_statement:
+    'Data' expression1 (COMMA expression1)*
+    ;
+    read_statement:
+    'Read' read_target (COMMA read_target)* ;
 
+    read_target:
+    array_structure
+    | IDENTIFIER
+    ;
     goto_label:
     'Goto' IDENTIFIER
     ;
@@ -235,7 +264,7 @@ statement:
     ;
 
     input_variable:
-    'Input' HASHTAG NUMBER COMMA IDENTIFIER HECADECIMAL?
+    'Input' HASHTAG NUMBER COMMA IDENTIFIER HEX_NUMBER?
     ;
 
 
@@ -275,7 +304,7 @@ statement:
     'Autoback' NUMBER
     ;
     palette:
-    'Palette' (HECADECIMAL (NUMBER | IDENTIFIER) COMMA?)*
+    'Palette' (HEX_NUMBER (NUMBER | IDENTIFIER) COMMA?)*
     ;
     double_buffer:
     'Double' 'Buffer'
@@ -316,7 +345,7 @@ cos_function:
     ;
 
 play_sound:
-    'Play' ((HECADECIMAL NUMBER) | expression1 | IDENTIFIER) COMMA NUMBER
+    'Play' ((HEX_NUMBER NUMBER) | expression1 | IDENTIFIER) COMMA NUMBER
     ;
 wait_key_break:
     WAITKEY
@@ -331,6 +360,7 @@ function_starter:
 function_call_or_array_access:
     IDENTIFIER BRACKETOPEN_ARRAY expression1 BRACKETCLOSE_ARRAY // Acesso a array
     | IDENTIFIER BRACKETOPEN_PROP expression1? (COMMA expression1)* BRACKETCLOSE_PROP // Chamadas de função com ou sem parâmetros
+    | IDENTIFIER BRACKETOPEN_PROP BRACKETCLOSE_PROP
     ;
 array_structure:
   IDENTIFIER BRACKETOPEN_PROP ((NUMBER | expression1) COMMA? (NUMBER | expression1)?) BRACKETCLOSE_PROP
@@ -360,7 +390,7 @@ ink:
     ;
 
 text:
-    TEXT NUMBER COMMA NUMBER COMMA STRING
+    TEXT NUMBER COMMA NUMBER COMMA (STRING | IDENTIFIER)
     ;
 
 do_loop:
@@ -381,7 +411,7 @@ for_loop:
 
 // If-End If statement that compares a variable to an expression
 if_statement:
-    IF expression1 ('=' | '<>' | '>=' | '>' | '<=' | '<') expression2
+    (IF expression1 | IF read_target) ('=' | '<>' | '>=' | '>' | '<=' | '<') expression2
     (statement)* 
     (('End' 'if') | else_statement | ENDIF )
     ;
@@ -402,7 +432,7 @@ bar:
     ;
 
 procedure:
-    PROC IDENTIFIER BRACKETOPEN_ARRAY IDENTIFIER? BRACKETCLOSE_ARRAY // Modified to properly capture the brackets and optional parameter
+    PROC IDENTIFIER (BRACKETOPEN_ARRAY IDENTIFIER? BRACKETCLOSE_ARRAY)? // Modified to properly capture the brackets and optional parameter
     (statement)* 
     ENDPROC
     ;

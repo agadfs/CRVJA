@@ -25,7 +25,7 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.lineData = this.lineData || [];
     this.globalVariables = "";
     this.globalVariablesStorage = {};
-    this.functionStarters = "";
+    this.functionStarters = ``;
     this.variables = {};
     this.output += `
       const keyMapping = {
@@ -467,7 +467,10 @@ function soundPlayer(noteId, cooldown) {
 
 // Dictionary to hold file streams based on channels (0-10)
 const channels = {};
+function randomInt(max) {
+const random = Math.floor(Math.random() * (max - 0 + 1)) + 0
 
+  return random}
 // Function to open a file and assign it to a channel
 function openFile(fileName, channel, mode = 'w') {
 console.log(fileName, 'opened on channel', channel); 
@@ -828,7 +831,9 @@ ${this.indent()}closeChannel(${channel});
     }
     for (let i = 0; i < ctx.print_options().length; i++) {
       let text = ctx.print_options(i)?.getText();
-      if (ctx.print_options(i)?.expression1(0)?.getText()) {
+      console.log(`Console log: ${text}`);
+      console.log(typeof text);
+      if (!text.includes('"')) {
         text = ctx
           .print_options(i)
           ?.expression1(0)
@@ -838,26 +843,29 @@ ${this.indent()}closeChannel(${channel});
       ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
        ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
   ${this.indent()}const printDiv${i} = document.createElement('div');
-  ${this.indent()}printDiv${i}.innerText = '${text}';
+  ${this.indent()}printDiv${i}.innerText = ${text};
   ${this.indent()}printDiv${i}.style.position = 'relative';
   ${this.indent()}printDiv${i}.style.left = '50%';
   ${this.indent()}printDiv${i}.style.top = '50%';
   ${this.indent()}printDiv${i}.style.fontSize = '14px';
-  ${this.indent()}printDiv${i}.style.color = 'black';
+  ${this.indent()}printDiv${i}.style.color = Ink;
+    ${this.indent()}printDiv${i}.style.zIndex = "999";
   ${this.indent()}printDiv${i}.id = 'printDiv${i}' + '${text}';
   ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
   `;
       } else {
+        
         this.output += `
          ${this.indent()}  const finder_printDiv${i} = document.getElementById('printDiv${i}' + '${text}');
        ${this.indent()} if(finder_printDiv${i}){finder_printDiv${i}.remove();}
         ${this.indent()}const printDiv${i} = document.createElement('div');
-        ${this.indent()}printDiv${i}.innerText = (${text}).toString();
+        ${this.indent()}printDiv${i}.innerText = ${text};
         ${this.indent()}printDiv${i}.style.position = 'relative';
         ${this.indent()}printDiv${i}.style.left = '50%';
         ${this.indent()}printDiv${i}.style.top = '50%';
         ${this.indent()}printDiv${i}.style.fontSize = '14px';
-        ${this.indent()}printDiv${i}.style.color = 'black';
+        ${this.indent()}printDiv${i}.style.color = Ink;
+            ${this.indent()}printDiv${i}.style.zIndex = "999";
           ${this.indent()}printDiv${i}.id = 'printDiv${i}' + '${text}';
         ${this.indent()}document.getElementById('amos-screen').appendChild(printDiv${i});
         `;
@@ -1017,74 +1025,114 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
   }
 
   enterBar(ctx) {
-    let x1 = ctx.expression1(0)?.getText();
-    let y1 = ctx.expression2(0)?.getText();
-    let x2 = ctx.expression1(1)?.getText();
-    let y2 = ctx.expression2(1)?.getText();
+    const x1 = ctx.expression1(0).getText();
+    const y1 = ctx.expression2(0).getText();
+    const x2 = ctx.expression1(1).getText();
+    const y2 = ctx.expression2(1).getText();
+
+    // Gere um ID seguro e único baseado nas coordenadas
+    const idBar = `"Bar_" + (${x1}) + "_" + (${y1})`;
 
     this.output += `
+    const idBar = ${idBar};
     const x1 = ${x1};
-    const x2 = ${x2};
     const y1 = ${y1};
+    const x2 = ${x2};
     const y2 = ${y2};
     const width = x2 - x1;
     const height = y2 - y1;
-    const IdCreator = x1 + x2 + y1 + y2;
-    const idBar = "Bar" + IdCreator.toString();
 
     let screenBarDiv = document.getElementById(idBar);
 
-    if (screenBarDiv) {
-        // If the div exists, update its properties
-        screenBarDiv.style.backgroundColor = Ink;
-        screenBarDiv.style.left = x1 + 'px';
-        screenBarDiv.style.top = y1 + 'px';
-        screenBarDiv.style.width = width + 'px';
-        screenBarDiv.style.height = height + 'px';
-       
-    } else {
-        // If the div doesn't exist, create it
+    if (!screenBarDiv) {
         screenBarDiv = document.createElement('div');
-        screenBarDiv.style.position = 'absolute';
         screenBarDiv.id = idBar;
-        screenBarDiv.style.backgroundColor = Ink;
-        screenBarDiv.style.left = x1 + 'px';
-        screenBarDiv.style.top = y1 + 'px';
-        screenBarDiv.style.width = width + 'px';
-        screenBarDiv.style.height = height + 'px';
+        screenBarDiv.style.position = 'absolute';
+        screenBarDiv.style.boxSizing = 'border-box';
         document.getElementById('amos-screen').appendChild(screenBarDiv);
-        
     }
-    `;
+
+    screenBarDiv.style.backgroundColor = Ink;
+    screenBarDiv.style.left = x1 + 'px';
+    screenBarDiv.style.top = y1 + 'px';
+    screenBarDiv.style.width = width + 'px';
+    screenBarDiv.style.height = height + 'px';
+    screenBarDiv.style.zIndex = 10;
+  `;
+  }
+
+  enterBox(ctx) {
+    const x1 = ctx.expression1(0).getText();
+    const y1 = ctx.expression1(1).getText();
+    const x2 = ctx.expression1(2).getText();
+    const y2 = ctx.expression1(3).getText();
+
+    const boxID = `"Box_" + ${x1} + "_" + ${y1} + "_" + ${x2} + "_" + ${y2}`;
+
+    this.output += `
+    const idBox = ${boxID};
+    let boxDiv = document.getElementById(idBox);
+    if (!boxDiv) {
+      boxDiv = document.createElement('div');
+      boxDiv.id = idBox;
+      boxDiv.style.position = 'absolute';
+      boxDiv.style.boxSizing = 'border-box';
+      document.getElementById('amos-screen').appendChild(boxDiv);
+      }
+    boxDiv.style.border = '2px solid ' + Ink;
+    boxDiv.style.left = (${x1}) + "px";
+    boxDiv.style.top = (${y1}) + "px";
+    boxDiv.style.width = (${x2} - ${x1}) + "px";
+    boxDiv.style.height = (${y2} - ${y1}) + "px";
+    boxDiv.style.zIndex = 10;
+  `;
+  }
+
+  enterCircle(ctx) {
+    const x = ctx.expression1(0).getText();
+    const y = ctx.expression1(1).getText();
+    const r = ctx.expression1(2).getText();
+    const circleID = `"Circle_" + (${x}) + "_" + (${y}) + "_" + (${r})`;
+
+    this.output += `
+    const circleId = ${circleID};
+    let circleDiv = document.getElementById(circleId);
+    if (!circleDiv) {
+      circleDiv = document.createElement('div');
+      circleDiv.id = circleId;
+      circleDiv.style.position = 'absolute';
+      circleDiv.style.boxSizing = 'border-box';
+      document.getElementById('amos-screen').appendChild(circleDiv);
+      }
+    circleDiv.style.borderRadius = '50%';
+    circleDiv.style.border = '2px solid ' + Ink;
+    circleDiv.style.left = (${x} - ${r}) + 'px';
+    circleDiv.style.top = (${y} - ${r}) + 'px';
+    circleDiv.style.width = (${r} * 2) + 'px';
+    circleDiv.style.height = (${r} * 2) + 'px';
+    circleDiv.style.zIndex = 10;
+    circleDiv.style.backgroundColor = Ink; 
+  `;
   }
 
   /* WHILE for key pressed */
   enterWhile_wend(ctx) {
     let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();
-    if (!leftExpression) {
-      return;
-    }
-    if (leftExpression.includes("$")) {
-      let hexValueMatch = leftExpression.match(/\$[0-9A-Fa-f]+/);
+    if (!leftExpression) return;
 
-      if (hexValueMatch) {
-        let hexValue = parseInt(hexValueMatch[0].replace("$", ""), 16);
-
-        // Check if the leftExpression is just a hexadecimal value
-        if (hexValueMatch[0] === leftExpression) {
-          // If it's only a hex value, convert it to a key mapping lookup
-          leftExpression = hexValue;
-        } else {
-          // If it's a variable or expression with a hex part, construct it accordingly
-          leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/, hexValue);
-        }
-      }
-      this.output += `
-
-${this.indent()}if (currentPressedKey === keyMapping[${leftExpression}]) {
-        `;
-    }
+    // Replace all occurrences of $xx with decimal equivalents
+    leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/g, (match) => {
+      return parseInt(match.substring(1), 16);
+    });
+    console.log(leftExpression);
+    this.output += `\n${this.indent()}if (currentPressedKey === keyMapping[${leftExpression}]) {\n`;
   }
+  enterWait_key(ctx) {
+    const waitTime = ctx.NUMBER().getText();
+    const ms = parseInt(waitTime) * 20; // 20ms por tick
+    this.output += `${this.indent()}await new Promise(resolve => setTimeout(resolve, ${ms}));\n`;
+  }
+
   exitWhile_wend(ctx) {
     this.output += `
 ${this.indent()}}`;
@@ -1140,6 +1188,7 @@ ${this.indent()}}`;
           }
         }
         // Variable doesn't exist at this indent level, so create it
+        value = value.replace(/\bRnd\s*\(([^)]+)\)/g, "randomInt($1)");
         this.output += `
         ${this.indent()}let ${name} = ${value};
           `;
@@ -1183,15 +1232,18 @@ ${this.indent()}}`;
     this.id++;
     let name = ctx.children[1]?.getText();
     let props = "";
-    for (let i = 3; i < ctx.children.length; i++) {
-      if (ctx.children[i]?.getText() === "]") {
-        break;
+    if (ctx.IDENTIFIER(1)) {
+      for (let i = 3; i < ctx.children.length; i++) {
+        if (ctx.children[i]?.getText() === "]") {
+          break;
+        }
+        props += ctx.children[i]?.getText();
+        if (ctx.children[i + 1]?.getText() !== "]") {
+          props += " ";
+          props += ",";
+        }
       }
-      props += ctx.children[i]?.getText();
-      if (ctx.children[i + 1]?.getText() !== "]") {
-        props += " ";
-        props += ",";
-      }
+    } else {
     }
 
     this.output += `
@@ -1218,35 +1270,71 @@ ${this.indent()}const ${name} = (${props}) => {
   exitProcedure(ctx) {
     this.indentLevel--;
     this.output += `
-${this.indent()}}`;
+${this.indent()}}\n`;
   }
 
   enterText(ctx) {
     const x = ctx.children[1]?.getText();
     const y = ctx.children[3]?.getText();
-    const text = ctx.children[5]?.getText().replace(/\"/g, "");
-
-    this.output += `
+    const text = ctx.children[5]?.getText();
+    if (!text.includes('"')){
+       this.output += `
+       
 ${this.indent()}const textDiv${x}${y} = document.createElement('div');
-${this.indent()}textDiv${x}${y}.innerText = '${text}';
+${this.indent()}textDiv${x}${y}.innerText = ${text};
+${this.indent()}textDiv${x}${y}.id = 'textDiv' + '${x}' + '${y}';
 ${this.indent()}textDiv${x}${y}.style.position = 'absolute';
 ${this.indent()}textDiv${x}${y}.style.left = '${x}px';
 ${this.indent()}textDiv${x}${y}.style.top = '${y}px';
 ${this.indent()}textDiv${x}${y}.style.fontSize = '14px';
-${this.indent()}textDiv${x}${y}.style.color = 'black';
+${this.indent()}textDiv${x}${y}.style.color = Ink;
+${this.indent()}textDiv${x}${y}.style.position = "Relative";
+${this.indent()}textDiv${x}${y}.style.zIndex = 99;
+${this.indent()}document.getElementById('amos-screen').appendChild(textDiv${x}${y});
+      setInterval(() => {
+  textDiv${x}${y}.innerText = ${text}; // Function that returns updated value
+}, 100); 
+        `;
+    }else{
+ this.output += `
+${this.indent()}const textDiv${x}${y} = document.createElement('div');
+${this.indent()}textDiv${x}${y}.innerText = '${text.replace(/"/g, '')}';
+${this.indent()}textDiv${x}${y}.id = 'textDiv' + '${x}' + '${y}';
+${this.indent()}textDiv${x}${y}.style.position = 'absolute';
+${this.indent()}textDiv${x}${y}.style.left = '${x}px';
+${this.indent()}textDiv${x}${y}.style.top = '${y}px';
+${this.indent()}textDiv${x}${y}.style.fontSize = '14px';
+${this.indent()}textDiv${x}${y}.style.color = Ink;
+${this.indent()}textDiv${x}${y}.style.position = "Relative";
+${this.indent()}textDiv${x}${y}.style.zIndex = 99;
 ${this.indent()}document.getElementById('amos-screen').appendChild(textDiv${x}${y});
         `;
+    }
+
+   
+  }
+  enterWait_key(ctx) {
+    const waitTicks = ctx.NUMBER().getText();
+    const ms = parseInt(waitTicks) * 20; // AMOS = ~50fps
+
+    this.output += `
+${this.indent()}allowLoop = false;
+${this.indent()}setTimeout(() => {
+${this.indent(1)}allowLoop = true;
+${this.indent()}}, ${ms});\n`;
   }
 
   // Handle DO loop
   enterDo_loop(ctx) {
     this.output += `
-${this.indent()}setInterval(() => {
-  currentTimer = Date.now();
-  Timer++;
+let allowLoop = true; // Controla o loop para Wait funcionar
 
-        `;
-    this.indentLevel++; // Increase indentation inside the loop
+${this.indent()}setInterval(() => {
+  if (!allowLoop) return;
+
+  currentTimer = Date.now();
+  Timer++;\n`;
+    this.indentLevel++;
   }
 
   enterRepeat_key(ctx) {
@@ -1274,7 +1362,8 @@ ${this.indent()}}, 16);`;
     
     Timer = 9;
   
-${this.indent()}}, 16);`;
+${this.indent()}}, 16); \n
+`;
   }
 
   enterFor_loop(ctx) {
@@ -1294,37 +1383,30 @@ ${this.indent()}}, 16);`;
     let expressions2 = [];
     let comparators = [];
     let or_and = [];
-    for(let i = 0; i < ctx.expression1().length; i++) {
+    for (let i = 0; i < ctx.expression1().length; i++) {
       expressions1.push(ctx.expression1(i).getText());
     }
-    for(let i = 0; i < ctx.expression2().length; i++) {
+    for (let i = 0; i < ctx.expression2().length; i++) {
       expressions2.push(ctx.expression2(i).getText());
     }
-    for(let i = 0; i < ctx.expressions_comparators().length; i++) {
+    for (let i = 0; i < ctx.expressions_comparators().length; i++) {
       comparators.push(ctx.expressions_comparators(i).getText());
     }
-    for(let i = 0; i < ctx.or_and().length; i++) {
+    for (let i = 0; i < ctx.or_and().length; i++) {
       or_and.push(ctx.or_and(i).getText());
     }
 
-   
-
     let finalIfStatement = "";
 
-    for(let i = 0; i < expressions1.length; i++) {
-      finalIfStatement += expressions1[i] + " " + comparators[i] + " " + expressions2[i];
-      if(or_and[i] && or_and[i] === "AND") {
-
+    for (let i = 0; i < expressions1.length; i++) {
+      finalIfStatement +=
+        expressions1[i] + " " + comparators[i] + " " + expressions2[i];
+      if (or_and[i] && or_and[i] === "AND") {
         finalIfStatement += " && ";
-      
       }
-      if(or_and[i] && or_and[i] === "OR") {
-
+      if (or_and[i] && or_and[i] === "OR") {
         finalIfStatement += " || ";
-      
       }
-
-
     }
 
     console.log(finalIfStatement);
@@ -1333,26 +1415,28 @@ ${this.indent()}}, 16);`;
   enterArray_create(ctx) {
     for (let i = 0; i < ctx.array_structure().length; i++) {
       if (ctx.array_structure(i).NUMBER().length > 1) {
-        this.output += `
-        ${this.indent()}const ${ctx
-          .array_structure(i)
-          .IDENTIFIER(0)
-          ?.getText()}0 = new Array(${
-          ctx.array_structure(i).NUMBER(0) === null
-            ? ctx.array_structure(i).expression1(0)?.getText()
-            : ctx.array_structure(i).NUMBER(0)?.getText()
-        });
-                `;
-        this.output += `
-                ${this.indent()}const ${ctx
-          .array_structure(i)
-          .IDENTIFIER(0)
-          ?.getText()}1 = new Array(${
-          ctx.array_structure(i).NUMBER(0) === null
-            ? ctx.array_structure(i).expression1(0)?.getText()
-            : ctx.array_structure(i).NUMBER(1)?.getText()
-        });
-                        `;
+        const struct = ctx.array_structure(i);
+        const name = struct.IDENTIFIER(0)?.getText();
+
+        const dim0 =
+          struct.NUMBER(0)?.getText() ||
+          struct.expression1(0)?.getText() ||
+          "0";
+        const dim1 =
+          struct.NUMBER(1)?.getText() || struct.expression1(1)?.getText();
+
+        if (dim1) {
+          // Matriz 2D
+          const xSize = parseInt(dim0) + 1;
+          const ySize = parseInt(dim1) + 1;
+
+          this.output += `${this.indent()}const ${name} = new Array(${ySize});\n`;
+          this.output += `${this.indent()}for (let i = 0; i < ${ySize}; i++) ${name}[i] = new Array(${xSize});\n`;
+        } else {
+          // Vetor 1D
+          const size = parseInt(dim0) + 1;
+          this.output += `${this.indent()}const ${name} = new Array(${size});\n`;
+        }
       } else if (ctx.array_structure(i).expression1().length > 1) {
         this.output += `
         ${this.indent()}const ${ctx
@@ -1366,24 +1450,24 @@ ${this.indent()}}, 16);`;
                 `;
         this.output += `
                 ${this.indent()}const ${ctx
-          .array_structure(i)
-          .IDENTIFIER(0)
-          ?.getText()}1 = new Array(${
-          ctx.array_structure(i).NUMBER(0) === null
-            ? ctx.array_structure(i).expression1(1)?.getText()
-            : ctx.array_structure(i).NUMBER(0)?.getText()
-        });
+                  .array_structure(i)
+                  .IDENTIFIER(0)
+                  ?.getText()}1 = new Array(${
+                  ctx.array_structure(i).NUMBER(0) === null
+                    ? ctx.array_structure(i).expression1(1)?.getText()
+                    : ctx.array_structure(i).NUMBER(0)?.getText()
+                });
                         `;
       } else {
         this.output += `
   ${this.indent()}const ${ctx
-          .array_structure(i)
-          .IDENTIFIER(0)
-          ?.getText()} = new Array(${
-          ctx.array_structure(i).NUMBER(0) === null
-            ? ctx.array_structure(i).expression1(0)?.getText()
-            : ctx.array_structure(i).NUMBER(0)?.getText()
-        });
+    .array_structure(i)
+    .IDENTIFIER(0)
+    ?.getText()} = new Array(${
+    ctx.array_structure(i).NUMBER(0) === null
+      ? ctx.array_structure(i).expression1(0)?.getText()
+      : ctx.array_structure(i).NUMBER(0)?.getText()
+  });
           `;
       }
     }
@@ -1391,6 +1475,46 @@ ${this.indent()}}, 16);`;
   exitFor_loop(ctx) {
     this.indentLevel--; // Decrease indentation after exiting the loop
     this.output += `${this.indent()}}`;
+  }
+  enterData_statement(ctx) {
+    if (!this.dataMatrix) {
+      this.dataMatrix = [];
+      this.output += `${this.indent()}const dataMatrix = [];\n`;
+    }
+
+    const values = ctx.expression1().map((e) => e.getText());
+    const row = `[${values.join(", ")}]`;
+    this.dataMatrix.push(row);
+    this.output += `${this.indent()}dataMatrix.push(${row});\n`;
+  }
+
+  enterRead_statement(ctx) {
+    function convertAMOSArrayAccess(text) {
+      const match = text.match(
+        /^(\w+)\s*\(\s*([^\s,]+)\s*,\s*([^\s,)]+)\s*\)$/
+      );
+      if (match) {
+        const [, name, x, y] = match;
+        return { name, x, y };
+      }
+      return null;
+    }
+
+    const targets = ctx.children.filter(
+      (child) => child.getText() !== "Read" && child.getText() !== ","
+    );
+
+    for (let i = 0; i < targets.length; i++) {
+      const rawText = targets[i].getText();
+      const access = convertAMOSArrayAccess(rawText);
+
+      if (access) {
+        const { name, x, y } = access;
+        this.output += `${this.indent()}${name}[${y}][${x}] = dataMatrix[${y}][${x}];\n`;
+      } else {
+        this.output += `${this.indent()}${rawText} = dataMatrix[0][${i}];\n`;
+      }
+    }
   }
 
   enterArray_update(ctx) {
@@ -1433,6 +1557,16 @@ ${this.indent()}}, 16);`;
   }
 
   enterIf_statement(ctx) {
+    function convertAMOSArrayAccess(text) {
+      const match = text.match(
+        /^(\w+)\s*\(\s*([^\s,]+)\s*,\s*([^\s,)]+)\s*\)$/
+      );
+      if (match) {
+        const [, name, x, y] = match;
+        return { name, x, y };
+      }
+      return null;
+    }
     let leftExpression;
     let comparator;
     let rightExpression = "";
@@ -1449,6 +1583,11 @@ ${this.indent()}}, 16);`;
       comparator = "!=";
     }
 
+    if (!leftExpression) {
+      const array = convertAMOSArrayAccess(ctx.read_target(0)?.getText());
+      const { name, x, y } = array;
+      leftExpression = `${this.indent()}${name}[${y}][${x}]`;
+    }
     // Get the right-hand side expression (e.g., 2 * I + 1)
     rightExpression = ctx.expression2(0)?.getText();
 
@@ -1478,6 +1617,7 @@ ${this.indent()}}`;
   ${this.indent()}${name}(${value}); // Function call
           `;
     }
+    console.log(name);
   }
   enterIf_statement_key_state(ctx) {
     let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();

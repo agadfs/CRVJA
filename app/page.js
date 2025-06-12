@@ -5,6 +5,9 @@ import AmosToJavaScriptTranslator from "@/AmosToJavaScriptTranslator";
 import AMOSParser from "@/AMOSParser";
 import AMOSLexer from "@/AMOSLexer";
 import { Sketch } from "@uiw/react-color";
+import prettier from "prettier/standalone";
+import babelPlugin from "prettier/plugins/babel";
+import estreePlugin from "prettier/plugins/estree";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
@@ -56,7 +59,7 @@ function App() {
     reader.readAsText(file);
   };
 
-  const parseAmosCode = (amosBasicCode) => {
+  const parseAmosCode = async (amosBasicCode) => {
     console.log(amosBasicCode);
     const chars = new antlr4.InputStream(amosBasicCode);
     const lexer = new AMOSLexer(chars);
@@ -67,9 +70,20 @@ function App() {
     const translator = new AmosToJavaScriptTranslator();
     const walker = new antlr4.tree.ParseTreeWalker();
     walker.walk(translator, tree);
-    const translatedJsCode = translator.getJavaScript();
-    setJsCode(translatedJsCode);
-    console.log(translatedJsCode);
+    let translatedJsCode = translator.getJavaScript();
+    try {
+      const formatted = await prettier.format(translatedJsCode, {
+        parser: "babel",
+        plugins: [babelPlugin, estreePlugin],
+      });
+
+      console.log(formatted);
+      
+      setJsCode(formatted);
+    } catch (err) {
+      console.log(translatedJsCode);
+      setJsCode(translatedJsCode); // fallback
+    }
   };
 
   useEffect(() => {
@@ -127,19 +141,18 @@ function App() {
         console.error("planarGraphicData is not an array", planarGraphicData);
       }
 
-      
       binaryData.push(...object);
     });
     let newPalette = [...palette];
     function rgbTo16Bit(rgbColor) {
       // Extract the red, green, and blue components from the hex color
-      const red = parseInt(rgbColor.slice(1, 3), 16) >> 4;   // Red channel (top 4 bits)
+      const red = parseInt(rgbColor.slice(1, 3), 16) >> 4; // Red channel (top 4 bits)
       const green = parseInt(rgbColor.slice(3, 5), 16) >> 4; // Green channel (middle 4 bits)
-      const blue = parseInt(rgbColor.slice(5, 7), 16) >> 4;  // Blue channel (bottom 4 bits)
-  
+      const blue = parseInt(rgbColor.slice(5, 7), 16) >> 4; // Blue channel (bottom 4 bits)
+
       // Combine red, green, and blue components into a 16-bit color value
       const color16Bit = (red << 8) | (green << 4) | blue;
-  
+
       return color16Bit;
     }
     let binaryPalette = [];
@@ -147,15 +160,15 @@ function App() {
     newPalette.forEach((color) => {
       const rgb = rgbTo16Bit(color); // Convert to 16-bit color
       binaryData.push((rgb >> 8) & 0xff); // High byte
-      binaryData.push(rgb & 0xff);       // Low byte
+      binaryData.push(rgb & 0xff); // Low byte
 
       binaryPalette.push((rgb >> 8) & 0xff); // High byte
-      binaryPalette.push(rgb & 0xff);       // Low byte
+      binaryPalette.push(rgb & 0xff); // Low byte
     });
-  
-    console.log(binaryPalette)
 
-   console.log(binaryData)
+    console.log(binaryPalette);
+
+    console.log(binaryData);
     const blob = new Blob([new Uint8Array(binaryData)], {
       type: "application/octet-stream",
     });
@@ -171,7 +184,7 @@ function App() {
   // Helper function to convert pixels array to planar format
 
   // Helper function to convert a hex color to 4-bit RGB values
-  
+
   function BankEditor({ bankCreator, setBankCreator }) {
     const renderSpritePixels = (
       planarGraphicData,
@@ -306,7 +319,7 @@ function App() {
             ).fill(0), // Reset planar data based on new size
           };
 
-          if(dimension === "width") {
+          if (dimension === "width") {
             newSprite.planarGraphicData = Array(
               newSize * spriteHeight * selectedSprite.depth * 2
             ).fill(0);
@@ -315,7 +328,7 @@ function App() {
               spriteWidth * newSize * selectedSprite.depth * 2
             ).fill(0);
           }
-         
+
           console.log(newSprite);
           const updatedSprites = sprites.map((sprite, i) =>
             i === spriteSelected ? newSprite : sprite

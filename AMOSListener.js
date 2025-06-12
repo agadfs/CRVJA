@@ -68,6 +68,42 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#rndFunction.
+	enterRndFunction(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#rndFunction.
+	exitRndFunction(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#wait_key.
+	enterWait_key(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#wait_key.
+	exitWait_key(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#box.
+	enterBox(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#box.
+	exitBox(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#circle.
+	enterCircle(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#circle.
+	exitCircle(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#on_gosub.
 	enterOn_gosub(ctx) {
 	}
@@ -92,6 +128,33 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by AMOSParser#choose_Screen.
 	exitChoose_Screen(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#data_statement.
+	enterData_statement(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#data_statement.
+	exitData_statement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#read_statement.
+	enterRead_statement(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#read_statement.
+	exitRead_statement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#read_target.
+	enterRead_target(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#read_target.
+	exitRead_target(ctx) {
 	}
 
 
