@@ -1,0 +1,307 @@
+' PAC-MAN Henrique 2025
+
+Screen Open 1,500,500,8,Hires
+Curs Off
+
+Paper 0 : Palette $0,$666,$FF0,$888,$BBB,$AAA,$BBB,$CCC
+
+
+Pen 1
+
+Dim map(18, 18)
+Dim pointsMapX(18)
+Dim pointsMapY(18)
+
+Data 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Data 1,0,0,0,3,3,3,0,0,1,0,0,0,0,0,0,0,0,1
+Data 1,0,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,0,1
+Data 1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,1
+Data 1,0,1,0,1,1,0,1,0,1,0,1,1,0,1,0,1,0,1
+Data 1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1
+Data 1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1
+Data 1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1
+Data 1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,1
+Data 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+Data 1,0,1,1,1,0,1,1,0,1,0,0,1,0,1,1,1,0,1
+Data 1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1
+Data 1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,1,1,0,1
+Data 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+Data 1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,0,1,1
+Data 1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1
+Data 1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,0,0,0,1
+Data 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+Data 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
+
+For y = 0 To 18
+ For x = 0 To 18
+  Read map(x, y)
+ Next
+Next
+
+playerDied = 0
+ghostCounter = 0
+tileSize = 24
+px = 1 : py = 2
+pghostonex = 17 : pghostoney = 17
+pghosttwox = 17 : pghosttwoy = 16
+points = 0
+Ink 3
+
+Text 10,480,"Points:"
+Text 130,460,points
+
+
+Procedure MoveGhosts[a]
+   ' Ghost 1: move random up/down/left/right if possible
+   dx = Rnd(3) - 1 : dy = Rnd(3) - 1
+   
+   previousOneX = pghostonex
+   previousOneY = pghostoney
+   
+   previousTwoX = pghosttwox
+   previousTwoY = pghosttwoy
+
+    
+	
+   If dx = 1
+   If map(pghostonex + 1, pghostoney) = 0
+	
+         pghostonex = pghostonex + dx
+	If pghostonex = pghosttwox
+	pghostonex = previousOneX
+	End If
+
+
+         
+   End If
+
+   End If
+   Else
+   If dx = 2
+      If map(pghostonex - 1, pghostoney) = 0
+         pghostonex = pghostonex - 1
+         pghostonex = previousOneX
+         
+
+         
+   End If
+   Else 
+   If dy = 1
+      If map(pghostonex, pghostoney + 1) = 0
+         pghostoney = pghostoney + 1
+         pghostonex = pghostonex
+         If pghostoney = pghosttwoy
+	pghostoney = previousOneY
+	End If
+
+
+   End If
+   Else
+   If dy = 2
+      If map(pghostonex, pghostoney - 1) = 0
+         pghostoney = pghostoney - 1
+         pghostonex = pghostonex
+         If pghostoney = pghosttwoy
+	pghostoney = previousOneY
+	End If
+
+
+   End If
+   End If
+
+
+   ' Ghost 2: same logic
+   dx2 = Rnd(3) - 1 : dy2 = Rnd(3) - 1
+
+If dx2 = 1
+   If map(pghosttwox + 1, pghosttwoy) = 0
+         pghosttwox = pghosttwox + dx2
+	If pghosttwox = pghostonex
+pghosttwox = previousTwoX
+End If
+
+  
+   End If
+
+End If
+If dx2 = 2
+      If map(pghosttwox - 1, pghosttwoy) = 0
+         pghosttwox = pghosttwox - 1
+         If pghosttwox = pghostonex
+pghosttwox = previousTwoX
+
+End If
+       
+      End If
+ End If
+If dy2 = 1
+      If map(pghosttwox, pghosttwoy + 1) = 0
+         pghosttwoy = pghosttwoy + 1
+         pghosttwox = pghosttwox
+         If pghosttwoy = pghostoney
+	pghosttwoy = previousTwoY
+	End If
+   	End If
+   	End If
+	If dy2 = 2
+      If map(pghosttwox, pghosttwoy - 1) = 0
+         pghosttwoy = pghosttwoy - 1
+         pghosttwox = pghosttwox
+         If pghosttwoy = pghostoney
+pghosttwoy = previousTwoY
+End If
+   End If
+   End If
+
+
+
+
+
+
+
+
+End Proc
+
+AlreadyDied = 0
+Procedure P_DRAWMAP[a]
+	If pghosttwox = px
+		If pghosttwoy = py
+		playerDied = 1
+	End If
+
+	End If
+
+       
+	If pghostonex = px
+			If pghostoney = py
+		playerDied = 1
+	End If
+	End If
+
+	
+
+   For y = 0 To 18
+      For x = 0 To 18
+
+    	 x13 = x * tileSize
+         y13 = y * tileSize
+         x23 = x13 + tileSize - 1
+         y23 = y13 + tileSize - 1
+
+
+         If map(x, y) = 1
+            Ink 0
+	    Bar x13, y13 To x23, y23
+	    
+
+         Else
+            Ink 1
+	    If map(x,y) = 3
+	 
+             Bar x13, y13 To x23, y23
+             Ink 3
+	     Circle x * tileSize + 12, y * tileSize + 12, 2
+	    Else
+            Ink 1
+	    Bar x13, y13 To x23, y23
+            Circle x * tileSize + 12, y * tileSize + 12, 10
+         End If
+
+         
+
+    	 If x = px 
+         Ink 3
+	 If y = py
+ 	 Circle px * tileSize + 12, py * tileSize + 12, 10
+	 End If
+	 Else
+         Ink 1
+	 End If
+
+	  If x = pghostonex 
+         Ink 4
+	 If y = pghostoney
+ 	 Circle pghostonex * tileSize + 12, pghostoney * tileSize + 12, 10
+	 End If
+	 Else
+         Ink 1
+	 End If
+
+  	 If x = pghosttwox 
+         Ink 5
+	 If y = pghosttwoy
+ 	 Circle pghosttwox * tileSize + 12, pghosttwoy * tileSize + 12, 10
+	 End If
+	 Else
+         Ink 1
+	 End If
+
+            
+      Next
+   Next
+If playerDied = 1
+If AlreadyDied = 0
+
+Ink 3
+ Text 10,10,"You Died!"
+AlreadyDied = 1
+End If
+End If
+End Proc
+
+
+
+Do
+
+   
+   P_DRAWMAP[1]
+
+
+   ' Lê movimento
+   nx = px : ny = py
+   If Key State($11)
+      ny = py - 1  ' W
+      
+      
+
+   End If
+   If Key State($1F)
+      ny = py + 1  ' S
+    End If
+   If Key State($1E)
+      nx = px - 1  ' A
+
+   End If
+   If Key State($20)
+      nx = px + 1  ' D
+      
+
+   End If
+
+   ' Aplica movimento se for caminho
+   If map(nx, ny) = 0
+      px = nx
+      py = ny 
+
+      
+      
+   End If 
+   
+      If map(nx, ny) = 3
+'Need to make a extra 2 variables to fetch the index of the array
+      px = nx
+      py = ny 
+      points = points + 1
+      
+      
+      
+   End If
+
+   MoveGhosts[1]
+
+
+   Wait 10
+Loop
+
+End
