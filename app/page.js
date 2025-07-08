@@ -77,11 +77,11 @@ function App() {
         plugins: [babelPlugin, estreePlugin],
       });
 
-      console.log(formatted);
+   
       
       setJsCode(formatted);
     } catch (err) {
-      console.log(translatedJsCode);
+     
       setJsCode(translatedJsCode); // fallback
     }
   };

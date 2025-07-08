@@ -203,6 +203,15 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#value.
+	enterValue(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#value.
+	exitValue(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#set_rainbow.
 	enterSet_rainbow(ctx) {
 	}
