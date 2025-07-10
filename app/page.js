@@ -8,6 +8,7 @@ import { Sketch } from "@uiw/react-color";
 import prettier from "prettier/standalone";
 import babelPlugin from "prettier/plugins/babel";
 import estreePlugin from "prettier/plugins/estree";
+import AMOSDecoder from "@/src/tools/AmosDecoder";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
@@ -676,6 +677,7 @@ function App() {
           )}
         </div>
       </div>
+      <AMOSDecoder />
       {!createBank ? (
         <div>
           <button onClick={() => setCreateBank(true)}>Open Bank Creator</button>
