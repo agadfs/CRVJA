@@ -242,7 +242,7 @@ statement:
     ;
 
     loadBank:
-    'Load' STRING
+    'Load' STRING (COMMA (IDENTIFIER | NUMBER))?
     ;
     
     loadBankImgToSprite:

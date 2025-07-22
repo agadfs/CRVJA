@@ -536,46 +536,78 @@ function Tan(angle) {
 let bankData = {
   1: {
   sprites: [],
+  processing: false,
   palette: [],
   },
   2: {
   sprites: [],
+  processing: false,
   palette: [],
   },
   3: {
   sprites: [],
+  processing: false,
   palette: [],
   },
   4: {
   sprites: [],
+  processing: false,
   palette: [],
   },
   5: {
   sprites: [],
+  processing: false,
   palette: [],
   },
 
   }
-function loadBank(bank, bankId) {
- 
+function loadBank(bankName, bank) {
 
-  const idBankInput = "bankStored" + "_AmosBank_" + bankId.replace(/"/g, ""); // Use the provided bankId for dynamic input
+  let bankFileType = bankName.split('.').pop().toLowerCase();
+  bankFileType = bankFileType.replace('"', ''); // Remove any non-alphanumeric characters
 
-  const inputElement = document.getElementById(idBankInput);
- console.log(idBankInput);
-  if (!inputElement || !inputElement.files[0]) {
-    console.log('Bank',  bankId, 'failed to be loaded', ' on bank slot:', bank, 'No file was selected');
-    
+  if(bankFileType !== "abk"){
+    console.error("Invalid file type. Please select a .abk file."); 
     return;
   }
+  
+  if(bankData[bank].processing === true){
+  
+  for(let i = 0; i< 5 ; i++){
+        if(bankData[i + 1].processing == false){
+     console.log("Bank", i + 1, " is free");
+     bank = i + 1; // Set the bank to the first available slot with sprites
+     bankData[bank].processing = true;
+     break;
+            }
+   }
+   if(bank == 1){
+     console.log("Bank slots are full");
+     return;
+   }
+  
+  
+  }else{
+    bankData[bank].processing = true;
+  }
+   console.log("Loading bank:", bankName, "into bank slot:", bank);
+    //only sprite banks now, if one already exists, it will be merged
+    // if no bank number is provided, it will default to bank 1 or the next available bank
+  const findElementId = "bankStored" + bank;
+  const inputElement = document.getElementById(findElementId);
+  const file = inputElement?.files?.[0];
 
-  const file = inputElement.files[0]; // Get the file from the input element
+  console.log("Storing bank:", inputElement?.id);
+  if (!file) {
+    console.log("Bank failed to be loaded: No file was selected");
+    return;
+  }
   const reader = new FileReader();
 
   reader.onload = function (e) {
     const arrayBuffer = e.target.result; // The result is now an ArrayBuffer
     const buffer = new Uint8Array(arrayBuffer); // Convert to Uint8Array for easier byte manipulation
-  console.log(buffer);
+
     let offset = 6; // Adjust the starting offset as per the file format
     const numberExpected = (buffer[4] << 8) | buffer[5]; // Check this is correct
    
@@ -636,15 +668,30 @@ function loadBank(bank, bankId) {
       colorPalette.push(color.toUpperCase());
     }
 
+    console.log("Bank 1 exists?", bankData[1]);
+    
+    if(bankData[1].sprites.length > 0){
+     
+    console.log("Bank 1 exists, merging sprites and palette");
+    // Merge the new sprites and palette with the existing ones
+    bankData[1].sprites = [...bankData[1].sprites, ...objectsArray
+    ];
+    bankData[1].palette = [...bankData[1].palette, ...colorPalette
+    ];
+    console.log("Bank data updated:", bankData[1]);
+    }else {
+      console.log("Bank 1 does not exist, creating new bank slot");
+    
     bankData[bank].sprites = objectsArray;
     bankData[bank].palette = colorPalette;
-   
     if(bankData[bank].sprites.length > 0){
     console.log("Loaded bank slot:", bank, "with", bankData[bank].sprites.length, "sprites", "and color palette: ", bankData[bank].palette);
     }else{
        console.log('Bank',  bankId, 'failed to be loaded', ' on bank slot:', bank);
     }
         console.log("Bank data updated:", bankData[bank]);
+      }
+   
   };
 
   reader.readAsArrayBuffer(file); // Use readAsArrayBuffer for binary data
@@ -765,10 +812,19 @@ ${this.indent()}document.getElementById('amos-screen').style.backgroundColor = c
 
   enterLoadBank(ctx) {
     const fileName = ctx.children[1]?.getText();
-
-    this.output += `
-${this.indent()}loadBank(1, '${fileName}');
-    `;
+    const bankId = ctx.children[3]?.getText();
+    if (!bankId) {
+      this.output += `
+  ${this.indent()}
+  ${this.indent()}loadBank('${fileName}', 1);
+                  
+      `;
+    } else {
+      this.output += `
+  ${this.indent()}
+  ${this.indent()}loadBank('${fileName}', ${bankId});
+      `;
+    }
   }
 
   enterLoadBankImgToSprite(ctx) {

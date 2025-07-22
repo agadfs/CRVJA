@@ -36,6 +36,89 @@ function App() {
     localStorage.setItem("bankCreator", JSON.stringify(bankCreator));
   }, [bankCreator]);
 
+  function loadBank(bank) {
+    const findElementId = "Creator_bankStored" + bank;
+    const inputElement = document.getElementById(findElementId);
+    const file = inputElement?.files?.[0];
+
+    console.log("Storing bank:", inputElement?.id);
+    if (!file) {
+      console.log("Bank failed to be loaded: No file was selected");
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const arrayBuffer = e.target.result; // The result is now an ArrayBuffer
+      const buffer = new Uint8Array(arrayBuffer); // Convert to Uint8Array for easier byte manipulation
+      console.log(buffer);
+      let offset = 6; // Adjust the starting offset as per the file format
+      const numberExpected = (buffer[4] << 8) | buffer[5]; // Check this is correct
+
+      let objectsArray = [];
+
+      for (let i = 0; i < numberExpected; i++) {
+        const width = (buffer[offset] << 8) | buffer[offset + 1];
+        const height = (buffer[offset + 2] << 8) | buffer[offset + 3];
+        const depth = (buffer[offset + 4] << 8) | buffer[offset + 5];
+        const hotspotX = (buffer[offset + 6] << 8) | buffer[offset + 7];
+        const hotspotY = (buffer[offset + 8] << 8) | buffer[offset + 9];
+
+        const planarGraphicData = [];
+        const dataSize = width * 2 * height * depth; // Ensure this calculation is correct
+
+        for (let j = 0; j < dataSize; j++) {
+          planarGraphicData.push(buffer[offset + 10 + j]);
+        }
+
+        const objectBuilder = {
+          width,
+          height,
+          depth,
+          hotspotX,
+          hotspotY,
+          planarGraphicData,
+        };
+
+        objectsArray.push(objectBuilder);
+        offset += 10 + dataSize;
+      }
+
+      // Initialize colorPalette to hold 32 colors (64 bytes in total)
+      let colorPalette = [];
+
+      // Loop through each pair of bytes in the color palette section (32 colors x 2 bytes)
+      for (let k = offset; k < offset + 64; k += 2) {
+        const byte1 = buffer[k];
+        const byte2 = buffer[k + 1];
+
+        const color1 = (byte1 << 8) | byte2;
+
+        // Extract the red, green, and blue components (4 bits each)
+        const red = (color1 >> 8) & 0xf;
+        const green = (color1 >> 4) & 0xf;
+        const blue = color1 & 0xf;
+
+        // Convert 4-bit values (0-15) to 8-bit values (0-255) by multiplying by 17
+        const red8 = (red * 17).toString(16).padStart(2, "0");
+        const green8 = (green * 17).toString(16).padStart(2, "0");
+        const blue8 = (blue * 17).toString(16).padStart(2, "0");
+
+        // Format as HTML color code #RRGGBB
+        const color = "#" + red8 + green8 + blue8;
+        colorPalette.push(color.toUpperCase());
+      }
+      setBankCreator({
+        ...bankCreator,
+        sprites: objectsArray,
+        palette: colorPalette,
+      });
+      console.log("Bank loaded successfully:", objectsArray, colorPalette);
+    };
+
+    reader.readAsArrayBuffer(file); // Use readAsArrayBuffer for binary data
+  }
+
   const clearBank = () => {
     localStorage.removeItem("bankCreator");
     setBankCreator({ sprites: [], palette: Array(32).fill("#000000") });
@@ -78,29 +161,34 @@ function App() {
         plugins: [babelPlugin, estreePlugin],
       });
 
-   
-      
       setJsCode(formatted);
     } catch (err) {
-     
       setJsCode(translatedJsCode); // fallback
     }
   };
 
-  useEffect(() => {
-    if (jsCode) {
-      try {
-        const existingContainer = document.getElementById("amos-screen");
-        if (existingContainer) {
-          existingContainer.remove();
-        }
-        const func = new Function(jsCode);
-        func();
-      } catch (err) {
-        console.error("Error rendering JavaScript:", err);
+ useEffect(() => {
+  if (jsCode) {
+    try {
+      const existingContainer = document.getElementById("amos-screen");
+      if (existingContainer) {
+        existingContainer.remove();
       }
+
+      const asyncWrapper = new Function(`
+        return (async () => {
+          ${jsCode}
+        })();
+      `);
+
+      asyncWrapper().catch((err) => {
+        console.error("Async error in dynamic JavaScript:", err);
+      });
+    } catch (err) {
+      console.error("Error creating async function:", err);
     }
-  }, [jsCode]);
+  }
+}, [jsCode]);
   function generateAmosBankFile(bankCreator) {
     const { sprites, palette } = bankCreator;
     const identifier = "AmSp"; // 4-byte identifier for sprites
@@ -368,6 +456,22 @@ function App() {
           >
             GENERATE BANK FILE
           </button>
+          <div>
+            Load bank:
+            <input
+              id={`Creator_bankStored1`}
+              type="file"
+              onChange={(e) => {
+                setBankCreator({ ...bankCreator, sprites: [], palette: [] });
+                if (e.target.files.length > 0) {
+                  const file = e.target.files[0];
+                  console.log("File selected for bank 1:", file.name);
+                  loadBank(1);
+                }
+              }}
+              multiple
+            />
+          </div>
           <button onClick={() => saveBankToLocalStorage()}>
             Save Bank to Local Storage
           </button>
@@ -539,7 +643,17 @@ function App() {
                 return (
                   <div
                     key={index}
-                    onClick={() => handleSpriteClick(index)}
+                    onClick={() => {
+                      handleSpriteClick(index);
+                    }}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      console.log(sprites[index]);
+                      const spritesCopy = [...sprites];
+                      spritesCopy.splice(index, 1);
+                      setBankCreator({ ...bankCreator, sprites: spritesCopy });
+                      selectSprite(index);
+                    }}
                     style={{
                       width: "40px",
                       height: "40px",
@@ -585,6 +699,10 @@ function App() {
           <select value={numBanks} onChange={handleNumBanksChange}>
             <option value="0">0</option>
             <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="3">4</option>
+            <option value="3">5</option>
           </select>
         </div>
         {Array.from({ length: numBanks }, (_, index) => (
@@ -595,11 +713,13 @@ function App() {
               type="file"
               onChange={(e) => {
                 if (e.target.files.length > 0) {
-                  const fileName = e.target.files[0].name;
-                  e.target.id = `bankStored_${fileName.replace(/\s/g, "_")}`;
+                  const file = e.target.files[0];
+                  console.log(
+                    `File selected for bank ${index + 1}:`,
+                    file.name
+                  );
                 }
               }}
-              multiple
             />
           </div>
         ))}
