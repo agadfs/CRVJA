@@ -742,6 +742,8 @@ function App() {
               flexDirection: "row",
               height: "20vh",
               border: "1px solid black",
+              
+             
             }}
           >
             <div
