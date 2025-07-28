@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import antlr4 from "antlr4";
 import AmosToJavaScriptTranslator from "@/AmosToJavaScriptTranslator";
 import AMOSParser from "@/AMOSParser";
@@ -12,17 +12,24 @@ import AMOSDecoder from "@/src/tools/AmosDecoder";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
-  const [numBanks, setNumBanks] = useState(0);
+  const [numBanks, setNumBanks] = useState(6);
   const [bankFiles, setBankFiles] = useState([]);
   const [option, setOption] = useState("file");
   const [AmosCode, setAmosCode] = useState("");
+  const fileInputRef = useRef();
   const [createBank, setCreateBank] = useState(false);
-
+  const [bankFileNames, setBankFileNames] = useState(
+    Array(numBanks).fill(null)
+  );
+  const [decodedText, setDecodedText] = useState("");
   const [bankCreator, setBankCreator] = useState({
     sprites: [],
     palette: Array(32).fill("#000000"),
   });
 
+  useEffect(() => {
+    setAmosCode(decodedText);
+  }, [decodedText]);
   useEffect(() => {
     // Load bank data from local storage if it exists
     const savedBankData = localStorage.getItem("bankCreator");
@@ -166,29 +173,33 @@ function App() {
       setJsCode(translatedJsCode); // fallback
     }
   };
+  const handleFileChange = (index, file) => {
+    const newBankFiles = [...bankFiles];
+    newBankFiles[index] = file;
+    setBankFiles(newBankFiles);
+  };
+  useEffect(() => {
+    if (jsCode) {
+      try {
+        const existingContainer = document.getElementById("amos-screen");
+        if (existingContainer) {
+          existingContainer.remove();
+        }
 
- useEffect(() => {
-  if (jsCode) {
-    try {
-      const existingContainer = document.getElementById("amos-screen");
-      if (existingContainer) {
-        existingContainer.remove();
-      }
-
-      const asyncWrapper = new Function(`
+        const asyncWrapper = new Function(`
         return (async () => {
           ${jsCode}
         })();
       `);
 
-      asyncWrapper().catch((err) => {
-        console.error("Async error in dynamic JavaScript:", err);
-      });
-    } catch (err) {
-      console.error("Error creating async function:", err);
+        asyncWrapper().catch((err) => {
+          console.error("Async error in dynamic JavaScript:", err);
+        });
+      } catch (err) {
+        console.error("Error creating async function:", err);
+      }
     }
-  }
-}, [jsCode]);
+  }, [jsCode]);
   function generateAmosBankFile(bankCreator) {
     const { sprites, palette } = bankCreator;
     const identifier = "AmSp"; // 4-byte identifier for sprites
@@ -687,128 +698,409 @@ function App() {
     );
   }
 
+  const styleButton = {
+    backgroundColor: "#00aaaa",
+    minWidth: "300px",
+    color: "white",
+    fontWeight: "bold",
+    padding: "10px 20px",
+    border: "4px solid #006666",
+    boxShadow: "4px 4px 0 #004444",
+    textShadow: "1px 1px 0 #006666",
+    letterSpacing: "1px",
+    fontFamily: "monospace",
+    fontSize: "16px",
+    cursor: "pointer",
+    transition: "all 0.1s ease-in-out",
+  };
+
   return (
     <div className="App">
       <h1>AMOS Basic parser to JavaScript</h1>
-      <div style={{ marginBlock: "20px" }}>
-        Open browser console to see full results
-      </div>
-      <div style={{ border: "2px solid black", padding: "5px" }}>
-        <div>
-          <label>STEP ONE: Select number of banks: </label>
-          <select value={numBanks} onChange={handleNumBanksChange}>
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="3">4</option>
-            <option value="3">5</option>
-          </select>
-        </div>
-        {Array.from({ length: numBanks }, (_, index) => (
-          <div style={{ marginBottom: "10px" }} key={index}>
-            <label>Bank {index + 1}: </label>
-            <input
-              id={`bankStored${index + 1}`}
-              type="file"
-              onChange={(e) => {
-                if (e.target.files.length > 0) {
-                  const file = e.target.files[0];
-                  console.log(
-                    `File selected for bank ${index + 1}:`,
-                    file.name
-                  );
-                }
-              }}
-            />
-          </div>
-        ))}
-      </div>
+
       <div
         style={{
           display: "flex",
           marginTop: "30px",
-          border: "2px solid black",
+          
           padding: "5px",
         }}
       >
-        <div>STEP TWO: Enter AMOS BASIC code or upload a file</div>
         <div
           style={{
+            height: "100vh",
+            width: "100%",
             display: "flex",
             flexDirection: "column",
-            marginTop: "10px",
           }}
         >
-          <select
-            style={{ width: "fit-content" }}
-            value={option}
-            onChange={(e) => setOption(e.target.value)}
+          <div
+            style={{
+            
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              height: "20vh",
+              border: "1px solid black",
+            }}
           >
-            <option value="file">File</option>
-            <option value="text">Code Text</option>
-          </select>
-          {option === "text" && (
-            <div style={{ display: "flex", gap: "1%" }}>
+            <div
+              style={{
+              
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                 marginLeft:"-2px",
+                gap: "10px",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  gap: "1%",
-                  marginBlock: "1%",
+                  flexDirection: "row",
+                 
+                  alignItems: "center",
+                  gap: "10px",
                 }}
               >
                 <button
-                  onClick={() => {
-                    parseAmosCode(AmosCode);
+                  onClick={() => fileInputRef.current?.click()}
+                  style={styleButton}
+                  onMouseDown={(e) => {
+                    e.target.style.transform = "translate(4px, 4px)";
+                    e.target.style.boxShadow = "0 0 0 #004444";
+                  }}
+                  onMouseUp={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translate(2px, 2px)";
+                    e.target.style.boxShadow = "2px 2px 0 #004444";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
                   }}
                 >
-                  Run Code
+                  LOAD .ASC FILE
                 </button>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  style={{ display: "none" }}
+                  accept=".asc, .txt, .amo"
+                />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignContent: "center",
+                }}
+              >
+                <AMOSDecoder onDecoded={(text) => setDecodedText(text)} />
+              </div>
+            </div>
+            <div
+              style={{
+              
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+
+                alignItems: "center",
+              }}
+            >
+              <div>Examples</div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "10px",
+                }}
+              >
                 <button
-                  onClick={() => {
-                    setAmosCode("");
-                    setJsCode("");
-                    const existingContainer =
-                      document.getElementById("amos-screen");
-                    if (existingContainer) {
-                      existingContainer.remove();
+                  onClick={async () => {
+                    try {
+
+                      const res = await fetch(
+                        "/AmosFiles/Amos2_Rotating_Triangle.txt"
+                      );
+                      if (!res.ok)
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                      const text = await res.text();
+                      setAmosCode(text);
+                      parseAmosCode(text);
+
+                      // Do something with the text, e.g., setState(text)
+                    } catch (err) {
+                      console.error("❌ Failed to load file:", err);
                     }
                   }}
+                  style={styleButton}
+                  onMouseDown={(e) => {
+                    e.target.style.transform = "translate(4px, 4px)";
+                    e.target.style.boxShadow = "0 0 0 #004444";
+                  }}
+                  onMouseUp={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translate(2px, 2px)";
+                    e.target.style.boxShadow = "2px 2px 0 #004444";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
                 >
-                  Clear Code
+                  Rotating Triangle
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                     
+                      const res = await fetch("/AmosFiles/Pacman.txt");
+                      if (!res.ok)
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                      const text = await res.text();
+                      setAmosCode(text);
+                      parseAmosCode(text);
+
+                      // Do something with the text, e.g., setState(text)
+                    } catch (err) {
+                      console.error("❌ Failed to load file:", err);
+                    }
+                  }}
+                  style={styleButton}
+                  onMouseDown={(e) => {
+                    e.target.style.transform = "translate(4px, 4px)";
+                    e.target.style.boxShadow = "0 0 0 #004444";
+                  }}
+                  onMouseUp={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translate(2px, 2px)";
+                    e.target.style.boxShadow = "2px 2px 0 #004444";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                >
+                  Pacman
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                     
+                      const res = await fetch("/AmosFiles/Amos1_piano_improved.asc");
+                      if (!res.ok)
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                      const text = await res.text();
+                      setAmosCode(text);
+                      parseAmosCode(text);
+
+                      // Do something with the text, e.g., setState(text)
+                    } catch (err) {
+                      console.error("❌ Failed to load file:", err);
+                    }
+                  }}
+                  style={styleButton}
+                  onMouseDown={(e) => {
+                    e.target.style.transform = "translate(4px, 4px)";
+                    e.target.style.boxShadow = "0 0 0 #004444";
+                  }}
+                  onMouseUp={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translate(2px, 2px)";
+                    e.target.style.boxShadow = "2px 2px 0 #004444";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                >
+                  Piano
                 </button>
               </div>
+            </div>
+          </div>
+          <div
+            style={{
+             
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              height: "60vh",
+              border: "1px solid black",
+            }}
+          >
+            <div
+              style={{
+              
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <label htmlFor="amos-code">Code Area</label>
               <textarea
+                style={{
+                  width: "44vw",
+                  height: "100%",
+                  background: "#222",
+                  color: "#0f0",
+                  margin: "10px",
+                }}
                 value={AmosCode}
                 onChange={(e) => {
                   setAmosCode(e.target.value);
                 }}
                 placeholder="Enter AMOS BASIC code here"
               />
+            </div>
+            <div
+              style={{
+              
+              
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+
+                alignItems: "center",
+              }}
+            >
+              <label htmlFor="amos-code">Render code area</label>
               <div id="game-container"></div>
             </div>
-          )}
-          {option === "file" && (
-            <div>
-              <input type="file" onChange={handleFileUpload} />
-              <div id="game-container"></div>
+          </div>
+          <div
+            style={{
+            
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              border: "1px solid black",
+            }}
+          >
+            <div
+              style={{
+              
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div>
+                {" "}
+                {bankFiles.map((file, index) => (
+                  <li key={index}>
+                    Bank {index + 1}:{" "}
+                    {file ? file.name.split("_")[1] : <i>No file selected</i>}
+                  </li>
+                ))}
+              </div>
             </div>
-          )}
+            <div
+              style={{
+               
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div style={{ width: "100%"}}>
+                {Array.from({ length: numBanks }, (_, index) => (
+                  <div style={{ marginBottom: "10px" }} key={index}>
+                    <label>Bank {index + 1}: </label>
+                    <input
+                      id={`bankStored${index + 1}`}
+                      type="file"
+                      onChange={(e) => {
+                        if (e.target.files.length > 0) {
+                          const file = e.target.files[0];
+                          console.log(
+                            `File selected for bank ${index + 1}:`,
+                            file.name
+                          );
+                          handleFileChange(index, file);
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+             
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              height: "10vh",
+            }}
+          >
+            <div
+              style={{
+               
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div>
+                {" "}
+                {!createBank ? (
+                  <div>
+                    <button onClick={() => setCreateBank(true)}>
+                      Open Bank Creator
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => setCreateBank(false)}>
+                    Close Bank Creator
+                  </button>
+                )}
+                {createBank && (
+                  <BankEditor
+                    bankCreator={bankCreator}
+                    setBankCreator={setBankCreator}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <AMOSDecoder />
-      {!createBank ? (
-        <div>
-          <button onClick={() => setCreateBank(true)}>Open Bank Creator</button>
-        </div>
-      ) : (
-        <button onClick={() => setCreateBank(false)}>Close Bank Creator</button>
-      )}
-
-      {createBank && (
-        <BankEditor bankCreator={bankCreator} setBankCreator={setBankCreator} />
-      )}
     </div>
   );
 }

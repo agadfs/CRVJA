@@ -887,7 +887,7 @@ ${this.indent()}closeChannel(${channel});
     }
     for (let i = 0; i < ctx.print_options().length; i++) {
       let text = ctx.print_options(i)?.getText();
-      console.log(`Console log: ${text}`);
+   
       console.log(typeof text);
       if (!text.includes('"')) {
         text = ctx
