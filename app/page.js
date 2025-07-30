@@ -9,6 +9,7 @@ import prettier from "prettier/standalone";
 import babelPlugin from "prettier/plugins/babel";
 import estreePlugin from "prettier/plugins/estree";
 import AMOSDecoder from "@/src/tools/AmosDecoder";
+import { parse } from "@babel/core";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
@@ -973,7 +974,44 @@ function App() {
                 alignItems: "center",
               }}
             >
-              <label htmlFor="amos-code">Code Area</label>
+              <div style={{display:'flex', flexDirection:"row"}} > <label htmlFor="amos-code">Code Area</label>
+                <button
+                  onClick={async () => {
+                    try {
+                     
+                      parseAmosCode(AmosCode)
+
+                   
+                    } catch (err) {
+                      console.error("❌ Failed to run code:", err);
+                    }
+                  }}
+                  style={styleButton}
+                  onMouseDown={(e) => {
+                    e.target.style.transform = "translate(4px, 4px)";
+                    e.target.style.boxShadow = "0 0 0 #004444";
+                  }}
+                  onMouseUp={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = "translate(2px, 2px)";
+                    e.target.style.boxShadow = "2px 2px 0 #004444";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "translate(0, 0)";
+                    e.target.style.boxShadow = "4px 4px 0 #004444";
+                  }}
+                >
+                  Run code
+                </button>
+              </div>
+             
               <textarea
                 style={{
                   width: "44vw",
