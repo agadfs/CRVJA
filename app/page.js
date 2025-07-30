@@ -9,7 +9,6 @@ import prettier from "prettier/standalone";
 import babelPlugin from "prettier/plugins/babel";
 import estreePlugin from "prettier/plugins/estree";
 import AMOSDecoder from "@/src/tools/AmosDecoder";
-import { parse } from "@babel/core";
 
 function App() {
   const [jsCode, setJsCode] = useState("");
@@ -150,9 +149,22 @@ function App() {
 
     reader.readAsText(file);
   };
-
+  const ensureRoot = () => {
+    let root = document.getElementById(AMOS_ROOT_ID);
+    if (!root) {
+      root = document.createElement("div");
+      root.id = AMOS_ROOT_ID;
+      document.body.appendChild(root);
+    }
+    // Always clear children before a new parse/run
+    root.replaceChildren();
+    return root;
+  };
   const parseAmosCode = async (amosBasicCode) => {
     console.log(amosBasicCode);
+    
+   
+
     const chars = new antlr4.InputStream(amosBasicCode);
     const lexer = new AMOSLexer(chars);
     const tokens = new antlr4.CommonTokenStream(lexer);
@@ -723,7 +735,7 @@ function App() {
         style={{
           display: "flex",
           marginTop: "30px",
-          
+
           padding: "5px",
         }}
       >
@@ -737,23 +749,19 @@ function App() {
         >
           <div
             style={{
-            
               width: "100%",
               display: "flex",
               flexDirection: "row",
               height: "20vh",
               border: "1px solid black",
-              
-             
             }}
           >
             <div
               style={{
-              
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                 marginLeft:"-2px",
+                marginLeft: "-2px",
                 gap: "10px",
               }}
             >
@@ -761,7 +769,7 @@ function App() {
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                 
+
                   alignItems: "center",
                   gap: "10px",
                 }}
@@ -813,7 +821,6 @@ function App() {
             </div>
             <div
               style={{
-              
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -832,7 +839,6 @@ function App() {
                 <button
                   onClick={async () => {
                     try {
-
                       const res = await fetch(
                         "/AmosFiles/Amos2_Rotating_Triangle.txt"
                       );
@@ -874,7 +880,6 @@ function App() {
                 <button
                   onClick={async () => {
                     try {
-                     
                       const res = await fetch("/AmosFiles/Pacman.txt");
                       if (!res.ok)
                         throw new Error(`HTTP error! status: ${res.status}`);
@@ -914,8 +919,9 @@ function App() {
                 <button
                   onClick={async () => {
                     try {
-                     
-                      const res = await fetch("/AmosFiles/Amos1_piano_improved.asc");
+                      const res = await fetch(
+                        "/AmosFiles/Amos1_piano_improved.asc"
+                      );
                       if (!res.ok)
                         throw new Error(`HTTP error! status: ${res.status}`);
                       const text = await res.text();
@@ -956,7 +962,6 @@ function App() {
           </div>
           <div
             style={{
-             
               width: "100%",
               display: "flex",
               flexDirection: "row",
@@ -966,7 +971,6 @@ function App() {
           >
             <div
               style={{
-              
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -974,14 +978,21 @@ function App() {
                 alignItems: "center",
               }}
             >
-              <div style={{display:'flex', flexDirection:"row"}} > <label htmlFor="amos-code">Code Area</label>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignContent: "center",
+                  alignItems: "center",
+                  gap: "20px",
+                }}
+              >
+                {" "}
+                <label htmlFor="amos-code">Code Area</label>
                 <button
                   onClick={async () => {
                     try {
-                     
-                      parseAmosCode(AmosCode)
-
-                   
+                      parseAmosCode(AmosCode);
                     } catch (err) {
                       console.error("❌ Failed to run code:", err);
                     }
@@ -1011,7 +1022,7 @@ function App() {
                   Run code
                 </button>
               </div>
-             
+
               <textarea
                 style={{
                   width: "44vw",
@@ -1029,8 +1040,6 @@ function App() {
             </div>
             <div
               style={{
-              
-              
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -1044,7 +1053,6 @@ function App() {
           </div>
           <div
             style={{
-            
               width: "100%",
               display: "flex",
               flexDirection: "row",
@@ -1053,7 +1061,6 @@ function App() {
           >
             <div
               style={{
-              
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -1071,13 +1078,12 @@ function App() {
             </div>
             <div
               style={{
-               
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              <div style={{ width: "100%"}}>
+              <div style={{ width: "100%" }}>
                 {Array.from({ length: numBanks }, (_, index) => (
                   <div style={{ marginBottom: "10px" }} key={index}>
                     <label>Bank {index + 1}: </label>
@@ -1102,7 +1108,6 @@ function App() {
           </div>
           <div
             style={{
-             
               width: "100%",
               display: "flex",
               flexDirection: "row",
@@ -1111,7 +1116,6 @@ function App() {
           >
             <div
               style={{
-               
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
