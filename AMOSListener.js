@@ -77,6 +77,24 @@ export default class AMOSListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by AMOSParser#screen_swap.
+	enterScreen_swap(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#screen_swap.
+	exitScreen_swap(ctx) {
+	}
+
+
+	// Enter a parse tree produced by AMOSParser#wait_vbl.
+	enterWait_vbl(ctx) {
+	}
+
+	// Exit a parse tree produced by AMOSParser#wait_vbl.
+	exitWait_vbl(ctx) {
+	}
+
+
 	// Enter a parse tree produced by AMOSParser#wait_key.
 	enterWait_key(ctx) {
 	}

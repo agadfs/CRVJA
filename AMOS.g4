@@ -157,7 +157,9 @@ statement:
     | read_statement
     | box
     | circle
+    | wait_vbl
     | wait_key
+    | screen_swap
 
     
    
@@ -169,6 +171,13 @@ statement:
 
     
     rndFunction: 'Rnd' '(' expression1 ')';
+
+    screen_swap:
+    'Screen' 'Swap'
+    ;
+    wait_vbl:
+    'Wait' 'Vbl'
+    ;
     wait_key:
     'Wait' NUMBER
     ;
