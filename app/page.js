@@ -10,8 +10,266 @@ import babelPlugin from "prettier/plugins/babel";
 import estreePlugin from "prettier/plugins/estree";
 import AMOSDecoder from "@/src/tools/AmosDecoder";
 
+class CollectingErrorListener extends antlr4.error.ErrorListener {
+  constructor() {
+    super();
+    this.errors = [];
+  }
+  syntaxError(recognizer, offendingSymbol, line, column, msg /*, e*/) {
+    this.errors.push({ line, column, msg });
+  }
+}
+// Put this near the top of your file (outside App)
+function CodeEditorWithErrors({
+  value,
+  onChange,
+  errors = [],         // [{ line: 1-based, column: 0-based, msg }]
+  style,
+  className,
+  fontFamily = "'Amiga4Ever', monospace",
+  fontSize = 12,
+  lineHeight = 1.4,
+  tabColumns = 4,
+}) {
+  const taRef = React.useRef(null);
+  const innerRef = React.useRef(null);
+
+  const [tip, setTip] = React.useState(null);
+const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
+  // ❶ Error lookup: line -> Map<col,msg>
+  const byLine = React.useMemo(() => {
+    const map = new Map();
+    for (const e of errors || []) {
+      const line = Number(e.line) | 0;
+      const col  = Number(e.column);
+      if (!map.has(line)) map.set(line, new Map());
+      if (Number.isFinite(col)) {
+        if (!map.get(line).has(col)) map.get(line).set(col, e.msg || "Syntax error");
+      } else {
+        map.get(line).set(-1, e.msg || "Syntax error"); // whole‑line
+      }
+    }
+    return map;
+  }, [errors]);
+
+  // ❷ Expand tabs only for the overlay; textarea keeps real tabs
+  const expandTabs = React.useCallback((s) => {
+    if (!s || !s.includes("\t")) return s ?? "";
+    const tab = " ".repeat(tabColumns);
+    return s.replace(/\t/g, tab);
+  }, [tabColumns]);
+
+  // ❸ Compute absolute string index from (line, col) for caret placement
+  const indexFromLineCol = React.useCallback((src, lineOneBased, colZeroBased) => {
+    const lines = src.split("\n");
+    const li = Math.max(0, Math.min(lines.length - 1, lineOneBased - 1));
+    let idx = 0;
+    for (let i = 0; i < li; i++) idx += lines[i].length + 1; // +1 for \n
+    return idx + Math.max(0, Math.min(colZeroBased, lines[li].length));
+  }, []);
+
+  // ❹ Render overlay (no own scroll; we translate inside)
+  const renderHighlights = React.useMemo(() => {
+    const lines = expandTabs(value ?? "").split("\n");
+    return lines.map((ln, i) => {
+      const lineNo = i + 1;
+      const colMap = byLine.get(lineNo);
+      if (!colMap) return <div key={i}>{ln || " "}{"\n"}</div>;
+
+      const hasWholeLineError = colMap.has(-1);
+      const parts = [];
+      const maxCols = Math.max(ln.length + 1, 1); // include EOL
+
+      for (let c = 0; c < maxCols; c++) {
+        const ch = ln[c] ?? " ";
+        const msg = colMap.get(c);
+
+        if (msg) {
+          // pass line/col to handler for caret setting
+          parts.push(
+            <span
+  key={c}
+  className="err-ch"
+  title={msg}
+  data-line={lineNo}
+  data-col={c}
+  onMouseEnter={(e) => setTip({ ...cursorPos(e), msg })}
+  onMouseMove={(e) => setTip(t => (t ? { ...cursorPos(e), msg } : t))}
+  onMouseLeave={() => setTip(null)}
+  onMouseDown={(e) => {
+    e.preventDefault();
+    const ta = taRef.current;
+    if (!ta) return;
+    const line = Number(e.currentTarget.dataset.line);
+    const col  = Number(e.currentTarget.dataset.col);
+    const pos  = indexFromLineCol(value ?? "", line, col);
+    ta.focus();
+    ta.setSelectionRange(pos, pos);
+  }}
+>
+  {ch}
+</span>
+          );
+        } else {
+          parts.push(<span key={c}>{ch}</span>);
+        }
+      }
+
+      return (
+        <div key={i} className={hasWholeLineError ? "err-line line-soft" : "err-line"}>
+          {parts}
+          {"\n"}
+        </div>
+      );
+    });
+  }, [value, byLine, expandTabs, indexFromLineCol]);
+
+  // ❺ Translate overlay to match textarea scroll, with a small vertical fix
+  React.useLayoutEffect(() => {
+    const ta = taRef.current;
+    const inner = innerRef.current;
+    if (!ta || !inner) return;
+
+    const Y_ADJUST = -5; // ← move overlay UP by 5px; tweak if you change font/lineHeight
+
+    const sync = () => {
+      inner.style.transform =
+        `translate(${-ta.scrollLeft}px, ${-ta.scrollTop + Y_ADJUST}px)`;
+    };
+    sync();
+    ta.addEventListener("scroll", sync);
+    const ro = new ResizeObserver(sync);
+    ro.observe(ta);
+    return () => { ta.removeEventListener("scroll", sync); ro.disconnect(); };
+  }, [value]);
+
+  // Shared metrics—must be identical on both layers
+  const metrics = {
+    fontFamily,
+    fontSize: `${fontSize}px`,
+    lineHeight,
+    letterSpacing: "0",
+    tabSize: tabColumns,
+  };
+
+  const wrapStyle = { position: "relative", ...style };
+
+  // Overlay wrapper: pointer-events:none so clicks fall through EXCEPT error spans
+  const overlayWrapStyle = {
+    position: "absolute",
+    inset: 0,
+    overflow: "hidden",
+    padding: 8,
+    boxSizing: "border-box",
+    zIndex: 2,
+    ...metrics,
+    color: "transparent",
+    whiteSpace: "pre",
+    pointerEvents: "none", // ← allow click-through by default
+  };
+
+  const overlayInnerStyle = {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    willChange: "transform",
+  };
+
+  const textareaStyle = {
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+    padding: 8,
+    boxSizing: "border-box",
+    background: "#222",
+    color: "#0f0",
+    border: "none",
+    resize: "none",
+    whiteSpace: "pre",
+    overflow: "auto",
+    outline: "none",
+    zIndex: 1,
+    ...metrics,
+  };
+
+  const tooltipStyle = tip && {
+  position: "fixed",             // ← fixed to the viewport, unaffected by scroll
+  left: tip.x,
+  top: tip.y,
+  background: "#111",
+  color: "#fff",
+  border: "1px solid #444",
+  borderRadius: 6,
+  padding: "8px 10px",
+  maxWidth: 360,
+  fontSize: 12,
+  lineHeight: 1.3,
+  zIndex: 9999,
+  boxShadow: "0 6px 16px rgba(0,0,0,0.4)",
+  pointerEvents: "none",
+};
+
+  return (
+    <div className={className} style={wrapStyle}>
+      {/* Overlay (no scroll; translated inner) */}
+      <div
+        style={overlayWrapStyle}
+        onWheel={(e) => {
+  const ta = taRef.current;
+  if (!ta) return;
+  e.preventDefault();
+  ta.scrollTop += e.deltaY;
+  ta.scrollLeft += e.deltaX;
+  setTip(null); // hide while scrolling (optional)
+}}
+      >
+        <pre ref={innerRef} style={overlayInnerStyle} className="overlay-pre">
+          {renderHighlights}
+        </pre>
+      </div>
+
+      {/* Textarea */}
+      <textarea
+        ref={taRef}
+        style={textareaStyle}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        spellCheck={false}
+        placeholder="Enter AMOS BASIC code here"
+      />
+
+      {tip && <div style={tooltipStyle}>{tip.msg}</div>}
+
+      <style>{`
+        .overlay-pre {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .overlay-pre::-webkit-scrollbar { display: none; }
+
+        /* Error cell: re-enable pointer events so we can show tooltip + set caret */
+        .err-line .err-ch {
+          display: inline-block;
+          background: rgba(255, 0, 0, 0.45);
+          color: transparent;
+          border-radius: 2px;
+          outline: 1px solid rgba(255,0,0,0.8);
+          pointer-events: auto;   /* ← active over errors only */
+          cursor: text;
+        }
+        .err-line.line-soft {
+          background: rgba(255, 0, 0, 0.10);
+        }
+      `}</style>
+    </div>
+  );
+}
+
+
 function App() {
   const [jsCode, setJsCode] = useState("");
+  const [parseErrors, setParseErrors] = useState([]);
   const [numBanks, setNumBanks] = useState(6);
   const [bankFiles, setBankFiles] = useState([]);
   const [option, setOption] = useState("file");
@@ -131,12 +389,6 @@ function App() {
     setBankCreator({ sprites: [], palette: Array(32).fill("#000000") });
   };
 
-  const handleNumBanksChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    setNumBanks(value);
-    setBankFiles(new Array(value).fill(null));
-  };
-
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -149,39 +401,41 @@ function App() {
 
     reader.readAsText(file);
   };
-  const ensureRoot = () => {
-    let root = document.getElementById(AMOS_ROOT_ID);
-    if (!root) {
-      root = document.createElement("div");
-      root.id = AMOS_ROOT_ID;
-      document.body.appendChild(root);
-    }
-    // Always clear children before a new parse/run
-    root.replaceChildren();
-    return root;
-  };
-  const parseAmosCode = async (amosBasicCode) => {
-    console.log(amosBasicCode);
 
+  const parseAmosCode = async (amosBasicCode) => {
     const chars = new antlr4.InputStream(amosBasicCode);
     const lexer = new AMOSLexer(chars);
+
+    const lexErr = new CollectingErrorListener();
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(lexErr);
+
     const tokens = new antlr4.CommonTokenStream(lexer);
     const parser = new AMOSParser(tokens);
+
+    const parseErr = new CollectingErrorListener();
+    parser.removeErrorListeners();
+    parser.addErrorListener(parseErr);
+
     const tree = parser.program();
 
+    // Save errors for UI highlighting (1-based line numbers)
+    setParseErrors([...lexErr.errors, ...parseErr.errors]);
+
+    // … your translation, formatting and setJsCode as before …
     const translator = new AmosToJavaScriptTranslator();
     const walker = new antlr4.tree.ParseTreeWalker();
     walker.walk(translator, tree);
-    let translatedJsCode = translator.getJavaScript();
+
+    const translatedJsCode = translator.getJavaScript();
     try {
       const formatted = await prettier.format(translatedJsCode, {
         parser: "babel",
         plugins: [babelPlugin, estreePlugin],
       });
-
       setJsCode(formatted);
-    } catch (err) {
-      setJsCode(translatedJsCode); // fallback
+    } catch {
+      setJsCode(translatedJsCode);
     }
   };
   const handleFileChange = (index, file) => {
@@ -189,74 +443,92 @@ function App() {
     newBankFiles[index] = file;
     setBankFiles(newBankFiles);
   };
-
-useEffect(() => {
-  if (!jsCode) return;
-
-  const host = document.getElementById("game-container");
-  if (!host) {
-    console.error('AMOS runner: host "#game-container" not found.');
-    return;
-  }
-  host.replaceChildren();
-
-  const token = Math.random().toString(36).slice(2);
-
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
-  iframe.style.border = "0";
-  iframe.style.display = "block";
-  iframe.style.width = "640px";   // initial; iframe will resize itself
-  iframe.style.height = "480px";
-  host.style.display = "inline-block";
-
-  // ---- PLAIN JS selector; find the bank file inputs in the PARENT ----
-  const forwardBanks = async () => {
-    const inputs = Array.from(
-      document.querySelectorAll(
-        'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
-      )
-    );
-    console.log("[parent] found bank inputs:", inputs.map(i => i.id));
-
-    for (const input of inputs) {
-      const file = input.files && input.files[0];
-      if (!file) continue;
-      const buffer = await file.arrayBuffer();
-      const m = input.id.match(/(\d+)$/);
-      const bankId = m ? m[1] : "";
-      console.log("[parent] posting bank", { bankId, name: file.name, bytes: buffer.byteLength });
-      iframe.contentWindow &&
-        iframe.contentWindow.postMessage(
-          { type: "amos-bank", token, bankId, name: file.name, mime: file.type || "application/octet-stream", buffer },
-          "*",
-          [buffer] // transferable
-        );
-    }
+  const [runNonce, setRunNonce] = useState(0);
+  const onRunClick = () => {
+    // If you re-parse AMOS here, keep it; otherwise just bump the nonce
+    setRunNonce((n) => n + 1);
   };
+  useEffect(() => {
+    if (!jsCode) return;
 
-  const onMessage = (e) => {
-    const data = e.data || {};
-    if (data.token !== token) return;
-
-    if (data.type === "amos-size") {
-      iframe.style.width  = `${Math.max(1, Math.round(data.width))}px`;
-      iframe.style.height = `${Math.max(1, Math.round(data.height))}px`;
+    const host = document.getElementById("game-container");
+    if (!host) {
+      console.error('AMOS runner: host "#game-container" not found.');
+      return;
     }
+    console.log("[parent] AMOS runner: host found, injecting iframe…");
+    host.replaceChildren();
 
-    if (data.type === "amos-ready") {
-      console.log("[parent] iframe is ready, forwarding banks…");
-      Promise.resolve()
-        .then(forwardBanks) // run on next tick to be safe
-        .then(() => {
-          console.log("[parent] banks forwarded, telling iframe we're done");
-          iframe.contentWindow && iframe.contentWindow.postMessage({ type: "amos-banks-done", token }, "*");
+    const token = Math.random().toString(36).slice(2);
+
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
+    iframe.style.border = "0";
+    iframe.style.display = "block";
+    iframe.style.width = "640px"; // initial; iframe will resize itself
+    iframe.style.height = "480px";
+    host.style.display = "inline-block";
+
+    // ---- PLAIN JS selector; find the bank file inputs in the PARENT ----
+    const forwardBanks = async () => {
+      const inputs = Array.from(
+        document.querySelectorAll(
+          'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
+        )
+      );
+
+      for (const input of inputs) {
+        const file = input.files && input.files[0];
+        if (!file) continue;
+        const buffer = await file.arrayBuffer();
+        const m = input.id.match(/(\d+)$/);
+        const bankId = m ? m[1] : "";
+        console.log("[parent] posting bank", {
+          bankId,
+          name: file.name,
+          bytes: buffer.byteLength,
         });
-    }
-  };
-  window.addEventListener("message", onMessage);
+        iframe.contentWindow &&
+          iframe.contentWindow.postMessage(
+            {
+              type: "amos-bank",
+              token,
+              bankId,
+              name: file.name,
+              mime: file.type || "application/octet-stream",
+              buffer,
+            },
+            "*",
+            [buffer] // transferable
+          );
+      }
+    };
 
-  const FONT_CSS = `
+    const onMessage = (e) => {
+      const data = e.data || {};
+      if (data.token !== token) return;
+
+      if (data.type === "amos-size") {
+        iframe.style.width = `${Math.max(1, Math.round(data.width))}px`;
+        iframe.style.height = `${Math.max(1, Math.round(data.height))}px`;
+      }
+
+      if (data.type === "amos-ready") {
+        Promise.resolve()
+          .then(forwardBanks) // run on next tick to be safe
+          .then(() => {
+            console.log("[parent] banks forwarded, telling iframe we're done");
+            iframe.contentWindow &&
+              iframe.contentWindow.postMessage(
+                { type: "amos-banks-done", token },
+                "*"
+              );
+          });
+      }
+    };
+    window.addEventListener("message", onMessage);
+
+    const FONT_CSS = `
 @font-face { font-family: 'Amiga4Ever';
   src: url('/fonts/amiga/amiga4ever.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Amiga4EverPro';
@@ -264,7 +536,7 @@ useEffect(() => {
 html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-serif; }
 `;
 
-  iframe.srcdoc = `
+    iframe.srcdoc = `
 <!doctype html>
 <html>
   <head>
@@ -332,13 +604,7 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
         if (!rec && nameKey) rec = BANKS_BY_NAME.get(nameKey);
         if (!rec && normKey) rec = BANKS_BY_NORM.get(normKey);
 
-        // DEBUG: see how it resolved
-        console.log("[__getBankFile] query:",
-          { bankId, bankName, nameClean, nameKey, normKey,
-            byId: !!BANKS_BY_ID.get(String(bankId)),
-            byExact: !!BANKS_BY_NAME.get(nameKey),
-            byNorm: !!BANKS_BY_NORM.get(normKey) });
-
+   
         if (!rec) return null;
         try {
           return new File([rec.buffer], rec.name || \`bank\${bankId||''}.abk\`, { type: rec.mime || "application/octet-stream" });
@@ -408,24 +674,27 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
   </body>
 </html>`.trim();
 
-  host.appendChild(iframe);
+    host.appendChild(iframe);
 
-  // Re-forward banks if the user changes inputs later
-  const changeHandler = () => forwardBanks();
-  const bankInputs = Array.from(
-    document.querySelectorAll(
-      'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
-    )
-  );
-  bankInputs.forEach((el) => el.addEventListener("change", changeHandler));
+    // Re-forward banks if the user changes inputs later
+    const changeHandler = () => forwardBanks();
+    const bankInputs = Array.from(
+      document.querySelectorAll(
+        'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
+      )
+    );
+    bankInputs.forEach((el) => el.addEventListener("change", changeHandler));
 
-  return () => {
-    window.removeEventListener("message", onMessage);
-    bankInputs.forEach((el) => el.removeEventListener("change", changeHandler));
-    try { iframe.remove(); } catch {}
-  };
-}, [jsCode]);
-
+    return () => {
+      window.removeEventListener("message", onMessage);
+      bankInputs.forEach((el) =>
+        el.removeEventListener("change", changeHandler)
+      );
+      try {
+        iframe.remove();
+      } catch {}
+    };
+  }, [jsCode, runNonce]);
 
   function generateAmosBankFile(bankCreator) {
     const { sprites, palette } = bankCreator;
@@ -676,6 +945,15 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
       const bankData = JSON.stringify(bankCreator);
       localStorage.setItem("bankCreator", bankData);
     };
+useEffect(() => {
+  if (!AmosCode) { setParseErrors([]); return; }
+
+  const id = setTimeout(() => {
+    parseAmosCode(AmosCode);
+  }, 250); // debounce 250ms
+
+  return () => clearTimeout(id);
+}, [AmosCode]);
     return (
       <div
         style={{
@@ -1206,7 +1484,8 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
                 <button
                   onClick={async () => {
                     try {
-                      parseAmosCode(AmosCode);
+                      await parseAmosCode(AmosCode); // updates jsCode
+                      onRunClick(); // bumps runNonce -> useEffect runs -> iframe rebuilt
                     } catch (err) {
                       console.error("❌ Failed to run code:", err);
                     }
@@ -1237,19 +1516,11 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
                 </button>
               </div>
 
-              <textarea
-                style={{
-                  width: "44vw",
-                  height: "100%",
-                  background: "#222",
-                  color: "#0f0",
-                  margin: "10px",
-                }}
+              <CodeEditorWithErrors
                 value={AmosCode}
-                onChange={(e) => {
-                  setAmosCode(e.target.value);
-                }}
-                placeholder="Enter AMOS BASIC code here"
+                onChange={setAmosCode}
+                errors={parseErrors}
+                style={{ width: "44vw", height: "100%", margin: "10px" }}
               />
             </div>
             <div

@@ -158,6 +158,7 @@ statement:
     | box
     | circle
     | wait_key
+
     
    
 
@@ -293,7 +294,7 @@ statement:
     'Locate' NUMBER COMMA? NUMBER?
     ;
     add:
-    'Add' IDENTIFIER COMMA expression1 (COMMA expression1 'To' 'NUMBER')?
+    'Add' IDENTIFIER COMMA expression1 (COMMA expression1 'To' NUMBER)?
     ;
     blitter_copy:
     'Blitter' 'Copy'  'Limit'? NUMBER COMMA NUMBER 'To' NUMBER COMMA NUMBER
@@ -308,7 +309,7 @@ statement:
     'Autoback' NUMBER
     ;
     palette:
-    'Palette' (HEX_NUMBER (NUMBER | IDENTIFIER) COMMA?)*
+    'Palette' (HEX_NUMBER COMMA?)*
     ;
     double_buffer:
     'Double' 'Buffer'

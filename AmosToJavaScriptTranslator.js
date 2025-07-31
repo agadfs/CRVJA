@@ -591,7 +591,7 @@ function loadBank(bankName, bank) {
     bankData[bank].processing = true;
   }
 
-  console.log("Loading bank:", bankName, "into bank slot:", bank);
+
 
   // 1) Try the posted bytes (by id or by a name match)
   let file = (window.__getBankFile && window.__getBankFile(bank, bankName)) || null;
@@ -679,17 +679,17 @@ function loadBank(bankName, bank) {
 
     }
 
-    console.log("Bank 1 exists?", bankData[1]);
+    
     
     if(bankData[1].sprites.length > 0){
      
-    console.log("Bank 1 exists, merging sprites and palette");
+  
     // Merge the new sprites and palette with the existing ones
     bankData[1].sprites = [...bankData[1].sprites, ...objectsArray
     ];
     bankData[1].palette = [...bankData[1].palette, ...colorPalette
     ];
-    console.log("Bank data updated:", bankData[1]);
+   
     }else {
       console.log("Bank 1 does not exist, creating new bank slot");
     
@@ -1190,7 +1190,7 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
     leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/g, (match) => {
       return parseInt(match.substring(1), 16);
     });
-    console.log(leftExpression);
+    
     this.output += `\n${this.indent()}if (currentPressedKey === keyMapping[${leftExpression}]) {\n`;
   }
   enterWait_key(ctx) {
@@ -1681,7 +1681,7 @@ ${this.indent()}}`;
   ${this.indent()}${name}(${value}); // Function call
           `;
     }
-    console.log(name);
+    
   }
   enterIf_statement_key_state(ctx) {
     let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();
