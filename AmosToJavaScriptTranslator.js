@@ -28,6 +28,7 @@ class AmosToJavaScriptTranslator extends AMOSListener {
     this.functionStarters = ``;
     this.variables = {};
     this.output += `
+    
       const keyMapping = {
         1: "Escape",
         2: "Digit1",
@@ -562,8 +563,7 @@ let bankData = {
 
   }
 function loadBank(bankName, bank) {
-
-  let bankFileType = bankName.split('.').pop().toLowerCase();
+ let bankFileType = bankName.split('.').pop().toLowerCase();
   bankFileType = bankFileType.replace('"', ''); // Remove any non-alphanumeric characters
 
   if(bankFileType !== "abk"){
@@ -590,18 +590,25 @@ function loadBank(bankName, bank) {
   }else{
     bankData[bank].processing = true;
   }
-   console.log("Loading bank:", bankName, "into bank slot:", bank);
-    //only sprite banks now, if one already exists, it will be merged
-    // if no bank number is provided, it will default to bank 1 or the next available bank
-  const findElementId = "bankStored" + bank;
-  const inputElement = document.getElementById(findElementId);
-  const file = inputElement?.files?.[0];
 
-  console.log("Storing bank:", inputElement?.id);
+  console.log("Loading bank:", bankName, "into bank slot:", bank);
+
+  // 1) Try the posted bytes (by id or by a name match)
+  let file = (window.__getBankFile && window.__getBankFile(bank, bankName)) || null;
+
+  // 2) Fallback to legacy input (only if you also render inputs inside the iframe)
   if (!file) {
-    console.log("Bank failed to be loaded: No file was selected");
+    const findElementId = "bankStored" + bank;
+    const inputElement = document.getElementById(findElementId);
+    file = inputElement?.files?.[0];
+    console.log("Storing bank (legacy input):", inputElement?.id);
+  }
+
+  if (!file) {
+    console.log("Bank failed to be loaded: No file was selected or posted");
     return;
   }
+
   const reader = new FileReader();
 
   reader.onload = function (e) {
@@ -665,7 +672,11 @@ function loadBank(bankName, bank) {
 
       // Format as HTML color code #RRGGBB
       const color = '#' + red8 + green8 + blue8;
+     
+      
       colorPalette.push(color.toUpperCase());
+      
+
     }
 
     console.log("Bank 1 exists?", bankData[1]);
@@ -887,7 +898,7 @@ ${this.indent()}closeChannel(${channel});
     }
     for (let i = 0; i < ctx.print_options().length; i++) {
       let text = ctx.print_options(i)?.getText();
-   
+
       console.log(typeof text);
       if (!text.includes('"')) {
         text = ctx
