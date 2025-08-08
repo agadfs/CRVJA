@@ -23,7 +23,7 @@ class CollectingErrorListener extends antlr4.error.ErrorListener {
 function CodeEditorWithErrors({
   value,
   onChange,
-  errors = [],         // [{ line: 1-based, column: 0-based, msg }]
+  errors = [], // [{ line: 1-based, column: 0-based, msg }]
   style,
   className,
   fontFamily = "'Amiga4Ever', monospace",
@@ -35,16 +35,17 @@ function CodeEditorWithErrors({
   const innerRef = React.useRef(null);
 
   const [tip, setTip] = React.useState(null);
-const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
+  const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
   // ❶ Error lookup: line -> Map<col,msg>
   const byLine = React.useMemo(() => {
     const map = new Map();
     for (const e of errors || []) {
       const line = Number(e.line) | 0;
-      const col  = Number(e.column);
+      const col = Number(e.column);
       if (!map.has(line)) map.set(line, new Map());
       if (Number.isFinite(col)) {
-        if (!map.get(line).has(col)) map.get(line).set(col, e.msg || "Syntax error");
+        if (!map.get(line).has(col))
+          map.get(line).set(col, e.msg || "Syntax error");
       } else {
         map.get(line).set(-1, e.msg || "Syntax error"); // whole‑line
       }
@@ -53,20 +54,26 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
   }, [errors]);
 
   // ❷ Expand tabs only for the overlay; textarea keeps real tabs
-  const expandTabs = React.useCallback((s) => {
-    if (!s || !s.includes("\t")) return s ?? "";
-    const tab = " ".repeat(tabColumns);
-    return s.replace(/\t/g, tab);
-  }, [tabColumns]);
+  const expandTabs = React.useCallback(
+    (s) => {
+      if (!s || !s.includes("\t")) return s ?? "";
+      const tab = " ".repeat(tabColumns);
+      return s.replace(/\t/g, tab);
+    },
+    [tabColumns]
+  );
 
   // ❸ Compute absolute string index from (line, col) for caret placement
-  const indexFromLineCol = React.useCallback((src, lineOneBased, colZeroBased) => {
-    const lines = src.split("\n");
-    const li = Math.max(0, Math.min(lines.length - 1, lineOneBased - 1));
-    let idx = 0;
-    for (let i = 0; i < li; i++) idx += lines[i].length + 1; // +1 for \n
-    return idx + Math.max(0, Math.min(colZeroBased, lines[li].length));
-  }, []);
+  const indexFromLineCol = React.useCallback(
+    (src, lineOneBased, colZeroBased) => {
+      const lines = src.split("\n");
+      const li = Math.max(0, Math.min(lines.length - 1, lineOneBased - 1));
+      let idx = 0;
+      for (let i = 0; i < li; i++) idx += lines[i].length + 1; // +1 for \n
+      return idx + Math.max(0, Math.min(colZeroBased, lines[li].length));
+    },
+    []
+  );
 
   // ❹ Render overlay (no own scroll; we translate inside)
   const renderHighlights = React.useMemo(() => {
@@ -74,7 +81,13 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
     return lines.map((ln, i) => {
       const lineNo = i + 1;
       const colMap = byLine.get(lineNo);
-      if (!colMap) return <div key={i}>{ln || " "}{"\n"}</div>;
+      if (!colMap)
+        return (
+          <div key={i}>
+            {ln || " "}
+            {"\n"}
+          </div>
+        );
 
       const hasWholeLineError = colMap.has(-1);
       const parts = [];
@@ -88,27 +101,29 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
           // pass line/col to handler for caret setting
           parts.push(
             <span
-  key={c}
-  className="err-ch"
-  title={msg}
-  data-line={lineNo}
-  data-col={c}
-  onMouseEnter={(e) => setTip({ ...cursorPos(e), msg })}
-  onMouseMove={(e) => setTip(t => (t ? { ...cursorPos(e), msg } : t))}
-  onMouseLeave={() => setTip(null)}
-  onMouseDown={(e) => {
-    e.preventDefault();
-    const ta = taRef.current;
-    if (!ta) return;
-    const line = Number(e.currentTarget.dataset.line);
-    const col  = Number(e.currentTarget.dataset.col);
-    const pos  = indexFromLineCol(value ?? "", line, col);
-    ta.focus();
-    ta.setSelectionRange(pos, pos);
-  }}
->
-  {ch}
-</span>
+              key={c}
+              className="err-ch"
+              title={msg}
+              data-line={lineNo}
+              data-col={c}
+              onMouseEnter={(e) => setTip({ ...cursorPos(e), msg })}
+              onMouseMove={(e) =>
+                setTip((t) => (t ? { ...cursorPos(e), msg } : t))
+              }
+              onMouseLeave={() => setTip(null)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                const ta = taRef.current;
+                if (!ta) return;
+                const line = Number(e.currentTarget.dataset.line);
+                const col = Number(e.currentTarget.dataset.col);
+                const pos = indexFromLineCol(value ?? "", line, col);
+                ta.focus();
+                ta.setSelectionRange(pos, pos);
+              }}
+            >
+              {ch}
+            </span>
           );
         } else {
           parts.push(<span key={c}>{ch}</span>);
@@ -116,7 +131,10 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
       }
 
       return (
-        <div key={i} className={hasWholeLineError ? "err-line line-soft" : "err-line"}>
+        <div
+          key={i}
+          className={hasWholeLineError ? "err-line line-soft" : "err-line"}
+        >
           {parts}
           {"\n"}
         </div>
@@ -133,14 +151,16 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
     const Y_ADJUST = -5; // ← move overlay UP by 5px; tweak if you change font/lineHeight
 
     const sync = () => {
-      inner.style.transform =
-        `translate(${-ta.scrollLeft}px, ${-ta.scrollTop + Y_ADJUST}px)`;
+      inner.style.transform = `translate(${-ta.scrollLeft}px, ${-ta.scrollTop + Y_ADJUST}px)`;
     };
     sync();
     ta.addEventListener("scroll", sync);
     const ro = new ResizeObserver(sync);
     ro.observe(ta);
-    return () => { ta.removeEventListener("scroll", sync); ro.disconnect(); };
+    return () => {
+      ta.removeEventListener("scroll", sync);
+      ro.disconnect();
+    };
   }, [value]);
 
   // Shared metrics—must be identical on both layers
@@ -194,21 +214,21 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
   };
 
   const tooltipStyle = tip && {
-  position: "fixed",             // ← fixed to the viewport, unaffected by scroll
-  left: tip.x,
-  top: tip.y,
-  background: "#111",
-  color: "#fff",
-  border: "1px solid #444",
-  borderRadius: 6,
-  padding: "8px 10px",
-  maxWidth: 360,
-  fontSize: 12,
-  lineHeight: 1.3,
-  zIndex: 9999,
-  boxShadow: "0 6px 16px rgba(0,0,0,0.4)",
-  pointerEvents: "none",
-};
+    position: "fixed", // ← fixed to the viewport, unaffected by scroll
+    left: tip.x,
+    top: tip.y,
+    background: "#111",
+    color: "#fff",
+    border: "1px solid #444",
+    borderRadius: 6,
+    padding: "8px 10px",
+    maxWidth: 360,
+    fontSize: 12,
+    lineHeight: 1.3,
+    zIndex: 9999,
+    boxShadow: "0 6px 16px rgba(0,0,0,0.4)",
+    pointerEvents: "none",
+  };
 
   return (
     <div className={className} style={wrapStyle}>
@@ -216,13 +236,13 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
       <div
         style={overlayWrapStyle}
         onWheel={(e) => {
-  const ta = taRef.current;
-  if (!ta) return;
-  e.preventDefault();
-  ta.scrollTop += e.deltaY;
-  ta.scrollLeft += e.deltaX;
-  setTip(null); // hide while scrolling (optional)
-}}
+          const ta = taRef.current;
+          if (!ta) return;
+          e.preventDefault();
+          ta.scrollTop += e.deltaY;
+          ta.scrollLeft += e.deltaX;
+          setTip(null); // hide while scrolling (optional)
+        }}
       >
         <pre ref={innerRef} style={overlayInnerStyle} className="overlay-pre">
           {renderHighlights}
@@ -265,7 +285,6 @@ const cursorPos = (e) => ({ x: e.clientX + 12, y: e.clientY + 12 });
     </div>
   );
 }
-
 
 function App() {
   const [jsCode, setJsCode] = useState("");
@@ -821,6 +840,7 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
     const [sprites, setSprites] = useState(bankCreator.sprites || []);
     const [spriteSelected, setSpriteSelected] = useState(null);
     const [showColorPicker, setShowColorPicker] = useState(false);
+    const [isMouseDown, setIsMouseDown] = useState(false);
     const [colorPickerPosition, setColorPickerPosition] = useState({
       top: 0,
       left: 0,
@@ -829,6 +849,44 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const [spriteWidth, setSpriteWidth] = useState(0);
     const [spriteHeight, setSpriteHeight] = useState(0);
+
+    useEffect(() => {
+      const handleMouseUp = () => setIsMouseDown(false);
+      window.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    }, []);
+    const handlePixelPaint = (index) => {
+      if (spriteSelected !== null) {
+        const selectedSprite = sprites[spriteSelected];
+        const actualWidth = selectedSprite.width * 16;
+        const bytesPerRow = Math.ceil(actualWidth / 8);
+
+        const x = index % actualWidth;
+        const y = Math.floor(index / actualWidth);
+
+        for (let plane = 0; plane < selectedSprite.depth; plane++) {
+          const bit = (currentColorIndex >> plane) & 1;
+          const byteIndex =
+            y * bytesPerRow +
+            plane * (selectedSprite.height * bytesPerRow) +
+            Math.floor(x / 8);
+          const bitPos = 7 - (x % 8);
+
+          if (bit) {
+            selectedSprite.planarGraphicData[byteIndex] |= 1 << bitPos;
+          } else {
+            selectedSprite.planarGraphicData[byteIndex] &= ~(1 << bitPos);
+          }
+        }
+
+        const updatedSprites = sprites.map((sprite, i) =>
+          i === spriteSelected ? { ...selectedSprite } : sprite
+        );
+        setSprites(updatedSprites);
+      }
+    };
 
     const handleColorClick = (index, event) => {
       event.preventDefault();
@@ -933,6 +991,23 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
         }
       }
     };
+const duplicateSprite = () => {
+  if (spriteSelected !== null) {
+    const original = sprites[spriteSelected];
+
+    // Deep copy of planarGraphicData
+    const copiedPlanarData = [...original.planarGraphicData];
+
+    const duplicatedSprite = {
+      ...original,
+      planarGraphicData: copiedPlanarData,
+    };
+
+    const updatedSprites = [...sprites, duplicatedSprite];
+    setSprites(updatedSprites);
+    setBankCreator({ ...bankCreator, sprites: updatedSprites });
+  }
+};
 
     const handleSpriteClick = (index) => {
       setSpriteSelected(index);
@@ -945,15 +1020,7 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
       const bankData = JSON.stringify(bankCreator);
       localStorage.setItem("bankCreator", bankData);
     };
-useEffect(() => {
-  if (!AmosCode) { setParseErrors([]); return; }
 
-  const id = setTimeout(() => {
-    parseAmosCode(AmosCode);
-  }, 250); // debounce 250ms
-
-  return () => clearTimeout(id);
-}, [AmosCode]);
     return (
       <div
         style={{
@@ -1111,6 +1178,13 @@ useEffect(() => {
                     cursor: "pointer",
                   }}
                   onClick={() => handlePixelClick(index)}
+                  onMouseDown={() => {
+                    setIsMouseDown(true);
+                    handlePixelPaint(index);
+                  }}
+                  onMouseEnter={() => {
+                    if (isMouseDown) handlePixelPaint(index);
+                  }}
                 />
               ))}
             </div>
@@ -1119,6 +1193,8 @@ useEffect(() => {
 
         <div>
           <h2>Sprites</h2>
+          <button onClick={duplicateSprite}>Duplicate Sprite selected</button>
+
           <button onClick={addNewSprite}>Add New Sprite</button>
           <button
             onClick={clearBank}
@@ -1202,7 +1278,18 @@ useEffect(() => {
       </div>
     );
   }
+  useEffect(() => {
+    if (!AmosCode) {
+      setParseErrors([]);
+      return;
+    }
 
+    const id = setTimeout(() => {
+      parseAmosCode(AmosCode);
+    }, 250); // debounce 250ms
+
+    return () => clearTimeout(id);
+  }, [AmosCode]);
   const styleButton = {
     backgroundColor: "#00aaaa",
     minWidth: "300px",
