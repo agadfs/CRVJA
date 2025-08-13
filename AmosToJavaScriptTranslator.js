@@ -766,7 +766,7 @@ spriteContainer.style.position = "absolute";
 spriteContainer.style.left = x + "px";
 spriteContainer.style.top = y + "px";
 spriteContainer.id = "sprite" + spriteNumber; // Assign the ID for future reference
-
+spriteContainer.style.zIndex = 99999;
 // Append the new sprite container to the document body (or a specific parent container)
 document.body.appendChild(spriteContainer);
 
