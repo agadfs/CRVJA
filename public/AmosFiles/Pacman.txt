@@ -1,9 +1,12 @@
+
 ' PAC-MAN Henrique 2025
 
 Screen Open 1,500,500,8,Hires
 Curs Off
 
 Paper 0 : Palette $0,$666,$FF0,$888,$BBB,$AAA,$BBB,$CCC
+
+Load "pacman.abk"
 
 
 Pen 1
@@ -38,6 +41,10 @@ For y = 0 To 18
   Read map(x, y)
  Next
 Next
+
+pacmancurrentsprite = 1
+pacman_direction = 0
+pacman_turn_to_direction = 0
 
 playerDied = 0
 ghostCounter = 0
@@ -77,7 +84,7 @@ Procedure MoveGhosts[a]
    End If
 
    End If
-   Else
+   
    If dx = 2
       If map(pghostonex - 1, pghostoney) = 0
          pghostonex = pghostonex - 1
@@ -210,10 +217,15 @@ Procedure P_DRAWMAP[a]
 
          
 
-    	 If x = px 
+    	If x = px 
          Ink 3
-	 If y = py
- 	 Circle px * tileSize + 12, py * tileSize + 12, 10
+	If y = py	
+	pacspritex = px * tileSize + 4
+	pacspritey = py * tileSize + 4
+    
+   	Sprite 1, pacspritex ,pacspritey, pacmancurrentsprite
+
+
 	 End If
 	 Else
          Ink 1
@@ -222,8 +234,13 @@ Procedure P_DRAWMAP[a]
 	  If x = pghostonex 
          Ink 4
 	 If y = pghostoney
- 	 Circle pghostonex * tileSize + 12, pghostoney * tileSize + 12, 10
-	 End If
+ 	 
+	 ghostspriteonex = pghostonex * tileSize + 4
+	ghostspriteoney = pghostoney* tileSize + 4
+    
+   	Sprite 2, ghostspriteonex ,ghostspriteoney , 25
+
+End If
 	 Else
          Ink 1
 	 End If
@@ -231,8 +248,13 @@ Procedure P_DRAWMAP[a]
   	 If x = pghosttwox 
          Ink 5
 	 If y = pghosttwoy
- 	 Circle pghosttwox * tileSize + 12, pghosttwoy * tileSize + 12, 10
-	 End If
+ 	 
+	 ghostspritetwox = pghosttwox * tileSize + 4
+	ghostspritetwoy = pghosttwoy* tileSize + 4
+    
+   	Sprite 3, ghostspritetwox ,ghostspritetwoy , 24	 
+
+End If
 	 Else
          Ink 1
 	 End If
@@ -252,6 +274,7 @@ End Proc
 
 
 
+
 Do
 
    
@@ -262,21 +285,24 @@ Do
    nx = px : ny = py
    If Key State($11)
       ny = py - 1  ' W
-      
+      pacman_direction = 2
       
 
    End If
    If Key State($1F)
       ny = py + 1  ' S
+      pacman_direction = 3
     End If
    If Key State($1E)
       nx = px - 1  ' A
-
+      pacman_direction = 1
+      
    End If
+
    If Key State($20)
       nx = px + 1  ' D
-      
-
+      pacman_direction = 0
+   
    End If
 
    ' Aplica movimento se for caminho
@@ -284,7 +310,76 @@ Do
       px = nx
       py = ny 
 
-      
+
+   If pacman_direction = 0 
+   If pacman_direction <> pacman_turn_to_direction
+   pacmancurrentsprite = 1
+   pacman_turn_to_direction = 0
+   End If
+   End If
+
+   If pacman_direction = 1 
+   If pacman_direction <> pacman_turn_to_direction
+   pacmancurrentsprite = 6
+   pacman_turn_to_direction = 1
+   End If
+   End If
+ 
+
+   If pacman_direction = 2 
+   If pacman_direction <> pacman_turn_to_direction
+   pacmancurrentsprite = 11
+   pacman_turn_to_direction = 2
+   End If
+   End If
+
+      If pacman_direction = 3 
+   If pacman_direction <> pacman_turn_to_direction
+   pacmancurrentsprite = 17
+   pacman_turn_to_direction = 3
+   End If
+   End If
+
+
+   End If
+
+   ' If is going RIGHT render sprites of pacman right
+   If pacman_direction = 0
+      pacmancurrentsprite = pacmancurrentsprite + 1
+
+   If pacmancurrentsprite > 5
+      pacmancurrentsprite = 1
+   End If
+   End If
+   ' If is going LEFT render sprites of pacman right
+ If pacman_direction = 1
+      pacmancurrentsprite = pacmancurrentsprite + 1
+
+   If pacmancurrentsprite > 11
+      pacmancurrentsprite = 6
+   End If
+   End If
+
+' If is going UP render sprites of pacman right
+ If pacman_direction = 2
+      pacmancurrentsprite = pacmancurrentsprite + 1
+
+   If pacmancurrentsprite > 17
+      pacmancurrentsprite = 12
+   End If
+   End If
+
+' If is going DOWN render sprites of pacman right
+ If pacman_direction = 3
+      pacmancurrentsprite = pacmancurrentsprite + 1
+
+   If pacmancurrentsprite > 23
+      pacmancurrentsprite = 18
+   End If
+   End If
+
+
+
       
    End If 
    

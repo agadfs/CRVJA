@@ -716,7 +716,7 @@ function renderSprite(spriteNumber, x, y, bankImgIndex) {
    return;
   }
    if (!bankData[1].sprites[bankImgIndex]) {
-    console.log("Sprite data is not loaded yet.");
+    
     tries++;
     setTimeout(() => {
         renderSprite(spriteNumber, x, y, bankImgIndex);

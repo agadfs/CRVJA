@@ -315,6 +315,8 @@ function App() {
     }
   }, []);
 
+  const bankFilesRef = React.useRef(bankFiles);
+useEffect(() => { bankFilesRef.current = bankFiles; }, [bankFiles]);
   useEffect(() => {
     // Save bank data to local storage whenever it changes
     localStorage.setItem("bankCreator", JSON.stringify(bankCreator));
@@ -458,6 +460,7 @@ function App() {
     }
   };
   const handleFileChange = (index, file) => {
+    console.log(file);
     const newBankFiles = [...bankFiles];
     newBankFiles[index] = file;
     setBankFiles(newBankFiles);
@@ -490,38 +493,54 @@ function App() {
 
     // ---- PLAIN JS selector; find the bank file inputs in the PARENT ----
     const forwardBanks = async () => {
-      const inputs = Array.from(
-        document.querySelectorAll(
-          'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
-        )
-      );
+  // 1) existing: from real <input type="file">
+  const inputs = Array.from(
+    document.querySelectorAll(
+      'input[type="file"][id^="bankStored"], input[type="file"][id^="Creator_bankStored"]'
+    )
+  );
 
-      for (const input of inputs) {
-        const file = input.files && input.files[0];
-        if (!file) continue;
-        const buffer = await file.arrayBuffer();
-        const m = input.id.match(/(\d+)$/);
-        const bankId = m ? m[1] : "";
-        console.log("[parent] posting bank", {
-          bankId,
-          name: file.name,
-          bytes: buffer.byteLength,
-        });
-        iframe.contentWindow &&
-          iframe.contentWindow.postMessage(
-            {
-              type: "amos-bank",
-              token,
-              bankId,
-              name: file.name,
-              mime: file.type || "application/octet-stream",
-              buffer,
-            },
-            "*",
-            [buffer] // transferable
-          );
-      }
-    };
+  for (const input of inputs) {
+    const file = input.files && input.files[0];
+    if (!file) continue;
+    const buffer = await file.arrayBuffer();
+    const m = input.id.match(/(\d+)$/);
+    const bankId = m ? m[1] : "";
+    iframe.contentWindow?.postMessage(
+      {
+        type: "amos-bank",
+        token,
+        bankId,
+        name: file.name,
+        mime: file.type || "application/octet-stream",
+        buffer,
+      },
+      "*",
+      [buffer]
+    );
+  }
+
+  // 2) NEW: also forward from React state (programmatically loaded files)
+  const files = bankFilesRef.current || [];
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    if (!f) continue;
+    const buffer = await f.arrayBuffer();
+    iframe.contentWindow?.postMessage(
+      {
+        type: "amos-bank",
+        token,
+        bankId: String(i + 1),      // banks are 1-based in your IDs
+        name: f.name,
+        mime: f.type || "application/octet-stream",
+        buffer,
+      },
+      "*",
+      [buffer]
+    );
+  }
+};
+
 
     const onMessage = (e) => {
       const data = e.data || {};
@@ -991,23 +1010,23 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
         }
       }
     };
-const duplicateSprite = () => {
-  if (spriteSelected !== null) {
-    const original = sprites[spriteSelected];
+    const duplicateSprite = () => {
+      if (spriteSelected !== null) {
+        const original = sprites[spriteSelected];
 
-    // Deep copy of planarGraphicData
-    const copiedPlanarData = [...original.planarGraphicData];
+        // Deep copy of planarGraphicData
+        const copiedPlanarData = [...original.planarGraphicData];
 
-    const duplicatedSprite = {
-      ...original,
-      planarGraphicData: copiedPlanarData,
+        const duplicatedSprite = {
+          ...original,
+          planarGraphicData: copiedPlanarData,
+        };
+
+        const updatedSprites = [...sprites, duplicatedSprite];
+        setSprites(updatedSprites);
+        setBankCreator({ ...bankCreator, sprites: updatedSprites });
+      }
     };
-
-    const updatedSprites = [...sprites, duplicatedSprite];
-    setSprites(updatedSprites);
-    setBankCreator({ ...bankCreator, sprites: updatedSprites });
-  }
-};
 
     const handleSpriteClick = (index) => {
       setSpriteSelected(index);
@@ -1459,6 +1478,25 @@ const duplicateSprite = () => {
                 <button
                   onClick={async () => {
                     try {
+                      const resBank1 = await fetch(
+                        "/AmosFiles/AmosBank_pacman.abk"
+                      );
+                      if (!resBank1.ok)
+                        throw new Error(
+                          `HTTP error! status: ${resBank1.status}`
+                        );
+
+                      // Convert response to Blob
+                      const blob = await resBank1.blob();
+
+                      // Create a File object (mimicking <input type="file"> result)
+                      const file = new File([blob], "AmosBank_pacman.abk", {
+                        type: blob.type,
+                      });
+
+                      // Now pass it to your handler like when user selects file
+                      handleFileChange(0, file);
+
                       const res = await fetch("/AmosFiles/Pacman.txt");
                       if (!res.ok)
                         throw new Error(`HTTP error! status: ${res.status}`);
@@ -1544,7 +1582,7 @@ const duplicateSprite = () => {
               width: "100%",
               display: "flex",
               flexDirection: "row",
-              height: "60vh",
+              height: "fit-content",
               border: "1px solid black",
             }}
           >
@@ -1555,6 +1593,7 @@ const duplicateSprite = () => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                  maxHeight:"80vh"
               }}
             >
               <div
@@ -1563,7 +1602,7 @@ const duplicateSprite = () => {
                   flexDirection: "row",
                   alignContent: "center",
                   alignItems: "center",
-                  gap: "20px",
+                  gap: "20px"
                 }}
               >
                 {" "}
@@ -1615,7 +1654,7 @@ const duplicateSprite = () => {
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
-
+                maxHeight:"100vh",
                 alignItems: "center",
               }}
             >
