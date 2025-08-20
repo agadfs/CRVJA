@@ -1593,7 +1593,8 @@ html, body, #game-container, #amos-screen, * { font-family: 'Amiga4Ever', sans-s
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                  maxHeight:"80vh"
+                  maxHeight:"80vh",
+                  minHeight:"500px"
               }}
             >
               <div
