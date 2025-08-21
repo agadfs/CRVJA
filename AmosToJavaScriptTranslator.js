@@ -1190,7 +1190,7 @@ ${this.indent()}soundPlayer(${soundIndex}, ${duration}*1000);
     leftExpression = leftExpression.replace(/\$[0-9A-Fa-f]+/g, (match) => {
       return parseInt(match.substring(1), 16);
     });
-    
+
     this.output += `\n${this.indent()}if (currentPressedKey === keyMapping[${leftExpression}]) {\n`;
   }
   enterWait_key(ctx) {
@@ -1349,12 +1349,12 @@ ${this.indent()}}\n`;
 ${this.indent()}const textDiv${x}${y} = document.createElement('div');
 ${this.indent()}textDiv${x}${y}.innerText = ${text};
 ${this.indent()}textDiv${x}${y}.id = 'textDiv' + '${x}' + '${y}';
-${this.indent()}textDiv${x}${y}.style.position = 'absolute';
+${this.indent()}textDiv${x}${y}.style.position = 'fixed';
 ${this.indent()}textDiv${x}${y}.style.left = '${x}px';
 ${this.indent()}textDiv${x}${y}.style.top = '${y}px';
 ${this.indent()}textDiv${x}${y}.style.fontSize = '14px';
 ${this.indent()}textDiv${x}${y}.style.color = Ink;
-${this.indent()}textDiv${x}${y}.style.position = "Relative";
+
 ${this.indent()}textDiv${x}${y}.style.zIndex = 99;
 ${this.indent()}document.getElementById('amos-screen').appendChild(textDiv${x}${y});
       setInterval(() => {
@@ -1631,6 +1631,18 @@ ${this.indent()}}, 16); \n
       }
       return null;
     }
+
+    function convertAMOSArrayAccessSimple(text) {
+      //format is <name>(<x>)
+
+      const match = text.match(/^(.*?)\s*\(\s*([^\s,]+)\s*\)$/);
+      if (match) {
+        const [, name, x] = match;
+
+        return { name, x };
+      }
+      return null;
+    }
     let leftExpression;
     let comparator;
     let rightExpression = "";
@@ -1647,10 +1659,26 @@ ${this.indent()}}, 16); \n
       comparator = "!=";
     }
 
+    // This below is for matrix, array[x][y]
+
     if (!leftExpression) {
       const array = convertAMOSArrayAccess(ctx.read_target(0)?.getText());
       const { name, x, y } = array;
       leftExpression = `${this.indent()}${name}[${y}][${x}]`;
+    }
+
+    // And this is for usual array
+
+    if (
+      leftExpression &&
+      ctx.expression1(0)?.term(0)?.factor(0)?.array_index_get(0)?.getText()
+    ) {
+      const array = convertAMOSArrayAccessSimple(
+        ctx.expression1(0)?.term(0)?.factor(0)?.array_index_get(0)?.getText()
+      );
+
+      const { name, x } = array;
+      leftExpression = `${this.indent()}${name}[${x}]`;
     }
     // Get the right-hand side expression (e.g., 2 * I + 1)
     rightExpression = ctx.expression2(0)?.getText();
@@ -1681,7 +1709,6 @@ ${this.indent()}}`;
   ${this.indent()}${name}(${value}); // Function call
           `;
     }
-    
   }
   enterIf_statement_key_state(ctx) {
     let leftExpression = ctx.current_Key_State(0)?.expression1(0)?.getText();

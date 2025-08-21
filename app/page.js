@@ -455,6 +455,7 @@ useEffect(() => { bankFilesRef.current = bankFiles; }, [bankFiles]);
         plugins: [babelPlugin, estreePlugin],
       });
       setJsCode(formatted);
+      console.log(formatted);
     } catch {
       setJsCode(translatedJsCode);
     }
